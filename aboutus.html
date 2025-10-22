@@ -1,133 +1,510 @@
 <!DOCTYPE html>
-<html lang="en.">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title> Бидний тухай</title>
-</head>
-<body>
-
-  <nav>
-    <div>
-      <strong>OMNICREDIT</strong>
-    </div>
-    <ul>
-      <li><a href="#">Нүүр</a></li>
-      <li><a href="#">Бидний тухай</a></li>
-      <li><a href="#">Бүтээгдэхүүн</a></li>
-      <li><a href="#">Хамтрагч</a></li>
-      <li><a href="#">Нэвтрэх</a></li>
-    </ul>
-  </nav>
-
-  <main>
-
-    <section aria-labelledby="about-hero">
-      <p>ABOUT US</p>
-      <h1 id="about-hero">Бид санхүүжилтийг хялбар болгоно.</h1>
-      <p>
-       Omnicredit нь хэрэглэгчдэд тод, шуурхай , уян хатан санхүүгийн үйлчилгээ хүргэх зорилготой финтекс баг.
-        Бидний түүх, үнэт зүйл, манай багтай танилцана уу.
-      </p>
+<html lang="mn">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title> Бидний тухай</title>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel= stylesheet">
+      <style>
 
 
-      <div>
-        <article>
-          <figure>
-            <img src="images/mission.jpg" alt="Ажлын баг уулзалт хийж буй зураг">
-            <figcaption>Эрхэм зорилго</figcaption>
-          </figure>
-          <h3>Эрхэм зорилго</h3>
-          <p>Санхүүжилтийг хүн бүрт хүртээмжтэй, хурдан, хялбар олгох
+        html{font-size:62.5%;}
+        *{
+            box-sizing:border-box; margin:0;padding:0; 
+        }
+        body{font-family: 'Roboto', sans-serif;
+              background-color:#ffffff;
+            color:black}
+        a{text-decoration:none}
+        a:hover{text-decoration:underline}
+       
+header{
+  position: sticky;
+  top:0;
+  z-index:100;
+  background-color:#000000;
+  color:#ffffff;
+ 
+}
+nav{ 
+        position:sticky;
+        top:0;
+        z-index: 1000;
+         display:flex;
+        align-items:center;
+        padding:1rem;
+        justify-content:space-between;
+      
+    ul{display:flex;
+        list-style:none;
+        margin:0 1rem;
+        gap:1.2rem;}}
+  nav a{
+    color:#ffffff;
+  }
+  nav a:hover{
+    color:beige;
+  }
 
-.</p>
-          <p>Тодорхой нөхцөл, ил тод хүү, шуурхай шийдвэр дээр төвлөрнө./a></p>
-        </article>
+  main{width:100%;
+   padding:1rem 1rem;
+  }
+  .intro{
+    width: 95%;
+    margin:0.5rem auto 0.5rem;
+    padding:3rem 2rem 3rem 3rem;
+    border-radius:10px;
+    background-color:#103C4C;
+    color:#ffffff;
+  }
+  .intro .smalltitle{
+    letter-spacing: 0.5em;
+    font-weight:bold;
+    font-size:1rem;
+  }
+  .intro h1{
+    margin:2% 0 2%;
+    color:#ffffff;
+    font-size:3.5rem;
+  }
+  .hylbar{
+   background:linear-gradient(90deg,#29C8C9, #41DB96);
+ background-clip: text;        
+      -webkit-background-clip: text;  
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+  .desc{
+    font-size:1.25rem;
+    font-weight:500;
+  }
 
-        <article>
-          <figure>
-            <img src="workspace.jpg" alt="Стратеги хэлэлцэж буй зураг">
-            <figcaption>Алсын хараа</figcaption>
-          </figure>
-          <h3>Алсын хараа</h3>
-          <p>Монголын тэргүүлэх дижитал зээл олгох 
-платформ болох</p>
-          <p>
-Харилцагч, хамтрагч байгууллагуудад  үнэ цэнийг бүтээж, бүх төрлийн санхүүгийн үйлчилгээг багтаасан платформ болох.</p>
-        </article>
-      </div>
-    </section>
+.purpose{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:2.4rem;
+  width:95%;
+  margin:3.2rem auto;
+  align-items:stretch;    }        
+.purpose article{
+  display:flex;                    
+  flex-direction:column;
+  height:100%;                     
+  background:#fff;
+  border:1px solid #e0e0e0;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
 
-    <section aria-labelledby="timeline">
-      <h2 id="timeline">Түүхэн товчоо</h2>
-      <ol>
-        <li>
-          <time datetime="2023-02-17">2023.02.17</time> — Анхны хэрэглэгчид зээл олгож, байгуулагдсан.
-        </li>
-        <li>
-          <time datetime="2023-07-09">2023.07.09</time> — Анхны хэрэглэгчид зээл олгож, байгуулагдсан. 
-        </li>
-        <li>
-          <time datetime="2024-03-01">2024.03.01</time> — Анхны хэрэглэгчид зээл олгож, байгуулагдсан.
-        </li>
-      </ol>
-    </section>
+.purpose img{
+  width:100%;
+  aspect-ratio: 16 / 9;           
+  height:auto;                     
+  object-fit:cover;
+  display:block;
+}
 
+.purpose h2 {
+  font-size: 1.8rem;
+  margin: 1.2rem 1.6rem 0.4rem;
+}
+
+.purpose p {
+  font-size: 1.4rem;
+  color: #444;
+  margin: 0 1.6rem 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .purpose {
+    grid-template-columns: 1fr;
+  }
+}
+
+.timeline { width: 95%; 
+  max-width: 100rem;
+   margin: 5rem auto;
+    position: relative; } 
+.timeline h2 { font-size: 2.4rem;
+   font-weight: 700; 
+   text-align: center;
+    margin-bottom: 3rem; }
+.timeline .list{
+  position:relative;
+  display:block;     }     
+.timeline .list::before{ display:none; }
+
+.titem{
+  width:min(48rem, 90%);
+  background:#D9FBE7;     
+  border:0;
+  border-radius:8px;
+  padding:1.6rem 2rem;
+  margin:2.8rem 0;          /* mur hoorondiinzai*/
+  box-shadow:0 10px 14px -6px rgba(0,0,0,.25);
+}
+
+.titem:nth-child(odd){     
+  margin-left:1.6rem;
+}
+.titem:nth-child(even){    
+  margin-left:auto;
+  margin-right:1.6rem;
+}
+
+.titem time{
+  font-weight:800;
+  font-size:1.8rem;
+  color:#064E3B;
+  margin-right:.8rem;
+  position:relative;
+   
+}
+.titem time::after{
+  content:"";
+  position:absolute;
+  right:.2rem; top:.15rem;
+  width:1.6rem; height:1.6rem;
+  background-repeat:no-repeat;
+  background-size:contain;
+}
+
+.titem span{
+  display:block;
+  font-size:1.6rem;
+  color:#0F172A;
+  margin-top:.4rem;
+}
+
+
+@media (max-width:700px){
+  .titem{
+    width:100%;
+    margin-left:0; margin-right:0;
+  }
+}
+
+.team {
+  width: 95%;
+  margin: 3.2rem auto;
+}
+.team h2 {
+  font-size: 2.4rem;
+  margin-bottom: 1.6rem;
+}
+
+.listmem {
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+  width: 90%;
+  margin: 4rem auto;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+.member img {
+  width: 30rem;
+  height: 20rem;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.member .infomem,
+.member .meminfo {
+  max-width: 40rem;
+}
+
+.member h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.member p {
+  font-size: 1.4rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+.member:nth-child(even) {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .member {
+    flex-direction: column;
+    text-align: center;
+  }
+  .member img {
+    width: 95%;
+    height: auto;
+  }
+}
+
+.request {
+  width: 95%;
+  margin: 4rem auto;
+  background: #E9FBF3;
+  border: 1px solid #CFF3E3;
+  border-radius: 10px;
+  padding: 2.4rem;
+}
+.request span {
+  font-size: 1rem;
+  font-weight:bold;
+  letter-spacing: 0.5em;
+  color: #000000;
   
-    <section aria-labelledby="team">
-      <h2 id="team">Гүйцэтгэх удирдлагын баг</h2>
-
-      <article>
-        <img src="images/team-1.jpg" alt="Багийн гишүүн 1-ийн хөрөг">
-        <h3>Нэр</h3>
-        <p>Гүйцэтгэх захирал — 2019–одоо</p>
-      </article>
-
-      <article>
-        <img src="images/team-2.jpg" alt="Багийн гишүүн 2-ийн хөрөг">
-        <h3>Нэр</h3>
-        <p>Технологийн захирал — 2020–одоо</p>
-      </article>
-
-      <article>
-        <img src="images/team-3.jpg" alt="Багийн гишүүн 3-ийн хөрөг">
-        <h3>Нэр</h3>
-        <p>Санхүү хариуцсан захирал — 2021–одоо</p>
-      </article>
-    </section>
-
-
-    <section aria-labelledby="cta">
-      <h2 id="cta">Манай байгууллагатай хамтарч ажиллах уу?</h2>
-    <section aria-labelledby="cta">
-  <p>Omnicredit таньд БОРЛУУЛАЛТАА өсгахад тань туслана. Богино маягт илгээвэл бид таньтай холбогдох болно.</p>
-  <button>Илгээх</button>
-</section>
+}
+.request h2 {
+  font-size: 2.4rem;
+  margin-bottom: 0.8rem;
+}
+.request p {
+  font-size: 1.4rem;
+  color: #000000;
+  margin-bottom: 1.6rem;
+}
+#openform {
+  border: none;
+  border-radius: 50px;
+  padding: 1rem 2rem;
+  background: linear-gradient(90deg, #29C8C9, #41DB96);
+  color: #000000;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#openform:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
 
-  </main>
+@media (max-width: 900px) {
+  .purpose {
+    grid-template-columns: 1fr;
+  }
+  .listmem {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .listmem {
+    grid-template-columns: 1fr;
+  }
+  .intro {
+    padding: 2rem;
+  }
+  .purpose img {
+    height: 16rem;
+  }
+}
+.footer {
+ 
+  background: #0A0F1F;
+  color: #DDE3EA;
+  padding: 4rem 2rem 2rem;
+  font-size: 1.4rem;
+}
 
-  <footer>
-    <section>
-      <h3>OMNICREDIT</h3>
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  max-width: 120rem;
+  margin: 0 auto;
+  gap: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-col {
+  flex: 1 1 25rem;
+  min-width: 20rem;
+}
+
+.footer-col h4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.footer-col p,
+.footer-col li,
+.footer-col a {
+  font-size: 1.4rem;
+  color: #DDE3EA;
+}
+
+.footer-col a {
+  text-decoration: none;
+  color: #DDE3EA;
+}
+
+.footer-col a:hover {
+  color: beige;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 1.6rem;
+  color: #9BA6B3;
+  font-size: 1.3rem;
+}
+
+      </style> 
+    </head>
+
+    
+  <body>
+    <header>
+      <nav>
+        <strong>OMNICREDIT</strong>
+        <ul>
+          <li><a href="#">Нүүр</a></li>
+          <li><a href="#">Бидний тухай</a></li>
+          <li><a href="#">Бүтээгдэхүүн</a></li>
+          <li><a href="#">Хамтрах</a></li>
+          <li><a href="#">Нэвтрэх</a></li>
+
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section class="intro">
+       <p class="smalltitle">ABOUT US</P>
+       <h1> Бид санхүүжилтийг <span class="hylbar">хялбар</span> болгоно.</h1>
+       <P class="desc">
+        Omnicredit нь хэрэглэгчдэд тод, уян хатан санхүүгийн үйлчилгээ хүргэх зорилготой финтекс баг.<br>Бидний түүх үнэт зүйлтэй танилцана уу.
+       </P>
+      </section>
+      <section class="purpose">
+        <article class="first">
+          <img src="workspace.jpg" alt="Ажиллаж буй хамт олон">
+          <h2>Эрхэм зорилго</h2>
+          <p>Санхүүжилтийг хүн бүрт хүртээмжтэй, хурдан, хялбар олгох. </p>
+          <p>
+            Тодорхой нөхцол,ил тод,шуурхай шийдвэр дээр төвлөрнө.</p>
+         </article>
+        <article class="second">
+           <img src="workspace.jpg" alt="Алсын хараа">
+           <h2>Алсын хараа</h2>
+           <p> Монголын тэргүүлэх дижитал зээл олгох платформ болох.</p>
+           <p> Харилцагчдад үнэ цэнийг бүтээж, бүх төрлийн санхүүгийн үйлчилгээг багтаахад төвлөрнө.</p>
+        </article>
+      </section>
+
+      <section class="timeline">
+         <h2>Түүхэн товчоо</h2>
+         <div class ="list">
+         <article class="titem">
+            <time datetime="2022-02-17">2022-02-17</time>
+            <span> Анхны хэрэглэгчдэд зээл олгож, байгуулагдсан.</span>
+         </article>
+         <article class="titem">
+          <time datetime="2023-07-08">2023-07-08</time>
+          <span> Анхны хамтрагчтай болж, бүтээгдэхүүн өргөжсөн.</span>
+         </article>
+          <article class="titem">
+          <time datetime="2023-07-08">2023-07-08</time>
+          <span> Анхны хамтрагчтай болж, бүтээгдэхүүн өргөжсөн.</span>
+         </article>
+        </div>
+      </section>
+
+      <!--Gishuudiin medeelel-->
+
+      <section class="team">
+        <h2>Гүйцэтгэх удирдлагын баг</h2>
+        <div class="listmem">
+
+          <article class="member">
+            <img src="coworker.webp">
+            <div class="infomem">
+            <h3>Нэр</h3>
+            <p>Гүйцэтгэх захирал</p>
+            <p>Finance Mcs, менежер</p>
+            </div>
+          </article>
+         
+        <article class="member">
+           <img src="coworker.webp">
+          <div class="infomem">
+            <h3>Бат</h3>
+            <p>Гүйцэтгэх захирал</p>
+            <p>Finance Mcs, менежер</p>
+          </div>
+        </article>
+
+        <article class="member">
+         <img src="coworker.webp">
+        <div class="meminfo">
+          <h3>Ариунаа</h3>
+          <p>Гүйцэтгэх захирал</p>
+          <p>Finance Mcs, менежер</p>
+        </div>
+        </article>
+        </div>
+      </section>
+
+      <section class="request">
+        <span>Хамтрах хүсэлт илгээх</span>
+        <h2>Бидэнтэй хамт өсөе</h2>
+       <p> Omnicredit таньд <strong>БОРЛУУЛАЛТАА</strong> өсгөхөд таньд туслана.
+    Богино маягт илгээвэл бид таньтай холбогдох болно. </p>
+        <button id="openform">Илгээх</button>
+      </section>
+    </main>
+  <!--Footer-->
+    <footer class="footer">
+  <section class="footer-inner">
+    <section class="footer-col">
+      <h4>OMNICREDIT</h4>
       <p>Финтек зээлийн үйлчилгээ</p>
     </section>
-    <section>
-      <h3>Холбоо барих</h3>
-      <ul>
-        <li>Утас: +976 7000-0000</li>
-        <li>Имэйл: <a href="mailto:hello@omnicredit.mn">hello@omnicredit.mn</a></li>
-      </ul>
+
+    <section class="footer-col">
+      <h4>Холбоо барих</h4>
+      <p>Утас: +976 7000-0000</p>
+      <p>Имэйл: <a href="mailto:hello@omnicredit.mn">hello@omnicredit.mn</a></p>
     </section>
-    <section>
-      <h3>Хуудас</h3>
+
+    <section class="footer-col">
+      <h4>Хуудас</h4>
       <ul>
         <li><a href="#">Нууцлал</a></li>
         <li><a href="#">Үйлчилгээний нөхцөл</a></li>
       </ul>
     </section>
-    <p>© 2025 OmniCredit</p>
-  </footer>
+  </section>
 
-</body>
+  <section class="footer-bottom">
+    <p>© 2025 OmniCredit</p>
+  </section>
+</footer>
+  </body>
+
 </html>

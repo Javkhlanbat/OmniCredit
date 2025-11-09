@@ -1,829 +1,558 @@
 <!DOCTYPE html>
 <html lang="mn">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <meta http-equiv="Content-Language" content="mn">
-  <title>OmniCredit — Зээлийн үйлчилгээ</title>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="../css/variables.css">
-  <link rel="stylesheet" href="../css/base.css">
-  <link rel="stylesheet" href="../css/navigation.css">
-  <link rel="stylesheet" href="../css/buttons.css">
-  <link rel="stylesheet" href="../css/cards.css">
-  <link rel="stylesheet" href="../css/hero.css">
-  <link rel="stylesheet" href="../css/footer.css">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OmniCredit — Хялбар зээл</title>
+
+  <!-- Google Fonts — Интер фонт -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
   <style>
-    /* Additional modern web styling */
+    /* =========================
+       Глобал хувьсагч / өнгө, сүүдэр, радиус
+       ========================= */
+    :root {
+      --gradient1: linear-gradient(135deg, #14b8a6, #10b981);
+      --gradient2: linear-gradient(135deg, #0d9488, #14b8a6);
+      --bg: #f9fafb;
+      --text: #111827;
+      --muted: #6b7280;
+      --card: #fff;
+      --shadow: 0 8px 30px rgba(0, 0, 0, .08);
+      --radius: 24px;
+    }
+
+    /* Ерөнхий reset / хайрцаглал */
+    * { box-sizing: border-box }
+
+    /* Их бие — фон, фонт, өнгө */
     body {
-      background: linear-gradient(180deg, #F0F9FF 0%, #FFFFFF 100%);
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text)
     }
 
-    /* Hero enhancements */
-    .hero {
-      background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
-      border-radius: 0;
-      padding: 100px 48px;
-      margin: 0 -48px;
-      margin-bottom: 80px;
-      position: relative;
-      overflow: hidden;
+    /* Төв контейнер — өргөн ба зай */
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 24px
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 800px;
-      height: 800px;
-      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-    }
-
-    .hero-content h1 {
-      font-size: 64px;
-      font-weight: 900;
-      color: white;
-      line-height: 1.1;
-      margin-bottom: 24px;
-    }
-
-    .hero-content p {
-      font-size: 20px;
-      color: rgba(255,255,255,0.95);
-      margin-bottom: 40px;
-      line-height: 1.7;
-    }
-
-    .hero-cta {
-      display: flex;
-      gap: 16px;
-    }
-
-    .hero-cta .btn {
-      padding: 16px 32px;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .hero-cta .btn-primary {
-      background: white;
-      color: #0EA5E9;
-    }
-
-    .hero-cta .btn-secondary {
-      background: transparent;
-      border: 2px solid white;
-      color: white;
-    }
-
-    /* Section styling */
-    section {
-      margin-bottom: 80px;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-
-    .section-header h2 {
-      font-size: 48px;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .section-header p {
-      font-size: 18px;
-      color: var(--text-muted);
-    }
-
-    /* Feature cards enhancement */
-    .feature-card {
-      padding: 40px 32px;
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--primary-light);
-    }
-
-    .feature-card-icon {
-      font-size: 48px;
-      margin-bottom: 20px;
-    }
-
-    .feature-card h4 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
-
-    .feature-card p {
-      font-size: 15px;
-      line-height: 1.7;
-      color: var(--text-muted);
-    }
-
-    /* Loan types section */
-    .loan-types {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 32px;
-      margin-top: 40px;
-    }
-
-    .loan-type-card {
-      background: white;
-      border-radius: var(--radius-lg);
-      padding: 48px;
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .loan-type-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--gradient-peachy);
-    }
-
-    .loan-type-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--primary-light);
-    }
-
-    .loan-type-icon {
-      width: 80px;
-      height: 80px;
-      background: var(--gradient-soft);
-      border-radius: var(--radius);
+    /* =========================
+       Навигаци (толгой хэсэг)
+       ========================= */
+    .nav {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 40px;
-      margin-bottom: 24px;
+      justify-content: space-between;
+      padding: 10px 0
     }
 
-    .loan-type-card h3 {
-      font-size: 28px;
+    .brand {
       font-weight: 800;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .loan-type-card p {
-      font-size: 16px;
-      line-height: 1.7;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    .loan-features {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 32px 0;
-    }
-
-    .loan-features li {
-      padding: 12px 0;
-      padding-left: 32px;
-      position: relative;
-      font-size: 15px;
-      color: var(--text);
-    }
-
-    .loan-features li::before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      color: var(--accent);
-      font-weight: bold;
       font-size: 20px;
+      letter-spacing: .3px
     }
 
-    .loan-highlight {
-      background: var(--gradient-soft);
-      padding: 20px;
-      border-radius: var(--radius-sm);
-      margin-bottom: 24px;
-      border-left: 4px solid var(--primary);
+    .nav a {
+      color: var(--text);
+      text-decoration: none;
+      margin-left: 16px;
+      font-weight: 600;
+      position: relative
     }
 
-    .loan-highlight strong {
-      color: var(--primary-dark);
+    /* Доогуур гүйлгэх шугамтай hover эффект */
+    .nav a::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient1);
+      transition: .3s
+    }
+    .nav a:hover::after { width: 100% }
+
+    .auth { display: flex; gap: 10px }
+
+    /* Товчийн нийтлэг загвар */
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
       font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      background: #111;
+      color: #fff;
+      transition: .25s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover { transform: translateY(-2px); opacity: .95 }
+
+    /* Цайвар товч (хоёрдогч) */
+    .btn.secondary {
+      background: #fff;
+      color: #111;
+      border: 1px solid #1112
     }
 
-    /* Stats cards */
-    .stats-grid {
+    /* =========================
+       HERO — Танилцуулга блок
+       ========================= */
+    .hero {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-top: 40px;
+      grid-template-columns: 1.1fr .9fr; /* Зүүн: текст, Баруун: бүтээгдэхүүн картууд */
+      gap: 28px;
+      align-items: center;
+      padding: 18px 0 6px
     }
 
-    .stat-card {
-      background: white;
-      padding: 32px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
-      text-align: center;
-      transition: all 0.3s ease;
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 800
     }
 
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .stat-number {
-      font-size: 48px;
-      font-weight: 900;
-      background: var(--gradient-peachy);
+    h1 {
+      font-size: 44px;
+      line-height: 1.1;
+      margin: 10px 0 18px;
+      background: var(--gradient1);
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      display: block;
-      margin-bottom: 8px;
+      color: transparent
     }
 
-    .stat-label {
-      font-size: 14px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+    .lead { color: #374151; max-width: 560px }
 
-    /* Testimonials Section */
-    .testimonials-grid {
+    /* Том дугуй "пил" төрлийн линк */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 999px;
+      background: var(--gradient2);
+      color: #fff;
+      padding: 14px 20px;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+      transition: .3s;
+      text-decoration: none
+    }
+    .pill:hover { transform: translateY(-2px) }
+
+    /* =========================
+       Бүтээгдэхүүний картууд
+       ========================= */
+    .products { display: grid; gap: 18px }
+
+    .card {
+      display: grid;
+      grid-template-columns: 150px 1fr; /* Зураг + мэдээлэл */
+      gap: 18px;
+      align-items: center;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      transition: transform .25s, box-shadow .25s
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.12) }
+
+    /* Дүрсний тойм (placeholder) */
+    .thumb {
+      width: 150px;
+      height: 150px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative
+    }
+    .thumb::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .7;
+      background: linear-gradient(135deg, #6ee7b7, #10b981)
+    }
+    .thumb.blue::before { background: linear-gradient(135deg, #5eead4, #14b8a6) }
+
+    .card h3 { margin: 0 0 6px; font-size: 22px }
+    .card p { margin: 0 0 12px; color: #4b5563 }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap }
+
+    /* =========================
+       Статистик тоо (анимацтай)
+       ========================= */
+    .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 40px;
+      gap: 14px;
+      margin-top: 26px;
+      text-align: center
     }
-
-    .testimonial-card {
-      background: white;
-      padding: 32px;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      transition: all 0.3s ease;
-    }
-
-    .testimonial-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .testimonial-rating {
-      color: #FFA500;
-      font-size: 20px;
-      margin-bottom: 16px;
-    }
-
-    .testimonial-text {
-      font-size: 15px;
-      line-height: 1.7;
-      color: var(--text);
-      margin-bottom: 20px;
-      font-style: italic;
-    }
-
-    .testimonial-author {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .testimonial-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--gradient-soft);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .testimonial-info h5 {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
-
-    .testimonial-info p {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    /* Partners Section */
-    .partners-section {
-      background: white;
-      padding: 60px 0;
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .partners-carousel {
-      overflow: hidden;
-      position: relative;
-      margin-top: 40px;
-    }
-
-    .partners-track {
-      display: flex;
-      animation: scroll 30s linear infinite;
-      gap: 60px;
-    }
-
-    .partner-logo {
-      flex-shrink: 0;
-      width: 160px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      border-radius: var(--radius-sm);
+    .stat {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
       padding: 20px;
-      transition: all 0.3s ease;
+      transition: .25s
     }
+    .stat:hover { transform: translateY(-3px) }
+    .stat h4 { font-size: 28px; margin: 0; color: #10b981 }
 
-    .partner-logo:hover {
-      transform: scale(1.05);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .partner-logo img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      filter: grayscale(100%);
-      opacity: 0.6;
-      transition: all 0.3s ease;
-    }
-
-    .partner-logo:hover img {
-      filter: grayscale(0%);
-      opacity: 1;
-    }
-
-    @keyframes scroll {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
-
-    .partner-cta {
+    /* Хэсгийн гарчиг (градиент өнгө) */
+    h2.section-title {
       text-align: center;
-      margin-top: 40px;
+      font-size: 32px;
+      margin: 38px 0 20px;
+      background: var(--gradient1);
+      -webkit-background-clip: text;
+      color: transparent
     }
 
-    .partner-cta .btn {
-      padding: 14px 32px;
+    /* =========================
+       Сэтгэгдэл/Туршлага (carousel)
+       ========================= */
+    .testimonials {
+      margin-top: 60px;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 32px 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden
     }
+    .testimonial-cards {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;           /* Хэвтээ гүйлгэлт */
+      scroll-snap-type: x mandatory;
+      padding-bottom: 10px
+    }
+    .testimonial {
+      flex: 0 0 300px;
+      scroll-snap-align: start;
+      background: linear-gradient(180deg, #d1fae5, #a7f3d0);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: .3s
+    }
+    .testimonial:hover { transform: translateY(-5px) }
+    .testimonial p { font-style: italic; color: #374151 }
+    .testimonial .name {
+      margin-top: 10px; font-weight: 700; color: #111;
+      display: flex; align-items: center; gap: 6px
+    }
+    .stars { color: #facc15; font-size: 16px }
 
-    /* CTA Section */
-    .cta-section {
-      background: var(--gradient-sunset);
-      padding: 80px 48px;
-      border-radius: var(--radius-xl);
+    /* =========================
+       Яагаад манайх — давуу талууд
+       ========================= */
+    .why-us {
+      padding: 50px 20px;
+      border-radius: 30px;
+      background: linear-gradient(160deg, #d1fae5, #a7f3d0)
+    }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 24px;
+      margin-top: 10px
+    }
+    .why-card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 22px;
       text-align: center;
-      color: white;
-      margin: 80px 0;
+      transition: .3s
+    }
+    .why-card:hover { transform: translateY(-4px); background: linear-gradient(180deg, #ecfdf5, #d1fae5) }
+    .why-icon {
+      font-size: 40px; margin-bottom: 8px;
+      background: var(--gradient1);
+      -webkit-background-clip: text;
+      color: transparent
     }
 
-    .cta-section h2 {
-      font-size: 42px;
-      font-weight: 800;
-      margin-bottom: 16px;
+    /* =========================
+       Хамтрагч байгууллагууд
+       ========================= */
+    .partners { margin-top: 30px; text-align: center }
+    .partner-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-top: 20px
     }
-
-    .cta-section p {
-      font-size: 18px;
-      margin-bottom: 32px;
-      opacity: 0.95;
+    .partner-card {
+      background: #fff; border-radius: 20px; padding: 20px;
+      box-shadow: var(--shadow); transition: .3s;
+      filter: grayscale(1); opacity: .8
     }
+    .partner-card:hover { filter: none; opacity: 1; transform: translateY(-4px) }
 
-    .cta-section .btn {
-      padding: 16px 40px;
-      font-size: 16px;
-      background: white;
-      color: var(--primary);
-      font-weight: 700;
+    /* CTA — Хамтрагч болох */
+    .cta {
+      margin-top: 28px; display: inline-block; padding: 14px 28px;
+      border-radius: 999px; font-weight: 700;
+      background: var(--gradient2); color: #fff; text-decoration: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,.1); transition: .3s
     }
+    .cta:hover { transform: translateY(-3px); opacity: .9 }
 
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .loan-types {
-        grid-template-columns: 1fr;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .testimonials-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-content h1 {
-        font-size: 48px;
-      }
+    /* =========================
+       Хөл хэсэг (footer)
+       ========================= */
+    footer {
+      margin-top: 60px; background: #111827; color: #f3f4f6;
+      padding: 34px 0; text-align: center
     }
+    .footer-links {
+      display: flex; justify-content: center; gap: 16px;
+      flex-wrap: wrap; margin-bottom: 10px
+    }
+    .footer-links a { color: #cbd5e1; text-decoration: none }
+    .footer-links a:hover { color: #14b8a6 }
+    .copy { font-size: 14px; color: #9ca3af }
 
-    @media (max-width: 768px) {
-      .hero {
-        padding: 60px 24px;
-        margin: 0 -24px;
-      }
-
-      .hero-content h1 {
-        font-size: 36px;
-      }
-
-      .hero-cta {
-        flex-direction: column;
-      }
-
-      .section-header h2 {
-        font-size: 32px;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
+    /* =========================
+       Responsive тохиргоо
+       ========================= */
+    @media(max-width:900px) { .hero { grid-template-columns: 1fr } }
+    @media(max-width:640px) {
+      .testimonial { flex: 0 0 260px }
+      h1 { font-size: 36px }
     }
   </style>
 </head>
+
 <body>
-  <!-- Navigation -->
   <div class="container">
+    <!-- =======================
+         NAV — Толгой, меню
+         ======================= -->
     <nav class="nav">
-  <div class="brand"><a href="index.html">OmniCredit</a></div>
+      <div class="brand">OMNICREDIT</div>
+      <div>
+        <a href="index.html">Нүүр</a>
+        <a href="#products">Бүтээгдэхүүн</a>
+        <a href="#partners">Хамтрагчид</a>
+      </div>
+      <div class="auth">
+        <!-- Нэвтрэх/Бүртгүүлэх — дараа нь Login/Register хуудас руу чиглүүлнэ -->
+        <a href="login.html" class="btn secondary">Нэвтрэх</a>
+        <a href="register.html" class="btn">Бүртгүүлэх</a>
+      </div>
+    </nav>
 
-  <div class="nav-links">
-    <a href="index.html" data-route="home">Нүүр</a>
-    <a href="zeelhuudas.html" data-route="loan">Зээлийн тооцоолуур</a>
-    <a href="aboutus.html" data-route="about">Бидний тухай</a>
-    <a href="FAQ.html" data-route="faq">Түгээмэл асуулт</a>
-    <a href="my-loans.html" data-route="myloans">Миний зээл</a>
-  </div>
-
-  <div class="auth-buttons">
-    <a href="login.html" class="btn btn-ghost btn-sm">Нэвтрэх</a>
-    <a href="register.html" class="btn btn-primary btn-sm">Бүртгүүлэх</a>
-  </div>
-
-  <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
-</nav>
-  </div>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <h1>Танд тохирох зээлийн<br>төрлөө сонгоорой</h1>
-        <p>
-          OmniCredit нь хэрэгцээтэй санхүүжилтийг хамгийн тохиромжтой нөхцөлөөр 
-          санал болгодог. Дөрөө 2 төрлийн зээлээс сонгож, тооцоолоод шууд хүсэлт илгээнэ үү.
+    <!-- =======================
+         HERO — Танилцуулга + Бүтээгдэхүүн картууд
+         ======================= -->
+    <section class="hero">
+      <!-- Зүүн талын текст, CTA -->
+      <div>
+        <div class="eyebrow">Танилцуулга</div>
+        <h1>Танд тохирох зээлийн төрлөө сонгоорой</h1>
+        <p class="lead">
+         OmniCredit нь хэрэгцээт санхүүжилтийг хаанаас ч, хэзээ ч авах боломжийг санал болгодог цахим зээлийн
+вэб апп юм. Доорх 2 төрлийн зээлээс сонгож, тооцоолоод шууд хүсэлт илгээнэ үү.
         </p>
-        <div class="hero-cta">
-          <a href="zeelhuudas.html" class="btn btn-primary">Зээл тооцоолох →</a>
-          <a href="Application.html" class="btn btn-secondary">Хүсэлт илгээх</a>
+
+        <!-- Таны хүсэлтээр зөвхөн "Зээл тооцоолох" үлдлээ -->
+        <div style="display:flex;gap:12px;margin-top:16px">
+          <a href="#products" class="pill">Зээл тооцоолох</a>
+          <!-- "Сэтгэгдлүүд" товчийг устгасан
+          <a href="#reviews" class="btn secondary" style="text-decoration:none">Сэтгэгдлүүд</a>
+          -->
         </div>
       </div>
-    </div>
-  </section>
 
-  <div class="container">
-    <!-- Stats Section -->
-    <section>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-number">5,000+</span>
-          <span class="stat-label">Хэрэглэгчдийн тоо</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">98%</span>
-          <span class="stat-label">Сэтгэл ханамж</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">24/7</span>
-          <span class="stat-label">Дэмжлэг үйлчилгээ</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">₮500M+</span>
-          <span class="stat-label">Нийт олгосон зээл</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Loan Types Section -->
-    <section>
-      <div class="section-header">
-        <h2>Танилцуулга</h2>
-        <p style="font-size: 20px; font-weight: 600; color: var(--text);">Танд тохирох <span style="color: var(--accent);">зээлийн төрлөө</span> сонгоорой</p>
-      </div>
-
-      <div class="loan-types">
-        <!-- Consumer Loan -->
-        <div class="loan-type-card">
-          <div class="loan-type-icon">💰</div>
-          <h3>Хэрэглээний зээл</h3>
-          <p>Өдөр тутмын хэрэгцээг санхүүжүүлэх дараах нөхцөлтэй хамгийн уян, хатан зээл.</p>
-          
-          <ul class="loan-features">
-            <li>Сард 0% - 3.3% хүү</li>
-            <li>3-60 сарын хугацаа</li>
-            <li>₮10,000 - ₮3,000,000 дүн</li>
-            <li>0-1% урьдчилгаа</li>
-          </ul>
-
-          <a href="zeelhuudas.html" class="btn btn-primary" style="width: 100%; text-align: center;">Дэлгэрэнгүй →</a>
-        </div>
-
-        <!-- Purchase Loan -->
-        <div class="loan-type-card">
-          <div class="loan-type-icon">🛒</div>
-          <h3>Худалдан авалтын зээл</h3>
-          <p>Барааг бүтээгдэхүүнээ урьдчилгаа багатайгаар худалдан авах ухаалаг санхүүжилт.</p>
-          
-          <ul class="loan-features">
-            <li>0% хүү, урьдчилгаагүй</li>
-            <li>Шаардлагатай эсэх</li>
-            <li>Барааг бүтээгдэхүүнээр ашиглаарай</li>
-            <li>Хялбар баталгаажуулалт</li>
-          </ul>
-
-          <a href="zeelhuudas.html" class="btn btn-primary" style="width: 100%; text-align: center;">Дэлгэрэнгүй →</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section>
-      <div class="section-header">
-        <h2>Яагаад OmniCredit вэ?</h2>
-        <p>Бид таны санхүүгийн найдвартай түнш</p>
-      </div>
-
-      <div class="card-grid">
-        <div class="card feature-card">
-          <div class="feature-card-icon">⚡</div>
-          <h4>Хурдан шийдвэр</h4>
-          <p>5 минутын дотор урьдчилсан шийдвэр авах. Цаг алдалгүй, баримт цөөн, хялбар үйл явц.</p>
-        </div>
-
-        <div class="card feature-card">
-          <div class="feature-card-icon">💰</div>
-          <h4>Уян хатан төлбөр</h4>
-          <p>Өөрийн хүссэн хугацаагаар төлөх боломж. Эрт төлөхөд хөнгөлөлт үзүүлнэ.</p>
-        </div>
-
-        <div class="card feature-card">
-          <div class="feature-card-icon">🔒</div>
-          <h4>Найдвартай аюулгүй</h4>
-          <p>Таны хувийн мэдээллийг дээд зэргийн нууцлалтайгаар хамгаална.</p>
-        </div>
-
-        <div class="card feature-card">
-          <div class="feature-card-icon">📱</div>
-          <h4>Хаанаас ч</h4>
-          <p>Веб болон мобайл төхөөрөмж дээр ашиглах боломжтой. Гэрээсээ гарахгүйгээр.</p>
-        </div>
-
-        <div class="card feature-card">
-          <div class="feature-card-icon">📊</div>
-          <h4>Ил тод үйлчилгээ</h4>
-          <p>Нууц төлбөр, нэмэлт хураамжгүй. Бүх зүйл бодитой, ойлгомжтой.</p>
-        </div>
-
-        <div class="card feature-card">
-          <div class="feature-card-icon">🎯</div>
-          <h4>24/7 дэмжлэг</h4>
-          <p>Өдөр бүр, цаг бүрд бэлэн байгаа мэргэжлийн тусламжийн баг.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section>
-      <div class="section-header">
-        <h2>Хэрэглэгчдийн сэтгэгдэл</h2>
-        <p>Манай үйлчилгээг ашигласан хэрэглэгчдийн үнэлгээ</p>
-      </div>
-
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-          <p class="testimonial-text">"OmniCredit-ийн тусламжтайгаар би хүссэн компьютероо авч чадлаа. Процесс маш хялбар, хурдан байсан."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">Б</div>
-            <div class="testimonial-info">
-              <h5>Болд</h5>
-              <p>IT мэргэжилтэн</p>
+      <!-- Баруун тал — бүтээгдэхүүний хоёр жишээ карт -->
+      <div class="products" id="products">
+        <article class="card">
+          <div class="thumb"></div>
+          <div>
+            <h3>Хэрэглээний зээл</h3>
+            <p>Өдөр тутмын хэрэгцээг хангах хурдан, уян хатан нөхцөлтэй зээл.</p>
+            <div class="actions">
+              <a href="zeelhuudas.html" class="btn">Дэлгэрэнгүй</a>
+              <a href="zeelhuudas.html" class="btn secondary">Тооцоолох</a>
             </div>
           </div>
-        </div>
+        </article>
 
-        <div class="testimonial-card">
-          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-          <p class="testimonial-text">"Худалдан авалтын зээл нь үнэхээр тохиромжтой. Хүү, урьдчилгаагүй байх нь маш сайн санагдлаа."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">С</div>
-            <div class="testimonial-info">
-              <h5>Сарнай</h5>
-              <p>Зохион байгуулагч</p>
+        <article class="card">
+          <div class="thumb blue"></div>
+          <div>
+            <h3>Худалдан авалтын зээл</h3>
+            <p>Бараа бүтээгдэхүүнээ урьдчилгаа багатайгаар авах ухаалаг санхүүжилт.</p>
+            <div class="actions">
+              <a href="purchase-loan.html" class="btn">Дэлгэрэнгүй</a>
+              <a href="purchase-loan.html" class="btn secondary">Тооцоолох</a>
             </div>
           </div>
-        </div>
+        </article>
+      </div>
+    </section>
 
-        <div class="testimonial-card">
-          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-          <p class="testimonial-text">"24/7 дэмжлэг үнэхээр ажилладаг. Шөнө дунд асуусан асуултанд маань хариулсан."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">Д</div>
-            <div class="testimonial-info">
-              <h5>Дорж</h5>
-              <p>Бизнес эрхлэгч</p>
-            </div>
-          </div>
+    <!-- =======================
+         Статистикийн тоо (анимацтай)
+         ======================= -->
+    <section class="stats">
+      <div class="stat">
+        <h4>100+</h4>
+        <div>Зээл олгосон</div>
+      </div>
+      <div class="stat">
+        <h4>4.8 ★</h4>
+        <div>Үнэлгээ</div>
+      </div>
+      <div class="stat">
+        <h4>500+</h4>
+        <div>Харилцагч</div>
+      </div>
+    </section>
+
+    <!-- =======================
+         Сэтгэгдэл / Туршлага
+         ======================= -->
+    <section class="testimonials" id="reviews">
+      <h2 class="section-title">Манай хэрэглэгчдийн туршлагаас</h2>
+      <div class="testimonial-cards">
+        <div class="testimonial">
+          <p>"Мобайлаар 2 минутанд хүсэлтээ илгээчихсөн. Мөнгө шууд орсон!"</p>
+          <div class="name">Б. Ууганцэцэг <span class="stars">★★★★★</span></div>
+        </div>
+        <div class="testimonial">
+          <p>"Хүү, шимтгэл тодорхой, тооцоолуур нь ойлгомжтой байлаа."</p>
+          <div class="name">Д. Амарсанаа <span class="stars">★★★★☆</span></div>
+        </div>
+        <div class="testimonial">
+          <p>"Худалдан авалтын зээлээр хүссэн бараагаа урьдчилгаагүй авч чадсан."</p>
+          <div class="name">Э. Мөнх-Эрдэнэ <span class="stars">★★★★★</span></div>
+        </div>
+        <div class="testimonial">
+          <p>"Дэмжлэгийн баг нь хурдан хариулдаг нь таалагдсан."</p>
+          <div class="name">Н. Саруул <span class="stars">★★★★☆</span></div>
         </div>
       </div>
     </section>
 
-    <!-- Partners Section -->
-    <section class="partners-section">
-      <div class="section-header" style="margin-bottom: 20px;">
-        <h2>Хамтрагч байгууллагууд</h2>
-        <p>Бид Монголын тэргүүлэх компаниудтай хамтран ажилладаг</p>
-      </div>
-
-      <div class="partners-carousel">
-        <div class="partners-track">
-          <!-- First set of logos -->
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">TechStore</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">MobileShop</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">HomeHub</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">FashionMN</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">AutoParts</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">BookWorld</div>
-          </div>
-          <!-- Duplicate set for seamless loop -->
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">TechStore</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">MobileShop</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">HomeHub</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">FashionMN</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">AutoParts</div>
-          </div>
-          <div class="partner-logo">
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">BookWorld</div>
-          </div>
+    <!-- =======================
+         "Яагаад манайх" — Давуу талууд
+         ======================= -->
+    <section class="why-us" id="why">
+      <h2 class="section-title">Яагаад манайхыг сонгох вэ?</h2>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">💡</div>
+          <h3>Ил тод үйлчилгээ</h3>
+          <p>Нууц шимтгэлгүй, нөхцөл бүр тодорхой. Эргэн төлөлт, хүүг бодитоор харна.</p>
         </div>
-      </div>
-
-      <div class="partner-cta">
-        <a href="aboutus.html" class="btn btn-primary">Хамтрагч болох</a>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-      <h2>Өнөөдөр эхлүүлээрэй!</h2>
-      <p>Таны санхүүгийн зорилго биелэх эхлэл энд байна</p>
-      <a href="Application.html" class="btn">Зээлийн хүсэлт илгээх →</a>
-    </section>
-
-    <!-- How it works -->
-    <section>
-      <div class="section-header">
-        <h2>Хэрхэн ажилладаг вэ?</h2>
-        <p>3 хялбар алхамаар зээл авна</p>
-      </div>
-
-      <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="card feature-card">
-          <div class="feature-card-icon">1️⃣</div>
-          <h4>Хүсэлт илгээх</h4>
-          <p>Онлайн хүсэлтийн маягт бөглөж, шаардлагатай баримтуудаа хавсаргана.</p>
+        <div class="why-card">
+          <div class="why-icon">⚡</div>
+          <h3>Шуурхай шийдвэр</h3>
+          <p>AI үнэлгээгээр 5 минутын дотор урьдчилсан шийдвэр авна.</p>
         </div>
-
-        <div class="card feature-card">
-          <div class="feature-card-icon">2️⃣</div>
-          <h4>Баталгаажуулалт</h4>
-          <p>5 минутын дотор урьдчилсан шийдвэр, 24 цагийн дотор эцсийн баталгаажуулалт.</p>
+        <div class="why-card">
+          <div class="why-icon">🔁</div>
+          <h3>Уян хатан төлөлт</h3>
+          <p>2–24 сарын сонголттой төлөлт, хугацаанаас өмнө төлбөл урамшуулалтай.</p>
         </div>
-
-        <div class="card feature-card">
-          <div class="feature-card-icon">3️⃣</div>
-          <h4>Зээл авах</h4>
-          <p>Баталгаажсаны дараа таны данс руу шууд шилжүүлэг хийгдэнэ.</p>
+        <div class="why-card">
+          <div class="why-icon">🔐</div>
+          <h3>Аюулгүй, найдвартай</h3>
+          <p>Банкны түвшний хамгаалалт,  2 шатлалтай нэвтрэлт.</p>
         </div>
       </div>
     </section>
-
+    <!-- =======================
+         Хамтрагч байгууллагууд
+         ======================= -->
+    <section class="partners" id="partners">
+      <h2 class="section-title">Хамтрагч байгууллагуудад</h2>
+      <p style="max-width:700px;margin:auto;color:var(--muted)">
+        OmniCredit-ийн BNPL шийдлээр борлуулалтаа өсгөж, эрсдэлийг бууруул. Хамтдаа санхүүгийн дижитал ирээдүйг бүтээе.
+      </p>
+      <div class="partner-grid">
+        <div class="partner-card">Logo 1</div>
+        <div class="partner-card">Logo 2</div>
+        <div class="partner-card">Logo 3</div>
+        <div class="partner-card">Logo 4</div>
+      </div>
+      <a href="#contact" class="cta">Хамтрагч болох →</a>
+    </section>
   </div>
 
-  <!-- Footer -->
-  <footer style="background: #0C4A6E; color: white; padding: 60px 0 30px; margin-top: 80px;">
+  <!-- =======================
+       Хөл хэсэг
+       ======================= -->
+  <footer>
     <div class="container">
-      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 40px;">
-        <div>
-          <h3 style="font-size: 24px; margin-bottom: 16px;">OmniCredit</h3>
-          <p style="color: rgba(255,255,255,0.8); line-height: 1.7;">
-            Монголын хамгийн хялбар, найдвартай онлайн зээлийн үйлчилгээ. 
-            Бид таны санхүүгийн зорилгод хүрэхэд туслана.
-          </p>
-        </div>
-
-        <div>
-          <h4 style="margin-bottom: 20px;">Холбоосууд</h4>
-          <ul style="list-style: none; padding: 0;">
-            <li style="margin-bottom: 12px;"><a href="index.html" style="color: rgba(255,255,255,0.8); text-decoration: none;">Нүүр</a></li>
-            <li style="margin-bottom: 12px;"><a href="zeelhuudas.html" style="color: rgba(255,255,255,0.8); text-decoration: none;">Тооцоолуур</a></li>
-            <li style="margin-bottom: 12px;"><a href="aboutus.html" style="color: rgba(255,255,255,0.8); text-decoration: none;">Бидний тухай</a></li>
-            <li style="margin-bottom: 12px;"><a href="FAQ.html" style="color: rgba(255,255,255,0.8); text-decoration: none;">Асуулт</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 style="margin-bottom: 20px;">Үйлчилгээ</h4>
-          <ul style="list-style: none; padding: 0;">
-            <li style="margin-bottom: 12px;"><a href="Application.html" style="color: rgba(255,255,255,0.8); text-decoration: none;">Хүсэлт илгээх</a></li>
-            <li style="margin-bottom: 12px;"><a href="login.html" style="color: rgba(255,255,255,0.8); text-decoration: none;">Нэвтрэх</a></li>
-            <li style="margin-bottom: 12px;"><a href="register.html" style="color: rgba(255,255,255,0.8); text-decoration: none;">Бүртгүүлэх</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 style="margin-bottom: 20px;">Холбоо барих</h4>
-          <ul style="list-style: none; padding: 0;">
-            <li style="margin-bottom: 12px; color: rgba(255,255,255,0.8);">И-мэйл: info@omnicredit.mn</li>
-            <li style="margin-bottom: 12px; color: rgba(255,255,255,0.8);">Утас: 7777-7777</li>
-            <li style="color: rgba(255,255,255,0.8);">Хаяг: УБ хот</li>
-          </ul>
-        </div>
+      <div class="footer-links">
+        <a href="index.html">Нүүр</a>
+        <a href="zeelhuudas.html">Зээл</a>
+        <a href="#why">Давуу тал</a>
+        <a href="#partners">Хамтрагчид</a>
+        <a href="#reviews">Сэтгэгдэл</a>
       </div>
-
-      <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 30px; text-align: center; color: rgba(255,255,255,0.6);">
-        <p>&copy; 2025 OmniCredit. Бүх эрх хуулиар хамгаалагдсан.</p>
-      </div>
+      <div class="copy">© 2025 OmniCredit. Бүх эрх хуулиар хамгаалагдсан.</div>
     </div>
   </footer>
 
-  <script src="../js/navigation.js"></script>
-  
+  <script>
+    // ==============================
+    // Статистикийн тоонуудыг өсгөх анимац
+    // speed тоо бага байх тусам хурдан болно
+    // ==============================
+    const counters = document.querySelectorAll('.stat h4');
+    const speed = 120; // бага = хурдан
+
+    // Тоо анимдаж өсгөх функц
+    const animateCounters = () => {
+      counters.forEach(counter => {
+        const targetText = counter.textContent;     // Жинхэнэ текст (жишээ: "100+")
+        const target = parseInt(targetText);        // Тоон утга гаргаж авах (жишээ: 100)
+        if (!isNaN(target)) {
+          let count = 0;
+          const update = () => {
+            count += Math.ceil(target / speed);     // Алхам тутамд нэмэх хэмжээ
+            if (count < target) {
+              counter.textContent = count + '+';    // Дэлгэц дээр түр зуурын утга
+              requestAnimationFrame(update);        // Дараагийн frame-д үргэлжлүүлнэ
+            } else {
+              counter.textContent = targetText;     // Эцсийн текстээр солих
+            }
+          };
+          update();
+        }
+      });
+    };
+
+    // Хэсэг дэлгэцэнд харагдах үед анимацыг эхлүүлэх
+    const statsSection = document.querySelector('.stats');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          observer.unobserve(statsSection); // Нэг удаа л ажиллуулна
+        }
+      });
+    }, { threshold: 0.4 });
+    observer.observe(statsSection);
+  </script>
 </body>
 </html>

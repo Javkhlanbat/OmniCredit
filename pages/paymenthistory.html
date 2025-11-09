@@ -1,0 +1,367 @@
+﻿<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniCredit — Төлбөрийн түүх</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/navigation.css">
+  <link rel="stylesheet" href="../css/buttons.css">
+  <link rel="stylesheet" href="../css/cards.css">
+  <link rel="stylesheet" href="../css/footer.css">
+
+  <style>
+    .page-header {
+      margin: 48px 0 32px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 10px 16px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .payment-list {
+      max-width: 900px;
+    }
+
+    .payment-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: var(--card);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .payment-item:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .payment-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .payment-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .payment-icon.success {
+      background: #DFFFD8;
+    }
+
+    .payment-icon.pending {
+      background: #FFE5D9;
+    }
+
+    .payment-icon.failed {
+      background: #FFE5E5;
+    }
+
+    .payment-details h4 {
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+
+    .payment-date {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .payment-amount {
+      text-align: right;
+    }
+
+    .amount {
+      font-weight: 800;
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+
+    .amount.success {
+      color: #10b981;
+    }
+
+    .amount.pending {
+      color: var(--primary);
+    }
+
+    .amount.failed {
+      color: #EF4444;
+    }
+
+    .payment-status {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .status-success {
+      background: #DFFFD8;
+      color: #10b981;
+    }
+
+    .status-pending {
+      background: #FFE5D9;
+      color: var(--primary);
+    }
+
+    .status-failed {
+      background: #FFE5E5;
+      color: #EF4444;
+    }
+
+    .summary-card {
+      background: var(--gradient-peachy);
+      color: white;
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 32px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .summary-item h4 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .summary-item p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .payment-item {
+        flex-direction: column;
+        align-items: start;
+        gap: 16px;
+      }
+
+      .payment-amount {
+        text-align: left;
+        width: 100%;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">OmniCredit</div>
+      <div class="nav-links">
+        <a href="index.html">Нүүр</a>
+        <a href="zeelhuudas.html">Зээлийн тооцоолуур</a>
+        <a href="aboutus.html">Бидний тухай</a>
+        <a href="FAQ.html">Түгээмэл асуулт</a>
+        <a href="my-loans.html">Миний зээл</a>
+      </div>
+      <div class="auth-buttons">
+        <a href="profile.html" class="btn btn-ghost btn-sm">👤 Профайл</a>
+        <a href="dashboard.html" class="btn btn-primary btn-sm">Dashboard</a>
+      </div>
+      <button class="mobile-menu-toggle">☰</button>
+    </nav>
+
+    <div class="page-header">
+      <h1>Төлбөрийн түүх</h1>
+      <p style="color: var(--text-muted);">Таны бүх төлбөрийн мэдээлэл</p>
+    </div>
+
+    <div class="summary-card">
+      <h3 style="margin-bottom: 4px;">Нийт статистик</h3>
+      <p style="opacity: 0.9; margin-bottom: 24px;">2024 оны нэгдсэн тайлан</p>
+      
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h4>₮1,620,000</h4>
+          <p>Нийт төлсөн</p>
+        </div>
+        <div class="summary-item">
+          <h4>12</h4>
+          <p>Гүйлгээний тоо</p>
+        </div>
+        <div class="summary-item">
+          <h4>100%</h4>
+          <p>Цаг хугацаандаа</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <select class="filter-select">
+        <option>Бүх гүйлгээ</option>
+        <option>Амжилттай</option>
+        <option>Хүлээгдэж буй</option>
+        <option>Амжилтгүй</option>
+      </select>
+
+      <select class="filter-select">
+        <option>Энэ сар</option>
+        <option>Өнгөрсөн сар</option>
+        <option>3 сар</option>
+        <option>6 сар</option>
+        <option>Энэ жил</option>
+      </select>
+
+      <button class="btn btn-secondary btn-sm" style="margin-left: auto;">
+        📥 Татаж авах
+      </button>
+    </div>
+
+    <div class="payment-list">
+      <div class="payment-item">
+        <div class="payment-info">
+          <div class="payment-icon success">✓</div>
+          <div class="payment-details">
+            <h4>Сарын төлбөр #12</h4>
+            <div class="payment-date">2024-12-15 14:30</div>
+          </div>
+        </div>
+        <div class="payment-amount">
+          <div class="amount success">-₮135,000</div>
+          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
+        </div>
+      </div>
+
+      <div class="payment-item">
+        <div class="payment-info">
+          <div class="payment-icon success">✓</div>
+          <div class="payment-details">
+            <h4>Сарын төлбөр #11</h4>
+            <div class="payment-date">2024-11-15 09:15</div>
+          </div>
+        </div>
+        <div class="payment-amount">
+          <div class="amount success">-₮135,000</div>
+          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
+        </div>
+      </div>
+
+      <div class="payment-item">
+        <div class="payment-info">
+          <div class="payment-icon success">✓</div>
+          <div class="payment-details">
+            <h4>Сарын төлбөр #10</h4>
+            <div class="payment-date">2024-10-15 16:45</div>
+          </div>
+        </div>
+        <div class="payment-amount">
+          <div class="amount success">-₮135,000</div>
+          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
+        </div>
+      </div>
+
+      <div class="payment-item">
+        <div class="payment-info">
+          <div class="payment-icon success">✓</div>
+          <div class="payment-details">
+            <h4>Сарын төлбөр #9</h4>
+            <div class="payment-date">2024-09-15 11:20</div>
+          </div>
+        </div>
+        <div class="payment-amount">
+          <div class="amount success">-₮135,000</div>
+          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
+        </div>
+      </div>
+
+      <div class="payment-item">
+        <div class="payment-info">
+          <div class="payment-icon success">✓</div>
+          <div class="payment-details">
+            <h4>Сарын төлбөр #8</h4>
+            <div class="payment-date">2024-08-15 13:30</div>
+          </div>
+        </div>
+        <div class="payment-amount">
+          <div class="amount success">-₮135,000</div>
+          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
+        </div>
+      </div>
+
+      <div class="payment-item">
+        <div class="payment-info">
+          <div class="payment-icon success">✓</div>
+          <div class="payment-details">
+            <h4>Зээл олголт</h4>
+            <div class="payment-date">2024-07-15 10:00</div>
+          </div>
+        </div>
+        <div class="payment-amount">
+          <div class="amount" style="color: var(--primary);">+₮1,500,000</div>
+          <span class="payment-status status-success">ОЛГОСОН</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin: 48px 0 80px;">
+      <div class="card" style="padding: 48px; text-align: center;">
+        <h3 style="margin-bottom: 16px;">Баримт хэрэгтэй юу?</h3>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">
+          Төлбөрийн түүхийг PDF эсвэл Excel форматаар татаж авна уу
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary">PDF татах</button>
+          <button class="btn btn-secondary">Excel татах</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-brand">OmniCredit</div>
+          <p>Монголын хамгийн хялбар бөгөөд найдвартай зээлийн үйлчилгээ.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          <span>© 2025 OmniCredit. Бүх эрх хуулиар хамгаалагдсан.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/navigation.js"></script>
+</body>
+</html>

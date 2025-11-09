@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniCredit — Нэвтрэх</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/navigation.css">
+  <link rel="stylesheet" href="../css/buttons.css">
+  <link rel="stylesheet" href="../css/cards.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  
+  <style>
+    .auth-container {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .auth-card {
+      max-width: 440px;
+      width: 100%;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-header h1 {
+      background: var(--gradient-peachy);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .divider span {
+      background: var(--card);
+      padding: 0 16px;
+      position: relative;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .social-login {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .social-btn:hover {
+      border-color: var(--primary);
+      background: var(--card-hover);
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .auth-footer a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="brand">OmniCredit</div>
+      <div class="nav-links">
+        <a href="index.html">Нүүр</a>
+        <a href="zeelhuudas.html">Зээлийн тооцоолуур</a>
+        <a href="aboutus.html">Бидний тухай</a>
+        <a href="FAQ.html">Түгээмэл асуулт</a>
+      </div>
+      <div class="auth-buttons">
+        <a href="register.html" class="btn btn-primary btn-sm">Бүртгүүлэх</a>
+      </div>
+      <button class="mobile-menu-toggle">☰</button>
+    </nav>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+      <div class="auth-card card">
+        <div class="card-body" style="padding: 48px 40px;">
+          <div class="auth-header">
+            <h1>Тавтай морил!</h1>
+            <p style="color: var(--text-muted);">Өөрийн дансанд нэвтрэх</p>
+          </div>
+
+          <!-- Social Login -->
+          <div class="social-login">
+            <button class="social-btn">
+              <span>📘</span>
+              Facebook
+            </button>
+            <button class="social-btn">
+              <span>🔍</span>
+              Google
+            </button>
+          </div>
+
+          <div class="divider">
+            <span>Эсвэл</span>
+          </div>
+
+          <!-- Login Form -->
+          <form id="loginForm">
+            <div class="form-group">
+              <label class="form-label required">Имэйл хаяг</label>
+              <input type="email" class="form-control" placeholder="name@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Нууц үг</label>
+              <input type="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <div class="form-check">
+                <input type="checkbox" id="remember">
+                <label for="remember">Сануул</label>
+              </div>
+              <a href="#" style="font-size: 14px;">Нууц үг мартсан?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">
+              Нэвтрэх
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            Данс байхгүй юу? <a href="register.html">Бүртгүүлэх</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      Utils.showToast('Нэвтэрч байна...', 'info');
+      
+      // Simulate login
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

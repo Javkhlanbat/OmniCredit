@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniCredit — Зээлийн хүсэлт</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/navigation.css">
+  <link rel="stylesheet" href="../css/buttons.css">
+  <link rel="stylesheet" href="../css/cards.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/footer.css">
+
+  <style>
+    .application-container {
+      max-width: 800px;
+      margin: 48px auto 80px;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--line);
+      z-index: 0;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+
+    .step.active .step-number {
+      background: var(--gradient-peachy);
+      color: white;
+      border-color: transparent;
+    }
+
+    .step.completed .step-number {
+      background: #10b981;
+      color: white;
+      border-color: transparent;
+    }
+
+    .step-label {
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+    }
+
+    .file-upload {
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .file-upload:hover {
+      border-color: var(--primary);
+      background: var(--card-hover);
+    }
+
+    .file-upload input {
+      display: none;
+    }
+
+    .file-list {
+      margin-top: 16px;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-item {
+      padding: 16px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .summary-value {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .steps {
+        flex-wrap: wrap;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">OmniCredit</div>
+      <div class="nav-links">
+        <a href="index.html">Нүүр</a>
+        <a href="zeelhuudas.html">Зээлийн тооцоолуур</a>
+        <a href="aboutus.html">Бидний тухай</a>
+        <a href="FAQ.html">Түгээмэл асуулт</a>
+        <a href="my-loans.html">Миний зээл</a>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-ghost btn-sm">Нэвтрэх</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Бүртгүүлэх</a>
+      </div>
+      <button class="mobile-menu-toggle">☰</button>
+    </nav>
+
+    <div class="application-container">
+      <h1 style="text-align: center; margin-bottom: 8px;">Зээлийн хүсэлт</h1>
+      <p style="text-align: center; color: var(--text-muted); margin-bottom: 48px;">
+        Дараах алхмуудыг дагаж хүсэлтээ бөглөнө үү
+      </p>
+
+      <div class="steps">
+        <div class="step active">
+          <div class="step-number">1</div>
+          <div class="step-label">Хувийн мэдээлэл</div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-label">Зээлийн мэдээлэл</div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-label">Баримт</div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-label">Баталгаажуулах</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <form id="applicationForm">
+            <!-- Step 1 -->
+            <div class="form-step active" data-step="1">
+              <h3 style="margin-bottom: 24px;">Хувийн мэдээлэл</h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label required">Овог</label>
+                  <input type="text" class="form-control" name="lastName" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label required">Нэр</label>
+                  <input type="text" class="form-control" name="firstName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Регистрийн дугаар</label>
+                <input type="text" class="form-control" name="registerId" placeholder="ААххххххх" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Утасны дугаар</label>
+                <input type="tel" class="form-control" name="phone" placeholder="99001122" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Имэйл хаяг</label>
+                <input type="email" class="form-control" name="email" placeholder="name@example.com" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Хаяг</label>
+                <textarea class="form-control" name="address" rows="3" required></textarea>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="form-step" data-step="2">
+              <h3 style="margin-bottom: 24px;">Зээлийн мэдээлэл</h3>
+              
+              <div class="form-group">
+                <label class="form-label required">Зээлийн дүн</label>
+                <div class="number-display">
+                  <span class="currency">₮</span>
+                  <input type="number" name="amount" value="1500000" min="100000" max="3000000" required>
+                </div>
+                <input type="range" min="100000" max="3000000" step="100000" value="1500000">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Зээлийн хугацаа</label>
+                <select class="form-control form-select" name="term" required>
+                  <option value="">Сонгох</option>
+                  <option value="6">6 сар</option>
+                  <option value="12">12 сар</option>
+                  <option value="18">18 сар</option>
+                  <option value="24">24 сар</option>
+                  <option value="36">36 сар</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Зориулалт</label>
+                <select class="form-control form-select" name="purpose" required>
+                  <option value="">Сонгох</option>
+                  <option value="personal">Хувийн зарцуулалт</option>
+                  <option value="business">Бизнес</option>
+                  <option value="education">Боловсрол</option>
+                  <option value="medical">Эмнэлэг</option>
+                  <option value="other">Бусад</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Сарын орлого</label>
+                <div class="number-display">
+                  <span class="currency">₮</span>
+                  <input type="number" name="income" min="500000" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Ажил мэргэжил</label>
+                <input type="text" class="form-control" name="occupation" required>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="form-step" data-step="3">
+              <h3 style="margin-bottom: 24px;">Баримт бичиг</h3>
+              
+              <div class="form-group">
+                <label class="form-label required">Иргэний үнэмлэх (Урд тал)</label>
+                <div class="file-upload" onclick="document.getElementById('idFront').click()">
+                  <input type="file" id="idFront" accept="image/*,.pdf">
+                  <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
+                  <div style="font-weight: 600; margin-bottom: 4px;">Файл сонгох</div>
+                  <div style="font-size: 13px; color: var(--text-muted);">PNG, JPG эсвэл PDF</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Иргэний үнэмлэх (Хойд тал)</label>
+                <div class="file-upload" onclick="document.getElementById('idBack').click()">
+                  <input type="file" id="idBack" accept="image/*,.pdf">
+                  <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
+                  <div style="font-weight: 600; margin-bottom: 4px;">Файл сонгох</div>
+                  <div style="font-size: 13px; color: var(--text-muted);">PNG, JPG эсвэл PDF</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Орлогын баримт</label>
+                <div class="file-upload" onclick="document.getElementById('income').click()">
+                  <input type="file" id="income" accept="image/*,.pdf">
+                  <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
+                  <div style="font-weight: 600; margin-bottom: 4px;">Файл сонгох</div>
+                  <div style="font-size: 13px; color: var(--text-muted);">Цалингийн хуудас эсвэл данс</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="form-step" data-step="4">
+              <h3 style="margin-bottom: 24px;">Баталгаажуулах</h3>
+              
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <div class="summary-label">Зээлийн дүн</div>
+                  <div class="summary-value">₮1,500,000</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Хугацаа</div>
+                  <div class="summary-value">12 сар</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Сарын хүү</div>
+                  <div class="summary-value">2.0%</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Сарын төлбөр</div>
+                  <div class="summary-value">₮135,000</div>
+                </div>
+              </div>
+
+              <div class="card" style="background: var(--bg); padding: 24px; margin-bottom: 24px;">
+                <h4 style="margin-bottom: 12px;">📋 Хувийн мэдээлэл</h4>
+                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">
+                  <strong>Нэр:</strong> <span id="summaryName">-</span><br>
+                  <strong>Утас:</strong> <span id="summaryPhone">-</span><br>
+                  <strong>Имэйл:</strong> <span id="summaryEmail">-</span>
+                </p>
+              </div>
+
+              <div class="form-check" style="margin-bottom: 24px;">
+                <input type="checkbox" id="agreeTerms" required>
+                <label for="agreeTerms">
+                  Би <a href="#">зээлийн гэрээ</a>, <a href="#">үйлчилгээний нөхцөл</a>-тэй 
+                  танилцаж зөвшөөрч байна
+                </label>
+              </div>
+
+              <div style="padding: 16px; background: #FFF0E6; border-left: 4px solid var(--primary); border-radius: var(--radius-sm); margin-bottom: 24px;">
+                <p style="margin: 0; font-size: 14px; color: var(--text);">
+                  ⚠️ Хүсэлтийг шалгаад 24 цагийн дотор хариу өгнө
+                </p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 32px;">
+              <button type="button" class="btn btn-ghost" id="prevBtn" style="display: none;">Буцах</button>
+              <button type="button" class="btn btn-primary" id="nextBtn" style="flex: 1;">Дараах</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn" style="flex: 1; display: none;">Илгээх</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-brand">OmniCredit</div>
+          <p>Монголын хамгийн хялбар бөгөөд найдвартай зээлийн үйлчилгээ.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          <span>© 2025 OmniCredit. Бүх эрх хуулиар хамгаалагдсан.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function updateSteps() {
+      document.querySelectorAll('.step').forEach((step, index) => {
+        if (index < currentStep - 1) {
+          step.classList.add('completed');
+          step.classList.remove('active');
+        } else if (index === currentStep - 1) {
+          step.classList.add('active');
+          step.classList.remove('completed');
+        } else {
+          step.classList.remove('active', 'completed');
+        }
+      });
+
+      document.querySelectorAll('.form-step').forEach((step, index) => {
+        step.classList.toggle('active', index === currentStep - 1);
+      });
+
+      prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+      nextBtn.style.display = currentStep < totalSteps ? 'block' : 'none';
+      submitBtn.style.display = currentStep === totalSteps ? 'block' : 'none';
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        updateSteps();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 1) {
+        currentStep--;
+        updateSteps();
+      }
+    });
+
+    document.getElementById('applicationForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      Utils.showToast('Хүсэлт илгээж байна...', 'info');
+      
+      setTimeout(() => {
+        Utils.showToast('Амжилттай илгээлээ!', 'success');
+        setTimeout(() => {
+          window.location.href = 'my-loans.html';
+        }, 1500);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

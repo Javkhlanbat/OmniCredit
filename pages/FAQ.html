@@ -146,7 +146,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- Navigation -->
+    
     <nav class="nav">
       <div class="brand">OmniCredit</div>
       <div class="nav-links">
@@ -162,7 +162,6 @@
       <button class="mobile-menu-toggle">☰</button>
     </nav>
 
-    <!-- Hero -->
     <section style="text-align: center; margin: 64px 0 32px;">
       <h1>Түгээмэл асуулт хариулт</h1>
       <p style="color: var(--text-muted); font-size: 1.125rem; max-width: 600px; margin: 16px auto 0;">
@@ -170,13 +169,11 @@
       </p>
     </section>
 
-    <!-- Search -->
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="Асуулт хайх...">
       <span class="search-icon">🔍</span>
     </div>
 
-    <!-- Categories -->
     <div class="faq-categories">
       <button class="btn btn-primary category-btn" data-category="general">
         <div class="category-icon">💼</div>
@@ -196,9 +193,7 @@
       </button>
     </div>
 
-    <!-- FAQ Sections -->
     <div class="faq-section">
-      <!-- General -->
       <div class="faq-list active" id="general">
         <div class="faq-item">
           <div class="faq-question">
@@ -259,7 +254,6 @@
         </div>
       </div>
 
-      <!-- Loan -->
       <div class="faq-list" id="loan">
         <div class="faq-item">
           <div class="faq-question">
@@ -334,7 +328,6 @@
         </div>
       </div>
 
-      <!-- Payment -->
       <div class="faq-list" id="payment">
         <div class="faq-item">
           <div class="faq-question">
@@ -393,7 +386,6 @@
         </div>
       </div>
 
-      <!-- Account -->
       <div class="faq-list" id="account">
         <div class="faq-item">
           <div class="faq-question">
@@ -452,7 +444,6 @@
       </div>
     </div>
 
-    <!-- Contact CTA -->
     <div class="contact-cta">
       <h3>Хариулт олдсонгүй юу?</h3>
       <p style="color: var(--text-muted); margin-bottom: 24px;">
@@ -469,7 +460,6 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -503,7 +493,6 @@
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
   <script>
-    // Category switching
     const categoryBtns = document.querySelectorAll('.category-btn');
     const faqLists = document.querySelectorAll('.faq-list');
 
@@ -523,7 +512,6 @@
       });
     });
 
-    // FAQ accordion
     const faqItems = document.querySelectorAll('.faq-item');
     
     faqItems.forEach(item => {
@@ -533,7 +521,6 @@
       });
     });
 
-    // Search
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase();

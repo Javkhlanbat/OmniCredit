@@ -151,7 +151,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- Navigation -->
+    
     <nav class="nav">
       <div class="brand">OmniCredit</div>
       <div class="nav-links">
@@ -167,7 +167,6 @@
       <button class="mobile-menu-toggle">☰</button>
     </nav>
 
-    <!-- Header -->
     <div style="background: linear-gradient(135deg, #E0F7FA 0%, #E8F5E9 100%); padding: 24px; border-radius: 16px; margin-top: 24px; margin-bottom: 24px;">
       <div style="text-align: center; margin-bottom: 4px;">
         <span style="display: inline-block; background: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #0d9488; letter-spacing: 0.5px;">
@@ -179,15 +178,12 @@
       </h2>
     </div>
 
-    <!-- Loan Type Tabs -->
     <div class="loan-type-tabs">
       <a href="zeelhuudas.html" class="btn btn-secondary">Хэрэглээний зээл</a>
       <a href="purchase-loan.html" class="btn btn-primary">Худалдан авалтын зээл</a>
     </div>
 
-    <!-- Main Content -->
     <div class="loan-content">
-      <!-- Info Box -->
       <div class="info-box">
         <h3>🛍️ Худалдан авалтын зээл (0% хүү, урьдчилгаагүй)</h3>
         <p>
@@ -195,7 +191,6 @@
         </p>
       </div>
 
-      <!-- Validation Form -->
       <div class="validation-form">
         <h3 style="margin-bottom: 24px; text-align: center;">Худалдан авалтын зээл (0% хүү, урьдчилгаагүй)</h3>
         
@@ -235,7 +230,6 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -269,7 +263,6 @@
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
   <script>
-    // Form validation
     document.getElementById('purchaseLoanForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
@@ -281,12 +274,10 @@
       }
     });
 
-    // Format invoice code input
     document.getElementById('invoiceCode').addEventListener('input', function(e) {
       this.value = this.value.toUpperCase();
     });
 
-    // Format phone number
     document.getElementById('phoneNumber').addEventListener('input', function(e) {
       this.value = this.value.replace(/\D/g, '').substring(0, 8);
     });

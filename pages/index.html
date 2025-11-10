@@ -7,10 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OmniCredit — Хялбар зээл</title>
 
-  <!-- Google Fonts — Интер фонт -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <!-- Stylesheets -->
+
   <link rel="stylesheet" href="../css/variables.css">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/navigation.css">
@@ -18,7 +17,6 @@
   <link rel="stylesheet" href="../css/footer.css">
 
   <style>
-    /* Index page specific styles only */
     .hero {
       display: grid;
       grid-template-columns: 1.1fr .9fr;
@@ -253,9 +251,6 @@
 
 <body>
   <div class="container">
-    <!-- =======================
-         NAV — Толгой, меню
-         ======================= -->
     <nav class="nav">
       <div class="brand">OmniCredit</div>
       <div class="nav-links">
@@ -271,11 +266,7 @@
       <button class="mobile-menu-toggle">☰</button>
     </nav>
 
-    <!-- =======================
-         HERO — Танилцуулга + Бүтээгдэхүүн картууд
-         ======================= -->
     <section class="hero">
-      <!-- Зүүн талын текст, CTA -->
       <div>
         <div class="eyebrow">Танилцуулга</div>
         <h1>Санхүүжилтийн шийдэл таны гарт</h1>
@@ -290,7 +281,6 @@
         </div>
       </div>
 
-      <!-- Баруун тал — бүтээгдэхүүний хоёр жишээ карт -->
       <div class="products" id="products">
         <article class="card">
           <div class="thumb"></div>
@@ -316,9 +306,6 @@
       </div>
     </section>
 
-    <!-- =======================
-         Статистикийн тоо (анимацтай)
-         ======================= -->
     <section class="stats">
       <div class="stat">
         <h4>100+</h4>
@@ -356,9 +343,6 @@
       </div>
     </section>
 
-    <!-- =======================
-         "Яагаад манайх" — Давуу талууд
-         ======================= -->
     <section class="why-us" id="why">
       <h2 class="section-title">Та яагаад биднийг сонгох ёстой вэ?</h2>
       <div class="why-grid">
@@ -384,9 +368,6 @@
         </div>
       </div>
     </section>
-    <!-- =======================
-         Хамтрагч байгууллагууд
-         ======================= -->
     <section class="partners" id="partners">
       <h2 class="section-title">Бидэнтэй хамтран ажиллах уу?</h2>
       <p style="max-width:700px;margin:auto;color:var(--text-muted)">
@@ -403,7 +384,6 @@
     </section>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -435,27 +415,22 @@
   </footer>
 
   <script>
-    // ==============================
-    // Статистикийн тоонуудыг өсгөх анимац
-    // speed тоо бага байх тусам хурдан болно
-    // ==============================
     const counters = document.querySelectorAll('.stat h4');
-    const speed = 120; // бага = хурдан
+    const speed = 120;
 
-    // Тоо анимдаж өсгөх функц
     const animateCounters = () => {
       counters.forEach(counter => {
-        const targetText = counter.textContent;     // Жинхэнэ текст (жишээ: "100+")
-        const target = parseInt(targetText);        // Тоон утга гаргаж авах (жишээ: 100)
+        const targetText = counter.textContent;
+        const target = parseInt(targetText);
         if (!isNaN(target)) {
           let count = 0;
           const update = () => {
-            count += Math.ceil(target / speed);     // Алхам тутамд нэмэх хэмжээ
+            count += Math.ceil(target / speed);
             if (count < target) {
-              counter.textContent = count + '+';    // Дэлгэц дээр түр зуурын утга
-              requestAnimationFrame(update);        // Дараагийн frame-д үргэлжлүүлнэ
+              counter.textContent = count + '+';
+              requestAnimationFrame(update);
             } else {
-              counter.textContent = targetText;     // Эцсийн текстээр солих
+              counter.textContent = targetText;
             }
           };
           update();
@@ -463,19 +438,17 @@
       });
     };
 
-    // Хэсэг дэлгэцэнд харагдах үед анимацыг эхлүүлэх
     const statsSection = document.querySelector('.stats');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           animateCounters();
-          observer.unobserve(statsSection); // Нэг удаа л ажиллуулна
+          observer.unobserve(statsSection);
         }
       });
     }, { threshold: 0.4 });
     observer.observe(statsSection);
 
-    // Mobile menu toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
 

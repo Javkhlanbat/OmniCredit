@@ -134,7 +134,7 @@
 
 <body>
   <div class="container">
-    <!-- Navigation -->
+    
     <nav class="nav">
       <div class="brand">OmniCredit</div>
       <div class="nav-links">
@@ -149,7 +149,6 @@
       <button class="mobile-menu-toggle">☰</button>
     </nav>
 
-    <!-- Auth Container -->
     <div class="auth-container">
       <div class="auth-card card">
         <div class="card-body" style="padding: 48px 40px;">
@@ -158,7 +157,6 @@
             <p style="color: var(--text-muted);">Шинэ данс үүсгэх</p>
           </div>
 
-          <!-- Social Login -->
           <div class="social-login">
             <button class="btn-social social-btn">
               <span>📘</span>
@@ -174,7 +172,6 @@
             <span>Эсвэл</span>
           </div>
 
-          <!-- Register Form -->
           <form id="registerForm">
             <div class="form-row">
               <div class="form-group">
@@ -235,7 +232,6 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -269,7 +265,6 @@
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
   <script>
-    // Password strength checker
     const password = document.getElementById('password');
     const strengthBar = document.getElementById('strengthBar');
     const strengthText = document.getElementById('strengthText');
@@ -303,7 +298,6 @@
       }
     });
 
-    // Email validation
     email.addEventListener('blur', () => {
       if (!Utils.isValidEmail(email.value)) {
         emailError.textContent = 'Зөв имэйл хаяг оруулна уу';
@@ -315,7 +309,6 @@
       }
     });
 
-    // Password match validation
     confirmPassword.addEventListener('blur', () => {
       if (password.value !== confirmPassword.value) {
         passwordError.textContent = 'Нууц үг таарахгүй байна';
@@ -327,7 +320,6 @@
       }
     });
 
-    // Form submission
     document.getElementById('registerForm').addEventListener('submit', (e) => {
       e.preventDefault();
 

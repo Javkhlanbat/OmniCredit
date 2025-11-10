@@ -8,7 +8,6 @@
   <title>OmniCredit — Зээлийн тооцоолуур</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <!-- Stylesheets -->
   <link rel="stylesheet" href="../css/variables.css">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/navigation.css">
@@ -51,7 +50,6 @@
       color: #cfe6df
     }
 
-    /* Tabs */
     .info-tabs {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -120,7 +118,6 @@
       padding-right: 10px
     }
 
-    /* Calc layout */
     .grid {
       display: grid;
       grid-template-columns: 360px 1fr;
@@ -299,7 +296,6 @@
 
 <body>
   <div class="container">
-    <!-- Navigation -->
     <nav class="nav">
       <div class="brand">OmniCredit</div>
       <div class="nav-links">
@@ -320,7 +316,6 @@
       <p>Тооцоогоо бодоод, онлайнаар хүсэлтээ илгээгээрэй. Танд хамгийн тохирох нөхцлийг санал болгоно.</p>
     </header>
 
-    <!-- Loan Type Selection Header -->
     <div style="background: linear-gradient(135deg, #E0F7FA 0%, #E8F5E9 100%); padding: 24px; border-radius: 16px; margin-top: 24px; margin-bottom: 24px;">
       <div style="text-align: center; margin-bottom: 4px;">
         <span style="display: inline-block; background: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #0d9488; letter-spacing: 0.5px;">
@@ -332,7 +327,6 @@
       </h2>
     </div>
 
-    <!-- Loan Type Tabs (Buttons) -->
     <div style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: center;">
       <button class="btn btn-primary loan-type-btn active" data-type="consumer">
         Хэрэглээний зээл
@@ -342,7 +336,6 @@
       </a>
     </div>
 
-    <!-- INFO TABS -->
     <input type="radio" name="info" id="i-cond" checked hidden>
     <input type="radio" name="info" id="i-req" hidden>
     <input type="radio" name="info" id="i-faq" hidden>
@@ -398,9 +391,7 @@
       </div>
     </div>
 
-    <!-- CALCULATOR -->
     <section class="grid" id="calculator">
-      <!-- LEFT -->
       <div class="card pad">
         <h3>Тохиргоо</h3>
 
@@ -445,7 +436,6 @@
         </div>
       </div>
 
-      <!-- RIGHT -->
       <div class="card pad">
         <input type="radio" name="chart" id="c-pay" checked hidden>
         <input type="radio" name="chart" id="c-bal" hidden>
@@ -460,7 +450,6 @@
       </div>
     </section>
 
-    <!-- KPIs -->
     <section class="kpis-wide">
       <div class="kpi">Сарын төлбөр<b id="kpiPayment">—</b></div>
       <div class="kpi">Нийт хүү<b id="kpiInterest">—</b></div>
@@ -468,11 +457,9 @@
     </section>
   </div>
 
-  <!-- Tooltip -->
   <div id="chartTip" class="chart-tip"></div>
 
   <script>
-    // ---------- helpers ----------
     const fmt = new Intl.NumberFormat('mn-MN');
     const money = n => '₮' + fmt.format(Math.round(n || 0));
     const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -496,7 +483,6 @@
       };
     }
 
-    // ---------- DOM ----------
     const amountNum = document.getElementById('amountNum'), amountRange = document.getElementById('amountRange');
     const rateNum = document.getElementById('rateNum'), rateRange = document.getElementById('rateRange');
     const termNum = document.getElementById('termNum'), termRange = document.getElementById('termRange');
@@ -514,7 +500,6 @@
 
     function clearCanvas(ctx) { ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); }
 
-    // ---------- charts ----------
     function drawPayments(schedule, hover = -1) {
       const ctx = paymentsCanvas.getContext('2d'); clearCanvas(ctx);
       const W = ctx.canvas.width, H = ctx.canvas.height, margin = 40, innerW = W - margin * 2, innerH = H - margin * 2;
@@ -561,7 +546,6 @@
       return { margin, innerW, pts };
     }
 
-    // ---------- recalc ----------
     let schedule = [], geomPay = null, geomBal = null;
     function recalc() {
       const P = +amountNum.value || 0, r = +rateNum.value || 0, n = +termNum.value || 1;
@@ -573,7 +557,6 @@
       geomBal = drawBalance(schedule, Math.max(P, 1), -1);
     }
 
-    // tooltips
     const showTip = (html, x, y) => { tip.innerHTML = html; tip.style.left = x + 'px'; tip.style.top = y + 'px'; tip.style.display = 'block'; };
     const hideTip = () => tip.style.display = 'none';
 
@@ -601,7 +584,6 @@
     document.getElementById('pdfBtn').addEventListener('click', () => window.print());
     document.getElementById('applyBtn').addEventListener('click', () => alert('UI demo — энд backend API-даа холбож илгээнэ.'));
 
-    // Mobile menu toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
 
@@ -614,7 +596,6 @@
     recalc();
   </script>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">

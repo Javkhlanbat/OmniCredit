@@ -74,22 +74,6 @@
 
     .social-btn {
       flex: 1;
-      padding: 14px;
-      border: 2px solid var(--line);
-      border-radius: var(--radius);
-      background: white;
-      cursor: pointer;
-      font-weight: 600;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .social-btn:hover {
-      border-color: var(--primary);
-      background: var(--card-hover);
     }
 
     .auth-footer {
@@ -176,11 +160,11 @@
 
           <!-- Social Login -->
           <div class="social-login">
-            <button class="social-btn">
+            <button class="btn-social social-btn">
               <span>📘</span>
               Facebook
             </button>
-            <button class="social-btn">
+            <button class="btn-social social-btn">
               <span>🔍</span>
               Google
             </button>
@@ -250,6 +234,37 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-brand">OmniCredit</div>
+          <p>Монголын хамгийн хялбар бөгөөд найдвартай зээлийн үйлчилгээ.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Үйлчилгээ</h4>
+          <ul class="footer-links">
+            <li><a href="zeelhuudas.html">Зээл авах</a></li>
+            <li><a href="purchase-loan.html">Худалдан авалтын зээл</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Тусламж</h4>
+          <ul class="footer-links">
+            <li><a href="aboutus.html">Бидний тухай</a></li>
+            <li><a href="FAQ.html">Түгээмэл асуулт</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          <span>© 2025 OmniCredit. Бүх эрх хуулиар хамгаалагдсан.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>

@@ -7,7 +7,7 @@
   padding: 14px 28px;
   border: none;
   border-radius: 999px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 15px;
   cursor: pointer;
   transition: var(--transition);
@@ -25,7 +25,8 @@
 /* Primary Button - Peachy gradient */
 .btn-primary {
   background: var(--gradient-peachy);
-  color: white;
+  color: var(--text);
+  font-weight: 800;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -125,4 +126,27 @@
 .btn-icon svg,
 .btn-icon i {
   font-size: 18px;
+}
+
+/* Social Login Buttons */
+.btn-social {
+  background: white;
+  color: var(--text);
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-social:hover {
+  border-color: var(--primary);
+  background: var(--card-hover);
+  transform: translateY(-2px);
 }

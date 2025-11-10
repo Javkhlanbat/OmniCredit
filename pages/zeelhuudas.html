@@ -16,19 +16,6 @@
   <link rel="stylesheet" href="../css/footer.css">
 
   <style>
-    /* Зээлийн тооцоолуур - дотоод өнгө тодорхойлолт variables.css-г давхарлана */
-    :root {
-      --gradient1: linear-gradient(135deg, #14b8a6, #10b981);
-      --gradient2: linear-gradient(135deg, #0d9488, #14b8a6);
-      --bg: #f9fafb;
-      --text: #111827;
-      --card: #fff;
-      --line: #e5e7eb;
-      --shadow: 0 10px 30px rgba(0, 0, 0, .08);
-      --radius: 22px;
-      --radius-lg: 26px
-    }
-
     * {
       box-sizing: border-box
     }
@@ -81,15 +68,17 @@
       font-weight: 800;
       cursor: pointer;
       border: 1px solid var(--line);
-      user-select: none
+      user-select: none;
+      color: var(--text);
     }
 
     input#i-cond:checked~.info-tabs label[for=i-cond],
     input#i-req:checked~.info-tabs label[for=i-req],
     input#i-faq:checked~.info-tabs label[for=i-faq] {
-      background: var(--gradient1);
-      color: #fff;
-      border-color: transparent
+      background: var(--gradient-peachy);
+      color: var(--text);
+      border-color: transparent;
+      font-weight: 800;
     }
 
     .info-pane-wrap {
@@ -129,31 +118,6 @@
       text-align: left;
       white-space: nowrap;
       padding-right: 10px
-    }
-
-    /* Loan Tab Buttons */
-    .loan-tab-btn {
-      padding: 12px 32px;
-      border: none;
-      background: white;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      color: #111827;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .loan-tab-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-    }
-
-    .loan-tab-btn.active {
-      background: linear-gradient(135deg, #14b8a6, #10b981);
-      color: white;
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
     }
 
     /* Calc layout */
@@ -237,21 +201,21 @@
     }
 
     .kpi {
-      background: #0b1220;
-      color: #dff7ff;
-      border: 1px solid #1f2a44;
+      background: var(--gradient-peachy);
+      color: white;
+      border: none;
       border-radius: 18px;
       padding: 14px;
-      text-align: center
+      text-align: center;
+      box-shadow: var(--shadow);
     }
 
     .kpi b {
       display: block;
       font-size: 20px;
       margin-top: 4px;
-      background: var(--gradient1);
-      -webkit-background-clip: text;
-      color: transparent
+      color: white;
+      font-weight: 800;
     }
 
     .chart-tabs {
@@ -266,17 +230,18 @@
       background: #fff;
       border: 1px solid #e5e7eb;
       cursor: pointer;
-      font-weight: 700;
-      color: #4b5563;
+      font-weight: 800;
+      color: var(--text);
       box-shadow: 0 6px 14px rgba(0, 0, 0, .06)
     }
 
     input#c-pay:checked~.chart-tabs label[for=c-pay],
     input#c-bal:checked~.chart-tabs label[for=c-bal] {
-      background: var(--gradient1);
-      color: #fff;
+      background: var(--gradient-peachy);
+      color: var(--text);
       border-color: transparent;
-      box-shadow: 0 10px 22px rgba(20, 184, 166, .28)
+      box-shadow: 0 10px 22px rgba(20, 184, 166, .28);
+      font-weight: 800;
     }
 
     .panel {
@@ -369,10 +334,10 @@
 
     <!-- Loan Type Tabs (Buttons) -->
     <div style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: center;">
-      <button class="loan-tab-btn active" data-type="consumer">
+      <button class="btn btn-primary loan-type-btn active" data-type="consumer">
         Хэрэглээний зээл
       </button>
-      <a href="purchase-loan.html" class="loan-tab-btn" style="text-decoration: none; display: inline-block;">
+      <a href="purchase-loan.html" class="btn btn-secondary loan-type-btn" style="text-decoration: none; display: inline-block;">
         Худалдан авалтын зээл
       </a>
     </div>
@@ -396,11 +361,11 @@
             <th>Зорилго</th>
             <td>Хэрэглээний зээл</td>
             <th>Хугацаа</th>
-            <td>3–60 сар</td>
+            <td>0–24 сар</td>
           </tr>
           <tr>
             <th>Хүү</th>
-            <td>Сард 0% – 3.3%</td>
+            <td>Сард 2% – 5%</td>
             <th>Барьцаа</th>
             <td>Шаардлагагүй</td>
           </tr>
@@ -455,17 +420,23 @@
         <div class="control">
           <label>Сарын хүү (%)</label>
           <div class="display">
-            <input id="rateNum" type="number" value="2" min="0" max="3.3" step="0.1" /><span>%</span>
+            <input id="rateNum" type="number" value="3" min="2" max="5" step="0.1" /><span>%</span>
           </div>
-          <input id="rateRange" type="range" min="0" max="3.3" step="0.1" value="2" />
+          <input id="rateRange" type="range" min="2" max="5" step="0.1" value="3" />
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-top:6px">
+            <span>2%</span><span>5%</span>
+          </div>
         </div>
 
         <div class="control">
           <label>Зээлийн хугацаа (сар)</label>
           <div class="display">
-            <input id="termNum" type="number" value="12" min="1" max="60" step="1" /><span>сар</span>
+            <input id="termNum" type="number" value="12" min="0" max="24" step="1" /><span>сар</span>
           </div>
-          <input id="termRange" type="range" min="1" max="60" step="1" value="12" />
+          <input id="termRange" type="range" min="0" max="24" step="1" value="12" />
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-top:6px">
+            <span>0 сар</span><span>24 сар</span>
+          </div>
         </div>
 
         <div class="cta">
@@ -538,8 +509,8 @@
       a.addEventListener('input', () => upd(a.value)); b.addEventListener('input', () => upd(b.value));
     }
     bind(amountNum, amountRange, 10000, 3000000);
-    bind(rateNum, rateRange, 0, 3.3);
-    bind(termNum, termRange, 1, 60);
+    bind(rateNum, rateRange, 2, 5);
+    bind(termNum, termRange, 0, 24);
 
     function clearCanvas(ctx) { ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); }
 

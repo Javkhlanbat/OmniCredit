@@ -25,21 +25,7 @@
 
     .category-btn {
       padding: 16px;
-      background: var(--card);
-      border: 2px solid var(--line);
-      border-radius: var(--radius);
-      cursor: pointer;
       text-align: center;
-      font-weight: 700;
-      transition: var(--transition);
-    }
-
-    .category-btn:hover,
-    .category-btn.active {
-      background: linear-gradient(135deg, #14b8a6, #10b981);
-      color: white;
-      border-color: transparent;
-      transform: translateY(-2px);
     }
 
     .category-icon {
@@ -192,19 +178,19 @@
 
     <!-- Categories -->
     <div class="faq-categories">
-      <button class="category-btn active" data-category="general">
+      <button class="btn btn-primary category-btn" data-category="general">
         <div class="category-icon">💼</div>
         <div>Ерөнхий</div>
       </button>
-      <button class="category-btn" data-category="loan">
+      <button class="btn btn-secondary category-btn" data-category="loan">
         <div class="category-icon">💰</div>
         <div>Зээлийн тухай</div>
       </button>
-      <button class="category-btn" data-category="payment">
+      <button class="btn btn-secondary category-btn" data-category="payment">
         <div class="category-icon">💳</div>
         <div>Төлбөр</div>
       </button>
-      <button class="category-btn" data-category="account">
+      <button class="btn btn-secondary category-btn" data-category="account">
         <div class="category-icon">👤</div>
         <div>Данс</div>
       </button>
@@ -524,10 +510,14 @@
     categoryBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const category = btn.dataset.category;
-        
-        categoryBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
+
+        categoryBtns.forEach(b => {
+          b.classList.remove('btn-primary');
+          b.classList.add('btn-secondary');
+        });
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-primary');
+
         faqLists.forEach(list => list.classList.remove('active'));
         document.getElementById(category).classList.add('active');
       });

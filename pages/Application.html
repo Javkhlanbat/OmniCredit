@@ -400,13 +400,55 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
   <script>
+    // Check if user is authenticated
+    if (!TokenManager.isAuthenticated()) {
+      Utils.showToast('Та эхлээд нэвтэрнэ үү', 'error');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    }
+
+    // Pre-fill user data from localStorage
+    function prefillUserData() {
+      const user = UserManager.getUser();
+      if (user) {
+        // Fill first name and last name
+        const firstNameInput = document.querySelector('input[name="firstName"]');
+        const lastNameInput = document.querySelector('input[name="lastName"]');
+        const emailInput = document.querySelector('input[name="email"]');
+        const phoneInput = document.querySelector('input[name="phone"]');
+
+        if (firstNameInput && (user.first_name || user.firstName)) {
+          firstNameInput.value = user.first_name || user.firstName;
+        }
+        if (lastNameInput && (user.last_name || user.lastName)) {
+          lastNameInput.value = user.last_name || user.lastName;
+        }
+        if (emailInput && user.email) {
+          emailInput.value = user.email;
+        }
+        if (phoneInput && user.phone) {
+          phoneInput.value = user.phone;
+        }
+      }
+    }
+
+    // Call prefill when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', prefillUserData);
+    } else {
+      prefillUserData();
+    }
+
     let currentStep = 1;
     const totalSteps = 4;
 
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('applicationForm');
 
     function updateSteps() {
       document.querySelectorAll('.step').forEach((step, index) => {
@@ -425,12 +467,56 @@
         step.classList.toggle('active', index === currentStep - 1);
       });
 
+      // Update summary on step 4
+      if (currentStep === 4) {
+        updateSummary();
+      }
+
       prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
       nextBtn.style.display = currentStep < totalSteps ? 'block' : 'none';
       submitBtn.style.display = currentStep === totalSteps ? 'block' : 'none';
     }
 
+    function updateSummary() {
+      const formData = new FormData(form);
+      document.getElementById('summaryName').textContent =
+        `${formData.get('lastName')} ${formData.get('firstName')}`;
+      document.getElementById('summaryPhone').textContent = formData.get('phone');
+      document.getElementById('summaryEmail').textContent = formData.get('email');
+
+      // Update loan amount and term in summary
+      const amount = formData.get('amount');
+      const term = formData.get('term');
+      if (amount) {
+        document.querySelector('.summary-grid .summary-item:nth-child(1) .summary-value').textContent =
+          `₮${parseInt(amount).toLocaleString()}`;
+      }
+      if (term) {
+        document.querySelector('.summary-grid .summary-item:nth-child(2) .summary-value').textContent =
+          `${term} сар`;
+      }
+    }
+
     nextBtn.addEventListener('click', () => {
+      // Validate current step before moving to next
+      const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+      const inputs = currentStepElement.querySelectorAll('input[required], select[required], textarea[required]');
+
+      let isValid = true;
+      inputs.forEach(input => {
+        if (!input.value) {
+          isValid = false;
+          input.classList.add('is-invalid');
+        } else {
+          input.classList.remove('is-invalid');
+        }
+      });
+
+      if (!isValid) {
+        Utils.showToast('Шаардлагатай талбаруудыг бөглөнө үү', 'error');
+        return;
+      }
+
       if (currentStep < totalSteps) {
         currentStep++;
         updateSteps();
@@ -444,16 +530,72 @@
       }
     });
 
-    document.getElementById('applicationForm').addEventListener('submit', (e) => {
+    // Loan amount slider sync
+    const amountInput = document.querySelector('input[name="amount"]');
+    const amountSlider = document.querySelector('input[type="range"]');
+
+    if (amountSlider && amountInput) {
+      amountSlider.addEventListener('input', (e) => {
+        amountInput.value = e.target.value;
+      });
+
+      amountInput.addEventListener('input', (e) => {
+        amountSlider.value = e.target.value;
+      });
+    }
+
+    document.getElementById('applicationForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      Utils.showToast('Хүсэлт илгээж байна...', 'info');
-      
-      setTimeout(() => {
+
+      const agreeTerms = document.getElementById('agreeTerms');
+      if (!agreeTerms.checked) {
+        Utils.showToast('Зээлийн гэрээ болон үйлчилгээний нөхцөлийг зөвшөөрнө үү', 'error');
+        return;
+      }
+
+      const formData = new FormData(form);
+
+      // Disable submit button during request
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Илгээж байна...';
+
+      try {
+        Utils.showToast('Хүсэлт илгээж байна...', 'info');
+
+        // Prepare loan application data
+        const loanData = {
+          firstName: formData.get('firstName'),
+          lastName: formData.get('lastName'),
+          registerId: formData.get('registerId'),
+          phone: formData.get('phone'),
+          email: formData.get('email'),
+          address: formData.get('address'),
+          amount: parseFloat(formData.get('amount')),
+          term: parseInt(formData.get('term')),
+          purpose: formData.get('purpose'),
+          monthlyIncome: parseFloat(formData.get('income')),
+          occupation: formData.get('occupation'),
+          status: 'pending'
+        };
+
+        // Call backend API
+        const response = await LoansAPI.createLoan(loanData);
+
         Utils.showToast('Амжилттай илгээлээ!', 'success');
+
+        // Redirect to my loans page
         setTimeout(() => {
           window.location.href = 'my-loans.html';
         }, 1500);
-      }, 1000);
+
+      } catch (error) {
+        console.error('Loan application error:', error);
+        Utils.showToast(error.message || 'Хүсэлт илгээхэд алдаа гарлаа', 'error');
+
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Илгээх';
+      }
     });
   </script>
 </body>

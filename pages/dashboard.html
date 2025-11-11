@@ -83,25 +83,25 @@
     </nav>
 
     <div style="margin: 48px 0 32px;">
-      <h1>Сайн байна уу, Батбаяр! 👋</h1>
+      <h1 id="welcomeMessage">Сайн байна уу! 👋</h1>
       <p style="color: var(--text-muted);">Таны санхүүгийн тойм</p>
     </div>
 
     <div class="dashboard-grid">
       <div class="stats-card">
-        <div class="stats-card-value">1</div>
+        <div class="stats-card-value" id="activeLoansCount">0</div>
         <div class="stats-card-label">Идэвхтэй зээл</div>
       </div>
       <div class="stats-card">
-        <div class="stats-card-value">₮945K</div>
+        <div class="stats-card-value" id="totalBalance">₮0</div>
         <div class="stats-card-label">Үлдэгдэл</div>
       </div>
       <div class="stats-card">
-        <div class="stats-card-value">₮135K</div>
+        <div class="stats-card-value" id="nextPayment">₮0</div>
         <div class="stats-card-label">Дараагийн төлбөр</div>
       </div>
       <div class="stats-card">
-        <div class="stats-card-value">5 хоног</div>
+        <div class="stats-card-value" id="daysUntilPayment">-</div>
         <div class="stats-card-label">Төлбөрийн хугацаа</div>
       </div>
     </div>
@@ -126,47 +126,21 @@
       </a>
     </div>
 
-    <div class="recent-section">
+    <div class="recent-section" id="activeLoansSection" style="display: none;">
       <h2 style="margin-bottom: 24px;">Идэвхтэй зээл</h2>
-      
-      <div class="card">
-        <div class="card-body">
-          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
-            <div>
-              <h3>Зээл #12345</h3>
-              <p style="color: var(--text-muted); margin: 4px 0;">Үүсгэсэн: 2024-07-15</p>
-            </div>
-            <span style="padding: 6px 12px; background: #DFFFD8; color: #10b981; border-radius: 999px; font-size: 12px; font-weight: 700;">ИДЭВХТЭЙ</span>
-          </div>
+      <div id="activeLoansContainer"></div>
+    </div>
 
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 24px 0;">
-            <div>
-              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Зээлийн дүн</div>
-              <div style="font-weight: 700; font-size: 1.125rem;">₮1,500,000</div>
-            </div>
-            <div>
-              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Төлөгдсөн</div>
-              <div style="font-weight: 700; font-size: 1.125rem;">₮555,000</div>
-            </div>
-            <div>
-              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Үлдэгдэл</div>
-              <div style="font-weight: 700; font-size: 1.125rem; color: var(--primary);">₮945,000</div>
-            </div>
-            <div>
-              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Үлдсэн хугацаа</div>
-              <div style="font-weight: 700; font-size: 1.125rem;">6 сар</div>
-            </div>
-          </div>
-
-          <div style="background: var(--line); height: 8px; border-radius: 999px; overflow: hidden; margin: 16px 0;">
-            <div style="height: 100%; width: 37%; background: var(--gradient-peachy);"></div>
-          </div>
-
-          <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <a href="Payment.html" class="btn btn-primary">Төлбөр төлөх</a>
-            <a href="my-loans.html" class="btn btn-secondary">Дэлгэрэнгүй</a>
-          </div>
-        </div>
+    <div class="recent-section" id="noLoansSection" style="display: none;">
+      <div class="card" style="text-align: center; padding: 48px;">
+        <div style="font-size: 64px; margin-bottom: 16px;">💼</div>
+        <h3>Зээл байхгүй байна</h3>
+        <p style="color: var(--text-muted); margin: 16px 0 24px;">
+          Та одоогоор ямар ч зээл аваагүй байна
+        </p>
+        <a href="Application.html" class="btn btn-primary btn-lg">
+          Зээл авах
+        </a>
       </div>
     </div>
 
@@ -238,5 +212,140 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth-guard.js"></script>
+  <script>
+    // Load dashboard data
+    async function loadDashboard() {
+      try {
+        // Get user data
+        const user = UserManager.getUser();
+
+        if (user) {
+          // Update welcome message
+          const welcomeMessage = document.getElementById('welcomeMessage');
+          const firstName = user.first_name || user.firstName || 'Хэрэглэгч';
+          welcomeMessage.textContent = `Сайн байна уу, ${firstName}! 👋`;
+        }
+
+        // Load user's loans
+        const loans = await LoansAPI.getLoans();
+
+        if (loans && loans.length > 0) {
+          // Filter active loans
+          const activeLoans = loans.filter(loan =>
+            loan.status === 'active' || loan.status === 'approved'
+          );
+
+          // Update statistics
+          document.getElementById('activeLoansCount').textContent = activeLoans.length;
+
+          // Calculate total balance and next payment
+          let totalBalance = 0;
+          let nextPayment = 0;
+          let earliestPaymentDate = null;
+
+          activeLoans.forEach(loan => {
+            const remaining = loan.amount - (loan.paid_amount || 0);
+            totalBalance += remaining;
+
+            // Calculate monthly payment (simple calculation)
+            const monthlyPayment = loan.amount / loan.term;
+            if (monthlyPayment > nextPayment) {
+              nextPayment = monthlyPayment;
+            }
+          });
+
+          document.getElementById('totalBalance').textContent =
+            `₮${Math.round(totalBalance).toLocaleString()}`;
+          document.getElementById('nextPayment').textContent =
+            `₮${Math.round(nextPayment).toLocaleString()}`;
+
+          // Show active loans section
+          if (activeLoans.length > 0) {
+            document.getElementById('activeLoansSection').style.display = 'block';
+            document.getElementById('noLoansSection').style.display = 'none';
+
+            // Display active loans
+            const container = document.getElementById('activeLoansContainer');
+            container.innerHTML = activeLoans.map(loan => {
+              const paidAmount = loan.paid_amount || 0;
+              const remaining = loan.amount - paidAmount;
+              const progress = (paidAmount / loan.amount * 100).toFixed(0);
+              const createdDate = new Date(loan.created_at).toLocaleDateString('mn-MN');
+
+              return `
+                <div class="card" style="margin-bottom: 16px;">
+                  <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                      <div>
+                        <h3>Зээл #${loan.id}</h3>
+                        <p style="color: var(--text-muted); margin: 4px 0;">Үүсгэсэн: ${createdDate}</p>
+                      </div>
+                      <span style="padding: 6px 12px; background: #DFFFD8; color: #10b981; border-radius: 999px; font-size: 12px; font-weight: 700;">ИДЭВХТЭЙ</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 24px 0;">
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Зээлийн дүн</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">₮${loan.amount.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Төлөгдсөн</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">₮${paidAmount.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Үлдэгдэл</div>
+                        <div style="font-weight: 700; font-size: 1.125rem; color: var(--primary);">₮${remaining.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Хугацаа</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">${loan.term} сар</div>
+                      </div>
+                    </div>
+
+                    <div style="background: var(--line); height: 8px; border-radius: 999px; overflow: hidden; margin: 16px 0;">
+                      <div style="height: 100%; width: ${progress}%; background: var(--gradient-peachy);"></div>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+                      ${progress}% төлөгдсөн
+                    </p>
+
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                      <a href="Payment.html?loan=${loan.id}" class="btn btn-primary">Төлбөр төлөх</a>
+                      <a href="my-loans.html" class="btn btn-secondary">Дэлгэрэнгүй</a>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            document.getElementById('activeLoansSection').style.display = 'none';
+            document.getElementById('noLoansSection').style.display = 'block';
+          }
+        } else {
+          // No loans at all
+          document.getElementById('activeLoansSection').style.display = 'none';
+          document.getElementById('noLoansSection').style.display = 'block';
+          document.getElementById('activeLoansCount').textContent = '0';
+          document.getElementById('totalBalance').textContent = '₮0';
+          document.getElementById('nextPayment').textContent = '₮0';
+        }
+
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+        // Show no loans section on error
+        document.getElementById('activeLoansSection').style.display = 'none';
+        document.getElementById('noLoansSection').style.display = 'block';
+      }
+    }
+
+    // Load dashboard when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDashboard);
+    } else {
+      loadDashboard();
+    }
+  </script>
 </body>
 </html>

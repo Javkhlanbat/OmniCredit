@@ -131,12 +131,15 @@
           <form id="loginForm">
             <div class="form-group">
               <label class="form-label required">Имэйл хаяг</label>
-              <input type="email" class="form-control" placeholder="name@example.com" required>
+              <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com" required>
             </div>
 
             <div class="form-group">
               <label class="form-label required">Нууц үг</label>
-              <input type="password" class="form-control" placeholder="••••••••" required>
+              <div style="position: relative;">
+                <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required style="padding-right: 40px;">
+                <button type="button" id="toggleLoginPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">👁️</button>
+              </div>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -192,15 +195,59 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
   <script>
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
+    // Check if already logged in
+    if (TokenManager.isAuthenticated()) {
+      window.location.href = 'dashboard.html';
+    }
+
+    // Toggle password visibility
+    const loginPassword = document.getElementById('loginPassword');
+    const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+
+    toggleLoginPassword.addEventListener('click', () => {
+      const type = loginPassword.type === 'password' ? 'text' : 'password';
+      loginPassword.type = type;
+      toggleLoginPassword.textContent = type === 'password' ? '👁️' : '🙈';
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      Utils.showToast('Нэвтэрч байна...', 'info');
-      
-      // Simulate login
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1000);
+
+      const form = e.target;
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      // Disable submit button during request
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Нэвтэрч байна...';
+
+      try {
+        Utils.showToast('Нэвтэрч байна...', 'info');
+
+        // Call backend API
+        const response = await AuthAPI.login({
+          email: email,
+          password: password
+        });
+
+        Utils.showToast('Амжилттай нэвтэрлээ!', 'success');
+
+        // Redirect to dashboard
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 500);
+
+      } catch (error) {
+        console.error('Login error:', error);
+        Utils.showToast(error.message || 'Нэвтрэх үед алдаа гарлаа', 'error');
+
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Нэвтрэх';
+      }
     });
   </script>
 </body>

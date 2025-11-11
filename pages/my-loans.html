@@ -192,139 +192,26 @@
       <button class="filter-btn" data-filter="paid">Төлсөн</button>
     </div>
 
-    
+
     <div id="loanList">
-      
-      <div class="loan-card" data-status="active">
-        <div class="loan-info">
-          <div style="display: flex; justify-content: space-between; align-items: start;">
-            <h4>Зээл #12345</h4>
-            <span class="loan-status status-active">Идэвхтэй</span>
-          </div>
-          
-          <div class="loan-meta">
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Зээлийн дүн</span>
-              <span class="loan-meta-value">₮1,500,000</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Үлдэгдэл</span>
-              <span class="loan-meta-value">₮945,000</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Сарын төлбөр</span>
-              <span class="loan-meta-value">₮135,000</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Дараагийн төлбөр</span>
-              <span class="loan-meta-value">2025-01-15</span>
-            </div>
-          </div>
-
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: 37%"></div>
-          </div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
-            37% төлөгдсөн
-          </p>
-        </div>
-
-        <div class="loan-actions">
-          <a href="Payment.html?id=12345" class="btn btn-primary">Төлбөр төлөх</a>
-          <button class="btn btn-secondary">Дэлгэрэнгүй</button>
-        </div>
-      </div>
-
-      
-      <div class="loan-card" data-status="pending">
-        <div class="loan-info">
-          <div style="display: flex; justify-content: space-between; align-items: start;">
-            <h4>Зээл #12346</h4>
-            <span class="loan-status status-pending">Хүлээгдэж буй</span>
-          </div>
-          
-          <div class="loan-meta">
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Хүсэлтийн дүн</span>
-              <span class="loan-meta-value">₮2,000,000</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Хугацаа</span>
-              <span class="loan-meta-value">18 сар</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Хүсэлтийн огноо</span>
-              <span class="loan-meta-value">2025-01-05</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Төлөв</span>
-              <span class="loan-meta-value">Шалгаж байна</span>
-            </div>
-          </div>
-
-          <p style="margin-top: 12px; color: var(--text-muted); font-size: 14px;">
-            ⏱️ Таны хүсэлтийг шалгаж байна. 24 цагийн дотор хариу өгнө.
-          </p>
-        </div>
-
-        <div class="loan-actions">
-          <button class="btn btn-secondary">Дэлгэрэнгүй</button>
-          <button class="btn btn-ghost">Цуцлах</button>
-        </div>
-      </div>
-
-      
-      <div class="loan-card" data-status="paid">
-        <div class="loan-info">
-          <div style="display: flex; justify-content: space-between; align-items: start;">
-            <h4>Зээл #12340</h4>
-            <span class="loan-status status-paid">Төлөгдсөн</span>
-          </div>
-          
-          <div class="loan-meta">
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Зээлийн дүн</span>
-              <span class="loan-meta-value">₮1,000,000</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Төлсөн</span>
-              <span class="loan-meta-value">₮1,240,000</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Эхэлсэн</span>
-              <span class="loan-meta-value">2024-06-01</span>
-            </div>
-            <div class="loan-meta-item">
-              <span class="loan-meta-label">Дууссан</span>
-              <span class="loan-meta-value">2024-12-01</span>
-            </div>
-          </div>
-
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: 100%"></div>
-          </div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
-            ✅ Бүрэн төлөгдсөн
-          </p>
-        </div>
-
-        <div class="loan-actions">
-          <button class="btn btn-secondary">Баримт харах</button>
-        </div>
-      </div>
+      <!-- Loans will be loaded here dynamically -->
     </div>
 
-    
-    <div class="empty-state" style="display: none;">
-      <div class="empty-state-icon">💼</div>
+    <div id="noLoansMessage" style="display: none; text-align: center; padding: 64px 20px;">
+      <div style="font-size: 64px; margin-bottom: 16px;">💼</div>
       <h3>Зээл байхгүй байна</h3>
-      <p style="color: var(--text-muted); margin-bottom: 24px;">
+      <p style="color: var(--text-muted); margin: 16px 0 24px;">
         Та одоогоор ямар ч зээл аваагүй байна
       </p>
-      <a href="zeelhuudas.html" class="btn btn-primary btn-lg">
-        Зээл тооцоолох
+      <a href="Application.html" class="btn btn-primary btn-lg">
+        Зээл авах
       </a>
     </div>
+
+    <div id="loadingMessage" style="text-align: center; padding: 64px 20px;">
+      <p style="color: var(--text-muted);">Ачаалж байна...</p>
+    </div>
+
 
     
     <div class="card card-peachy" style="margin-top: 48px; margin-bottom: 80px; padding: 48px; text-align: center;">
@@ -364,27 +251,217 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth-guard.js"></script>
   <script>
-    // Filter functionality
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const loanCards = document.querySelectorAll('.loan-card');
+    let allLoans = [];
+    let currentFilter = 'all';
 
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filter = btn.dataset.filter;
-        
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    // Load loans from backend
+    async function loadLoans() {
+      try {
+        document.getElementById('loadingMessage').style.display = 'block';
+        document.getElementById('noLoansMessage').style.display = 'none';
+        document.getElementById('loanList').innerHTML = '';
 
-        loanCards.forEach(card => {
-          if (filter === 'all' || card.dataset.status === filter) {
-            card.style.display = 'grid';
-          } else {
-            card.style.display = 'none';
-          }
+        const loans = await LoansAPI.getLoans();
+        allLoans = loans || [];
+
+        if (allLoans.length === 0) {
+          document.getElementById('loadingMessage').style.display = 'none';
+          document.getElementById('noLoansMessage').style.display = 'block';
+          return;
+        }
+
+        document.getElementById('loadingMessage').style.display = 'none';
+        displayLoans(allLoans);
+      } catch (error) {
+        console.error('Load loans error:', error);
+        document.getElementById('loadingMessage').style.display = 'none';
+        document.getElementById('noLoansMessage').style.display = 'block';
+      }
+    }
+
+    function getStatusInfo(status) {
+      const statusMap = {
+        'pending': { label: 'Хүлээгдэж буй', class: 'status-pending' },
+        'approved': { label: 'Баталгаажсан', class: 'status-active' },
+        'active': { label: 'Идэвхтэй', class: 'status-active' },
+        'paid': { label: 'Төлөгдсөн', class: 'status-paid' },
+        'rejected': { label: 'Татгалзсан', class: 'status-rejected' },
+        'cancelled': { label: 'Цуцлагдсан', class: 'status-cancelled' }
+      };
+      return statusMap[status] || { label: status, class: 'status-pending' };
+    }
+
+    function displayLoans(loans) {
+      const loanList = document.getElementById('loanList');
+      loanList.innerHTML = loans.map(loan => {
+        const statusInfo = getStatusInfo(loan.status);
+        const paidAmount = loan.paid_amount || 0;
+        const remaining = loan.amount - paidAmount;
+        const progress = loan.amount > 0 ? ((paidAmount / loan.amount) * 100).toFixed(0) : 0;
+        const monthlyPayment = Math.round(loan.amount / loan.term);
+        const createdDate = new Date(loan.created_at).toLocaleDateString('mn-MN');
+
+        if (loan.status === 'pending') {
+          return `
+            <div class="loan-card" data-status="${loan.status}">
+              <div class="loan-info">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                  <h4>Зээл #${loan.id}</h4>
+                  <span class="loan-status ${statusInfo.class}">${statusInfo.label}</span>
+                </div>
+
+                <div class="loan-meta">
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Хүсэлтийн дүн</span>
+                    <span class="loan-meta-value">₮${loan.amount.toLocaleString()}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Хугацаа</span>
+                    <span class="loan-meta-value">${loan.term} сар</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Хүсэлтийн огноо</span>
+                    <span class="loan-meta-value">${createdDate}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Зориулалт</span>
+                    <span class="loan-meta-value">${loan.purpose || '-'}</span>
+                  </div>
+                </div>
+
+                <p style="margin-top: 12px; color: var(--text-muted); font-size: 14px;">
+                  ⏱️ Таны хүсэлтийг шалгаж байна. 24 цагийн дотор хариу өгнө.
+                </p>
+              </div>
+
+              <div class="loan-actions">
+                <button class="btn btn-secondary" disabled>Дэлгэрэнгүй</button>
+              </div>
+            </div>
+          `;
+        } else if (loan.status === 'paid') {
+          return `
+            <div class="loan-card" data-status="${loan.status}">
+              <div class="loan-info">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                  <h4>Зээл #${loan.id}</h4>
+                  <span class="loan-status ${statusInfo.class}">${statusInfo.label}</span>
+                </div>
+
+                <div class="loan-meta">
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Зээлийн дүн</span>
+                    <span class="loan-meta-value">₮${loan.amount.toLocaleString()}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Төлсөн</span>
+                    <span class="loan-meta-value">₮${paidAmount.toLocaleString()}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Эхэлсэн</span>
+                    <span class="loan-meta-value">${createdDate}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Хугацаа</span>
+                    <span class="loan-meta-value">${loan.term} сар</span>
+                  </div>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+                  ✅ Бүрэн төлөгдсөн
+                </p>
+              </div>
+
+              <div class="loan-actions">
+                <button class="btn btn-secondary" disabled>Баримт харах</button>
+              </div>
+            </div>
+          `;
+        } else {
+          // Active or approved loans
+          return `
+            <div class="loan-card" data-status="${loan.status}">
+              <div class="loan-info">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                  <h4>Зээл #${loan.id}</h4>
+                  <span class="loan-status ${statusInfo.class}">${statusInfo.label}</span>
+                </div>
+
+                <div class="loan-meta">
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Зээлийн дүн</span>
+                    <span class="loan-meta-value">₮${loan.amount.toLocaleString()}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Үлдэгдэл</span>
+                    <span class="loan-meta-value">₮${remaining.toLocaleString()}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Сарын төлбөр</span>
+                    <span class="loan-meta-value">₮${monthlyPayment.toLocaleString()}</span>
+                  </div>
+                  <div class="loan-meta-item">
+                    <span class="loan-meta-label">Хугацаа</span>
+                    <span class="loan-meta-value">${loan.term} сар</span>
+                  </div>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+                  ${progress}% төлөгдсөн
+                </p>
+              </div>
+
+              <div class="loan-actions">
+                <a href="Payment.html?loan=${loan.id}" class="btn btn-primary">Төлбөр төлөх</a>
+                <button class="btn btn-secondary" disabled>Дэлгэрэнгүй</button>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+
+      // Setup filter functionality
+      setupFilters();
+    }
+
+    function setupFilters() {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const loanCards = document.querySelectorAll('.loan-card');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.dataset.filter;
+          currentFilter = filter;
+
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          loanCards.forEach(card => {
+            if (filter === 'all' || card.dataset.status === filter) {
+              card.style.display = 'grid';
+            } else {
+              card.style.display = 'none';
+            }
+          });
         });
       });
-    });
+    }
+
+    // Load loans when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadLoans);
+    } else {
+      loadLoans();
+    }
   </script>
 </body>
 </html>

@@ -183,18 +183,10 @@
       <div class="steps">
         <div class="step active">
           <div class="step-number">1</div>
-          <div class="step-label">Хувийн мэдээлэл</div>
-        </div>
-        <div class="step">
-          <div class="step-number">2</div>
           <div class="step-label">Зээлийн мэдээлэл</div>
         </div>
         <div class="step">
-          <div class="step-number">3</div>
-          <div class="step-label">Баримт</div>
-        </div>
-        <div class="step">
-          <div class="step-number">4</div>
+          <div class="step-number">2</div>
           <div class="step-label">Баталгаажуулах</div>
         </div>
       </div>
@@ -202,46 +194,10 @@
       <div class="card">
         <div class="card-body">
           <form id="applicationForm">
-            
+
             <div class="form-step active" data-step="1">
-              <h3 style="margin-bottom: 24px;">Хувийн мэдээлэл</h3>
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div class="form-group">
-                  <label class="form-label required">Овог</label>
-                  <input type="text" class="form-control" name="lastName" required>
-                </div>
-                <div class="form-group">
-                  <label class="form-label required">Нэр</label>
-                  <input type="text" class="form-control" name="firstName" required>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">Регистрийн дугаар</label>
-                <input type="text" class="form-control" name="registerId" placeholder="ААххххххх" required>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">Утасны дугаар</label>
-                <input type="tel" class="form-control" name="phone" placeholder="99001122" required>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">Имэйл хаяг</label>
-                <input type="email" class="form-control" name="email" placeholder="name@example.com" required>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">Хаяг</label>
-                <textarea class="form-control" name="address" rows="3" required></textarea>
-              </div>
-            </div>
-
-            
-            <div class="form-step" data-step="2">
               <h3 style="margin-bottom: 24px;">Зээлийн мэдээлэл</h3>
-              
+
               <div class="form-group">
                 <label class="form-label required">Зээлийн дүн</label>
                 <div class="number-display">
@@ -265,7 +221,7 @@
 
               <div class="form-group">
                 <label class="form-label required">Зориулалт</label>
-                <select class="form-control form-select" name="purpose" required>
+                <select class="form-control form-select" name="purpose" id="purposeSelect" required>
                   <option value="">Сонгох</option>
                   <option value="personal">Хувийн зарцуулалт</option>
                   <option value="business">Бизнес</option>
@@ -273,6 +229,11 @@
                   <option value="medical">Эмнэлэг</option>
                   <option value="other">Бусад</option>
                 </select>
+              </div>
+
+              <div class="form-group" id="otherPurposeGroup" style="display: none;">
+                <label class="form-label required">Зориулалт дэлгэрэнгүй</label>
+                <input type="text" class="form-control" name="otherPurpose" id="otherPurposeInput" placeholder="Зориулалтаа тодорхойлно уу">
               </div>
 
               <div class="form-group">
@@ -289,43 +250,23 @@
               </div>
             </div>
 
-            
-            <div class="form-step" data-step="3">
-              <h3 style="margin-bottom: 24px;">Баримт бичиг</h3>
-              
-              <div class="form-group">
-                <label class="form-label required">Иргэний үнэмлэх (Урд тал)</label>
-                <div class="file-upload" onclick="document.getElementById('idFront').click()">
-                  <input type="file" id="idFront" accept="image/*,.pdf">
-                  <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
-                  <div style="font-weight: 600; margin-bottom: 4px;">Файл сонгох</div>
-                  <div style="font-size: 13px; color: var(--text-muted);">PNG, JPG эсвэл PDF</div>
-                </div>
-              </div>
+
+            <div class="form-step" data-step="2">
+              <h3 style="margin-bottom: 24px;">Орлогын баримт</h3>
 
               <div class="form-group">
-                <label class="form-label required">Иргэний үнэмлэх (Хойд тал)</label>
-                <div class="file-upload" onclick="document.getElementById('idBack').click()">
-                  <input type="file" id="idBack" accept="image/*,.pdf">
+                <label class="form-label">Орлогын баримт</label>
+                <div class="file-upload" onclick="document.getElementById('incomeDoc').click()">
+                  <input type="file" id="incomeDoc" accept="image/*,.pdf">
                   <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
-                  <div style="font-weight: 600; margin-bottom: 4px;">Файл сонгох</div>
-                  <div style="font-size: 13px; color: var(--text-muted);">PNG, JPG эсвэл PDF</div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label required">Орлогын баримт</label>
-                <div class="file-upload" onclick="document.getElementById('income').click()">
-                  <input type="file" id="income" accept="image/*,.pdf">
-                  <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
-                  <div style="font-weight: 600; margin-bottom: 4px;">Файл сонгох</div>
-                  <div style="font-size: 13px; color: var(--text-muted);">Цалингийн хуудас эсвэл данс</div>
+                  <div style="font-weight: 600; margin-bottom: 4px;">Файл сонгох (Заавал биш)</div>
+                  <div style="font-size: 13px; color: var(--text-muted);">Цалингийн хуудас эсвэл данс (PNG, JPG, PDF)</div>
                 </div>
               </div>
             </div>
 
-            
-            <div class="form-step" data-step="4">
+
+            <div class="form-step" data-step="3">
               <h3 style="margin-bottom: 24px;">Баталгаажуулах</h3>
               
               <div class="summary-grid">
@@ -345,15 +286,6 @@
                   <div class="summary-label">Сарын төлбөр</div>
                   <div class="summary-value">₮135,000</div>
                 </div>
-              </div>
-
-              <div class="card" style="background: var(--bg); padding: 24px; margin-bottom: 24px;">
-                <h4 style="margin-bottom: 12px;">📋 Хувийн мэдээлэл</h4>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">
-                  <strong>Нэр:</strong> <span id="summaryName">-</span><br>
-                  <strong>Утас:</strong> <span id="summaryPhone">-</span><br>
-                  <strong>Имэйл:</strong> <span id="summaryEmail">-</span>
-                </p>
               </div>
 
               <div class="form-check" style="margin-bottom: 24px;">
@@ -399,51 +331,24 @@
   </footer>
 
   <script src="../js/utils.js"></script>
-  <script src="../js/navigation.js"></script>
   <script src="../js/api.js"></script>
+  <script src="../js/navigation.js"></script>
   <script>
+    console.log('Utils available:', typeof Utils !== 'undefined');
+    console.log('TokenManager available:', typeof TokenManager !== 'undefined');
+
     // Check if user is authenticated
     if (!TokenManager.isAuthenticated()) {
-      Utils.showToast('Та эхлээд нэвтэрнэ үү', 'error');
+      if (typeof Utils !== 'undefined' && Utils.showToast) {
+        Utils.showToast('Та эхлээд нэвтэрнэ үү', 'error');
+      }
       setTimeout(() => {
         window.location.href = 'login.html';
       }, 1500);
     }
 
-    // Pre-fill user data from localStorage
-    function prefillUserData() {
-      const user = UserManager.getUser();
-      if (user) {
-        // Fill first name and last name
-        const firstNameInput = document.querySelector('input[name="firstName"]');
-        const lastNameInput = document.querySelector('input[name="lastName"]');
-        const emailInput = document.querySelector('input[name="email"]');
-        const phoneInput = document.querySelector('input[name="phone"]');
-
-        if (firstNameInput && (user.first_name || user.firstName)) {
-          firstNameInput.value = user.first_name || user.firstName;
-        }
-        if (lastNameInput && (user.last_name || user.lastName)) {
-          lastNameInput.value = user.last_name || user.lastName;
-        }
-        if (emailInput && user.email) {
-          emailInput.value = user.email;
-        }
-        if (phoneInput && user.phone) {
-          phoneInput.value = user.phone;
-        }
-      }
-    }
-
-    // Call prefill when page loads
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', prefillUserData);
-    } else {
-      prefillUserData();
-    }
-
     let currentStep = 1;
-    const totalSteps = 4;
+    const totalSteps = 3;
 
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
@@ -479,10 +384,6 @@
 
     function updateSummary() {
       const formData = new FormData(form);
-      document.getElementById('summaryName').textContent =
-        `${formData.get('lastName')} ${formData.get('firstName')}`;
-      document.getElementById('summaryPhone').textContent = formData.get('phone');
-      document.getElementById('summaryEmail').textContent = formData.get('email');
 
       // Update loan amount and term in summary
       const amount = formData.get('amount');
@@ -498,15 +399,30 @@
     }
 
     nextBtn.addEventListener('click', () => {
+      // Step 2 (Орлогын баримт) has no required fields, so skip validation
+      if (currentStep === 2) {
+        currentStep++;
+        updateSteps();
+        return;
+      }
+
       // Validate current step before moving to next
       const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-      const inputs = currentStepElement.querySelectorAll('input[required], select[required], textarea[required]');
+      const inputs = currentStepElement.querySelectorAll('input[required]:not([type="file"]), select[required], textarea[required]');
 
       let isValid = true;
+
+      // Check text/select inputs
       inputs.forEach(input => {
+        // Skip validation for hidden inputs (like otherPurpose when not visible)
+        if (input.offsetParent === null) {
+          return;
+        }
+
         if (!input.value) {
           isValid = false;
           input.classList.add('is-invalid');
+          console.log('Invalid input:', input.name, input.value);
         } else {
           input.classList.remove('is-invalid');
         }
@@ -544,16 +460,44 @@
       });
     }
 
+    // Purpose "Бусад" handler
+    const purposeSelect = document.getElementById('purposeSelect');
+    const otherPurposeGroup = document.getElementById('otherPurposeGroup');
+    const otherPurposeInput = document.getElementById('otherPurposeInput');
+
+    if (purposeSelect) {
+      purposeSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'other') {
+          otherPurposeGroup.style.display = 'block';
+          otherPurposeInput.required = true;
+        } else {
+          otherPurposeGroup.style.display = 'none';
+          otherPurposeInput.required = false;
+          otherPurposeInput.value = '';
+        }
+      });
+    }
+
     document.getElementById('applicationForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      console.log('Form submitted!');
 
       const agreeTerms = document.getElementById('agreeTerms');
+      console.log('Checkbox checked:', agreeTerms.checked);
+
       if (!agreeTerms.checked) {
         Utils.showToast('Зээлийн гэрээ болон үйлчилгээний нөхцөлийг зөвшөөрнө үү', 'error');
         return;
       }
 
       const formData = new FormData(form);
+      console.log('Form data:', {
+        amount: formData.get('amount'),
+        term: formData.get('term'),
+        purpose: formData.get('purpose'),
+        income: formData.get('income'),
+        occupation: formData.get('occupation')
+      });
 
       // Disable submit button during request
       submitBtn.disabled = true;
@@ -563,23 +507,21 @@
         Utils.showToast('Хүсэлт илгээж байна...', 'info');
 
         // Prepare loan application data
+        let purpose = formData.get('purpose');
+        if (purpose === 'other') {
+          purpose = formData.get('otherPurpose') || 'Бусад';
+        }
+
         const loanData = {
-          firstName: formData.get('firstName'),
-          lastName: formData.get('lastName'),
-          registerId: formData.get('registerId'),
-          phone: formData.get('phone'),
-          email: formData.get('email'),
-          address: formData.get('address'),
           amount: parseFloat(formData.get('amount')),
           term: parseInt(formData.get('term')),
-          purpose: formData.get('purpose'),
-          monthlyIncome: parseFloat(formData.get('income')),
-          occupation: formData.get('occupation'),
-          status: 'pending'
+          purpose: purpose,
+          monthly_income: parseFloat(formData.get('income')),
+          occupation: formData.get('occupation')
         };
 
         // Call backend API
-        const response = await LoansAPI.createLoan(loanData);
+        const response = await LoansAPI.applyForLoan(loanData);
 
         Utils.showToast('Амжилттай илгээлээ!', 'success');
 

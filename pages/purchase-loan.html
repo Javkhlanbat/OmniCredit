@@ -262,15 +262,74 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
   <script>
-    document.getElementById('purchaseLoanForm').addEventListener('submit', function(e) {
+    document.getElementById('purchaseLoanForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
+
+      // Check if user is logged in
+      if (typeof TokenManager !== 'undefined' && !TokenManager.isAuthenticated()) {
+        if (confirm('Зээл авахын тулд нэвтрэх хэрэгтэй. Нэвтрэх хуудас руу шилжих үү?')) {
+          window.location.href = 'login.html';
+        }
+        return;
+      }
+
       const invoiceCode = document.getElementById('invoiceCode').value;
       const phoneNumber = document.getElementById('phoneNumber').value;
-      
-      if (invoiceCode && phoneNumber) {
-        alert('UI Demo - Худалдан авалтын зээл баталгаажуулалт амжилттай!\n\nКод: ' + invoiceCode + '\nУтас: ' + phoneNumber + '\n\nБодит системд backend API холбогдоно.');
+      const submitBtn = this.querySelector('button[type="submit"]');
+
+      if (!invoiceCode || !phoneNumber) {
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('Бүх талбарыг бөглөнө үү', 'error');
+        } else {
+          alert('Бүх талбарыг бөглөнө үү');
+        }
+        return;
+      }
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Баталгаажуулж байна...';
+
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('Нэхэмжлэх баталгаажуулж байна...', 'info');
+        }
+
+        // Call API if available
+        if (typeof LoansAPI !== 'undefined') {
+          await LoansAPI.applyForPurchaseLoan({
+            invoice_code: invoiceCode,
+            phone: phoneNumber,
+            merchant_name: 'Demo Merchant',
+            amount: 0
+          });
+
+          if (typeof Utils !== 'undefined') {
+            Utils.showToast('Амжилттай баталгаажлаа!', 'success');
+          } else {
+            alert('Амжилттай баталгаажлаа!');
+          }
+
+          setTimeout(() => {
+            window.location.href = 'my-loans.html';
+          }, 1500);
+        } else {
+          // Fallback
+          alert('Худалдан авалтын зээл баталгаажуулалт амжилттай!\n\nКод: ' + invoiceCode + '\nУтас: ' + phoneNumber);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Баталгаажуулах';
+        }
+      } catch (error) {
+        console.error('Purchase loan error:', error);
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast(error.message || 'Баталгаажуулахад алдаа гарлаа', 'error');
+        } else {
+          alert('Алдаа гарлаа: ' + (error.message || ''));
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Баталгаажуулах';
       }
     });
 

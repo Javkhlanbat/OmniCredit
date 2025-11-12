@@ -8,9 +8,35 @@ class Navigation {
   }
 
   init() {
+    this.updateNavLinks();
     this.setupMobileMenu();
     this.setupActiveLinks();
     this.setupStickyNav();
+    this.updateAuthButtons();
+  }
+
+  // Update navigation links based on login status
+  updateNavLinks() {
+    const navLinks = document.querySelector('.nav-links');
+    if (!navLinks) return;
+
+    // Check if user is authenticated
+    const isAuthenticated = typeof TokenManager !== 'undefined' && TokenManager.isAuthenticated();
+
+    // Base navigation links
+    const baseLinks = `
+      <a href="index.html">Нүүр</a>
+      <a href="zeelhuudas.html">Зээлийн тооцоолуур</a>
+      <a href="aboutus.html">Бидний тухай</a>
+      <a href="FAQ.html">Түгээмэл асуулт</a>
+    `;
+
+    if (isAuthenticated) {
+      // Add "Миний зээл" for authenticated users
+      navLinks.innerHTML = baseLinks + `<a href="my-loans.html">Миний зээл</a>`;
+    } else {
+      navLinks.innerHTML = baseLinks;
+    }
   }
 
   // Mobile menu toggle
@@ -72,6 +98,49 @@ class Navigation {
 
       lastScroll = currentScroll;
     });
+  }
+
+  // Update auth buttons based on login status
+  updateAuthButtons() {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (!authButtons) return;
+
+    // Check if user is authenticated
+    const isAuthenticated = typeof TokenManager !== 'undefined' && TokenManager.isAuthenticated();
+
+    if (isAuthenticated) {
+      // Show dashboard link and logout button for authenticated users
+      const user = typeof UserManager !== 'undefined' ? UserManager.getUser() : null;
+      const userName = user ? (user.first_name || user.firstName || 'Хэрэглэгч') : 'Хэрэглэгч';
+
+      authButtons.innerHTML = `
+        <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
+        <button id="logoutBtn" class="btn btn-primary btn-sm">Гарах</button>
+      `;
+
+      // Setup logout handler
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          if (confirm('Гарахдаа итгэлтэй байна уу?')) {
+            if (typeof UserManager !== 'undefined') {
+              UserManager.logout();
+            } else {
+              // Fallback logout
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('userData');
+              window.location.href = 'login.html';
+            }
+          }
+        });
+      }
+    } else {
+      // Show login and register buttons for non-authenticated users
+      authButtons.innerHTML = `
+        <a href="login.html" class="btn btn-ghost btn-sm">Нэвтрэх</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Бүртгүүлэх</a>
+      `;
+    }
   }
 
   // Generate navigation HTML

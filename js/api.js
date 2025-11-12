@@ -204,43 +204,69 @@ const AuthAPI = {
 
 // Loans API
 const LoansAPI = {
-    async createLoan(loanData) {
-        return await api.post('/loans', loanData);
+    async applyForLoan(loanData) {
+        return await api.post('/loans/apply', loanData);
     },
 
-    async getLoans(params = {}) {
-        return await api.get('/loans', params);
+    async getMyLoans() {
+        return await api.get('/loans/my');
     },
 
     async getLoanById(loanId) {
         return await api.get(`/loans/${loanId}`);
     },
 
-    async updateLoan(loanId, loanData) {
-        return await api.put(`/loans/${loanId}`, loanData);
+    async getMyLoanStats() {
+        return await api.get('/loans/stats');
     },
 
-    async deleteLoan(loanId) {
-        return await api.delete(`/loans/${loanId}`);
+    async applyForPurchaseLoan(purchaseData) {
+        return await api.post('/loans/purchase', purchaseData);
+    },
+
+    async getMyPurchaseLoans() {
+        return await api.get('/loans/purchase/my');
+    },
+
+    // Admin functions
+    async getAllLoans() {
+        return await api.get('/loans/admin/all');
+    },
+
+    async updateLoanStatus(loanId, status) {
+        return await api.put(`/loans/admin/${loanId}/status`, { status });
     }
 };
 
 // Payments API
 const PaymentsAPI = {
-    async createPayment(paymentData) {
+    async makePayment(paymentData) {
         return await api.post('/payments', paymentData);
     },
 
-    async getPayments(params = {}) {
-        return await api.get('/payments', params);
+    async getMyPayments() {
+        return await api.get('/payments/my');
+    },
+
+    async getLoanPayments(loanId) {
+        return await api.get(`/payments/loan/${loanId}`);
     },
 
     async getPaymentById(paymentId) {
         return await api.get(`/payments/${paymentId}`);
     },
 
-    async getPaymentsByLoan(loanId) {
-        return await api.get(`/payments/loan/${loanId}`);
+    async getMyPaymentStats() {
+        return await api.get('/payments/stats');
+    },
+
+    async checkLoanBalance(loanId) {
+        return await api.get(`/payments/loan/${loanId}/balance`);
+    },
+
+    // Admin functions
+    async getAllPayments() {
+        return await api.get('/payments/admin/all');
     }
 };
 

@@ -245,89 +245,19 @@
       </button>
     </div>
 
-    <div class="payment-list">
-      <div class="payment-item">
-        <div class="payment-info">
-          <div class="payment-icon success">✓</div>
-          <div class="payment-details">
-            <h4>Сарын төлбөр #12</h4>
-            <div class="payment-date">2024-12-15 14:30</div>
-          </div>
-        </div>
-        <div class="payment-amount">
-          <div class="amount success">-₮135,000</div>
-          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
-        </div>
+    <div class="payment-list" id="paymentList">
+      <div style="text-align: center; padding: 48px;">
+        <p style="color: var(--text-muted);">Төлбөрийн түүх уншиж байна...</p>
       </div>
+    </div>
 
-      <div class="payment-item">
-        <div class="payment-info">
-          <div class="payment-icon success">✓</div>
-          <div class="payment-details">
-            <h4>Сарын төлбөр #11</h4>
-            <div class="payment-date">2024-11-15 09:15</div>
-          </div>
-        </div>
-        <div class="payment-amount">
-          <div class="amount success">-₮135,000</div>
-          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
-        </div>
-      </div>
-
-      <div class="payment-item">
-        <div class="payment-info">
-          <div class="payment-icon success">✓</div>
-          <div class="payment-details">
-            <h4>Сарын төлбөр #10</h4>
-            <div class="payment-date">2024-10-15 16:45</div>
-          </div>
-        </div>
-        <div class="payment-amount">
-          <div class="amount success">-₮135,000</div>
-          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
-        </div>
-      </div>
-
-      <div class="payment-item">
-        <div class="payment-info">
-          <div class="payment-icon success">✓</div>
-          <div class="payment-details">
-            <h4>Сарын төлбөр #9</h4>
-            <div class="payment-date">2024-09-15 11:20</div>
-          </div>
-        </div>
-        <div class="payment-amount">
-          <div class="amount success">-₮135,000</div>
-          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
-        </div>
-      </div>
-
-      <div class="payment-item">
-        <div class="payment-info">
-          <div class="payment-icon success">✓</div>
-          <div class="payment-details">
-            <h4>Сарын төлбөр #8</h4>
-            <div class="payment-date">2024-08-15 13:30</div>
-          </div>
-        </div>
-        <div class="payment-amount">
-          <div class="amount success">-₮135,000</div>
-          <span class="payment-status status-success">АМЖИЛТТАЙ</span>
-        </div>
-      </div>
-
-      <div class="payment-item">
-        <div class="payment-info">
-          <div class="payment-icon success">✓</div>
-          <div class="payment-details">
-            <h4>Зээл олголт</h4>
-            <div class="payment-date">2024-07-15 10:00</div>
-          </div>
-        </div>
-        <div class="payment-amount">
-          <div class="amount" style="color: var(--primary);">+₮1,500,000</div>
-          <span class="payment-status status-success">ОЛГОСОН</span>
-        </div>
+    <div id="noPaymentsMessage" style="display: none;">
+      <div class="card" style="text-align: center; padding: 48px;">
+        <div style="font-size: 64px; margin-bottom: 16px;">📋</div>
+        <h3>Төлбөрийн түүх байхгүй</h3>
+        <p style="color: var(--text-muted); margin: 16px 0;">
+          Та одоогоор ямар ч төлбөр төлөөгүй байна
+        </p>
       </div>
     </div>
 
@@ -363,5 +293,86 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth-guard.js"></script>
+  <script>
+    // Load payment history
+    async function loadPayments() {
+      try {
+        const payments = await PaymentsAPI.getMyPayments();
+
+        const paymentList = document.getElementById('paymentList');
+        const noPaymentsMessage = document.getElementById('noPaymentsMessage');
+
+        if (!payments || payments.length === 0) {
+          paymentList.style.display = 'none';
+          noPaymentsMessage.style.display = 'block';
+          return;
+        }
+
+        paymentList.innerHTML = payments.map(payment => {
+          const date = new Date(payment.created_at);
+          const formattedDate = date.toLocaleString('mn-MN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          const statusMap = {
+            'completed': { label: 'АМЖИЛТТАЙ', class: 'status-success', icon: '✓' },
+            'pending': { label: 'ХҮЛЭЭГДЭЖ БУЙ', class: 'status-pending', icon: '⏳' },
+            'failed': { label: 'АМЖИЛТГҮЙ', class: 'status-failed', icon: '✗' }
+          };
+
+          const status = statusMap[payment.status] || statusMap['pending'];
+
+          return `
+            <div class="payment-item">
+              <div class="payment-info">
+                <div class="payment-icon ${payment.status}">${status.icon}</div>
+                <div class="payment-details">
+                  <h4>Төлбөр #${payment.id} - Зээл #${payment.loan_id}</h4>
+                  <div class="payment-date">${formattedDate}</div>
+                </div>
+              </div>
+              <div class="payment-amount">
+                <div class="amount ${payment.status}">-₮${payment.amount.toLocaleString()}</div>
+                <span class="payment-status ${status.class}">${status.label}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Update summary stats
+        const stats = await PaymentsAPI.getMyPaymentStats();
+        if (stats) {
+          const totalPaidEl = document.getElementById('totalPaid');
+          const paymentsCountEl = document.getElementById('paymentsCount');
+          const thisMonthEl = document.getElementById('thisMonth');
+
+          if (totalPaidEl) totalPaidEl.textContent = `₮${(stats.total_paid || 0).toLocaleString()}`;
+          if (paymentsCountEl) paymentsCountEl.textContent = stats.payment_count || 0;
+          if (thisMonthEl) thisMonthEl.textContent = `₮${(stats.this_month || 0).toLocaleString()}`;
+        }
+
+      } catch (error) {
+        console.error('Load payments error:', error);
+        document.getElementById('paymentList').innerHTML = `
+          <div style="text-align: center; padding: 48px;">
+            <p style="color: var(--text-muted);">Төлбөрийн түүх уншихад алдаа гарлаа</p>
+          </div>
+        `;
+      }
+    }
+
+    // Load payments when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadPayments);
+    } else {
+      loadPayments();
+    }
+  </script>
 </body>
 </html>

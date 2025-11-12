@@ -264,7 +264,7 @@
         document.getElementById('noLoansMessage').style.display = 'none';
         document.getElementById('loanList').innerHTML = '';
 
-        const loans = await LoansAPI.getLoans();
+        const loans = await LoansAPI.getMyLoans();
         allLoans = loans || [];
 
         if (allLoans.length === 0) {

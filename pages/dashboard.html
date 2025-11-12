@@ -77,7 +77,7 @@
       </div>
       <div class="auth-buttons">
         <a href="profile.html" class="btn btn-ghost btn-sm">👤 Профайл</a>
-        <a href="#" class="btn btn-primary btn-sm" onclick="alert('Гарах'); return false;">Гарах</a>
+        <button class="btn btn-primary btn-sm" onclick="handleLogout()">Гарах</button>
       </div>
       <button class="mobile-menu-toggle">☰</button>
     </nav>
@@ -215,6 +215,13 @@
   <script src="../js/api.js"></script>
   <script src="../js/auth-guard.js"></script>
   <script>
+    // Logout handler
+    function handleLogout() {
+      if (confirm('Гарахдаа итгэлтэй байна уу?')) {
+        AuthAPI.logout();
+      }
+    }
+
     // Load dashboard data
     async function loadDashboard() {
       try {
@@ -229,7 +236,7 @@
         }
 
         // Load user's loans
-        const loans = await LoansAPI.getLoans();
+        const loans = await LoansAPI.getMyLoans();
 
         if (loans && loans.length > 0) {
           // Filter active loans

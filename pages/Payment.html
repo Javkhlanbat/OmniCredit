@@ -121,6 +121,13 @@
               </div>
 
               <form id="paymentForm">
+                <div class="form-group">
+                  <label class="form-label required">Зээл сонгох</label>
+                  <select id="loanSelect" class="form-control" required>
+                    <option value="">Уншиж байна...</option>
+                  </select>
+                </div>
+
                 <div id="cardForm">
                   <div class="form-group">
                     <label class="form-label required">Картын дугаар</label>
@@ -145,18 +152,18 @@
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Төлбөрийн дүн</label>
+                  <label class="form-label required">Төлбөрийн дүн</label>
                   <div class="number-display">
                     <span class="currency">₮</span>
-                    <input type="number" value="135000" min="1000">
+                    <input type="number" id="amount" value="0" min="1000" required>
                   </div>
                   <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
-                    Сарын төлбөр: ₮135,000
+                    Доод дүн: ₮1,000
                   </p>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block btn-lg">
-                  ₮135,000 төлөх
+                  Төлбөр төлөх
                 </button>
               </form>
             </div>
@@ -251,25 +258,115 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth-guard.js"></script>
   <script>
+    let selectedLoanId = null;
+    let selectedMethod = null;
+
+    // Get loan ID from URL parameter if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const loanIdFromUrl = urlParams.get('loan');
+
+    // Load user's active loans
+    async function loadActiveLoans() {
+      try {
+        const loans = await LoansAPI.getMyLoans();
+        const activeLoans = loans.filter(loan =>
+          loan.status === 'active' || loan.status === 'approved'
+        );
+
+        const loanSelect = document.getElementById('loanSelect');
+        if (loanSelect && activeLoans.length > 0) {
+          loanSelect.innerHTML = activeLoans.map(loan => {
+            const remaining = loan.amount - (loan.paid_amount || 0);
+            return `<option value="${loan.id}">Зээл #${loan.id} - Үлдэгдэл: ₮${remaining.toLocaleString()}</option>`;
+          }).join('');
+
+          // Select loan from URL if provided
+          if (loanIdFromUrl) {
+            loanSelect.value = loanIdFromUrl;
+          }
+        }
+      } catch (error) {
+        console.error('Load loans error:', error);
+      }
+    }
+
+    // Payment method selection
     document.querySelectorAll('.method-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
+        selectedMethod = card.dataset.method;
       });
     });
 
-    document.getElementById('paymentForm').addEventListener('submit', (e) => {
+    // Payment form submission
+    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      Utils.showToast('Төлбөр боловсруулж байна...', 'info');
-      
-      setTimeout(() => {
+
+      const form = e.target;
+      const loanSelect = document.getElementById('loanSelect');
+      const amountInput = document.getElementById('amount');
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      if (!loanSelect || !loanSelect.value) {
+        Utils.showToast('Зээл сонгоно уу', 'error');
+        return;
+      }
+
+      if (!selectedMethod) {
+        Utils.showToast('Төлбөрийн хэрэгсэл сонгоно уу', 'error');
+        return;
+      }
+
+      const loanId = parseInt(loanSelect.value);
+      const amount = parseFloat(amountInput.value);
+
+      if (!amount || amount <= 0) {
+        Utils.showToast('Төлбөрийн дүн оруулна уу', 'error');
+        return;
+      }
+
+      // Disable submit button
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Төлбөр боловсруулж байна...';
+
+      try {
+        Utils.showToast('Төлбөр боловсруулж байна...', 'info');
+
+        // Call backend API
+        const response = await PaymentsAPI.makePayment({
+          loan_id: loanId,
+          amount: amount,
+          payment_method: selectedMethod
+        });
+
         Utils.showToast('Амжилттай төлөгдлөө!', 'success');
+
+        // Redirect to payment history
         setTimeout(() => {
           window.location.href = 'paymenthistory.html';
         }, 1500);
-      }, 2000);
+
+      } catch (error) {
+        console.error('Payment error:', error);
+        Utils.showToast(error.message || 'Төлбөр төлөхөд алдаа гарлаа', 'error');
+
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
     });
+
+    // Load loans when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadActiveLoans);
+    } else {
+      loadActiveLoans();
+    }
   </script>
 </body>
 </html>

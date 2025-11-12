@@ -113,25 +113,11 @@
             <p style="color: var(--text-muted);">Өөрийн дансанд нэвтрэх</p>
           </div>
 
-          <div class="social-login">
-            <button class="btn-social social-btn">
-              <span>📘</span>
-              Facebook
-            </button>
-            <button class="btn-social social-btn">
-              <span>🔍</span>
-              Google
-            </button>
-          </div>
-
-          <div class="divider">
-            <span>Эсвэл</span>
-          </div>
-
           <form id="loginForm">
             <div class="form-group">
-              <label class="form-label required">Имэйл хаяг</label>
-              <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com" required>
+              <label class="form-label required">Утасны дугаар</label>
+              <input type="tel" id="loginPhone" class="form-control" placeholder="99001122" required maxlength="8">
+              <span class="form-text">8 оронтой дугаар</span>
             </div>
 
             <div class="form-group">
@@ -202,6 +188,12 @@
       window.location.href = 'dashboard.html';
     }
 
+    // Format phone number input
+    const phoneInput = document.getElementById('loginPhone');
+    phoneInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').substring(0, 8);
+    });
+
     // Toggle password visibility
     const loginPassword = document.getElementById('loginPassword');
     const toggleLoginPassword = document.getElementById('toggleLoginPassword');
@@ -212,24 +204,34 @@
       toggleLoginPassword.textContent = type === 'password' ? '👁️' : '🙈';
     });
 
+    // Login form submit
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const form = e.target;
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const submitBtn = form.querySelector('button[type="submit"]');
+      const phone = phoneInput.value;
+      const password = loginPassword.value;
+      const submitBtn = e.target.querySelector('button[type="submit"]');
 
-      // Disable submit button during request
+      if (!phone || phone.length < 8) {
+        Utils.showToast('Утасны дугаар буруу байна', 'error');
+        return;
+      }
+
+      if (!password) {
+        Utils.showToast('Нууц үг оруулна уу', 'error');
+        return;
+      }
+
+      // Disable submit button
       submitBtn.disabled = true;
       submitBtn.textContent = 'Нэвтэрч байна...';
 
       try {
         Utils.showToast('Нэвтэрч байна...', 'info');
 
-        // Call backend API
+        // Call backend API with phone
         const response = await AuthAPI.login({
-          email: email,
+          phone: phone,
           password: password
         });
 

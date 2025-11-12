@@ -102,17 +102,17 @@
       </div>
       <div class="auth-buttons">
         <a href="dashboard.html" class="btn btn-primary btn-sm">Dashboard</a>
-        <a href="#" class="btn btn-ghost btn-sm" onclick="alert('Гарах'); return false;">Гарах</a>
+        <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Гарах</button>
       </div>
       <button class="mobile-menu-toggle">☰</button>
     </nav>
 
     <div class="profile-container">
       <div class="profile-header">
-        <div class="profile-avatar">ББ</div>
+        <div class="profile-avatar" id="userAvatar">--</div>
         <div>
-          <h1 style="margin-bottom: 8px;">Батбаяр Баттулга</h1>
-          <p style="color: var(--text-muted); margin-bottom: 12px;">batbayar@email.com</p>
+          <h1 style="margin-bottom: 8px;" id="userName">Уншиж байна...</h1>
+          <p style="color: var(--text-muted); margin-bottom: 12px;" id="userEmail">--</p>
           <span style="padding: 6px 12px; background: white; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--primary);">
             Баталгаажсан ✓
           </span>
@@ -132,36 +132,31 @@
             <h3>Хувийн мэдээлэл</h3>
           </div>
           <div class="card-body">
-            <form>
+            <form id="profileForm">
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                 <div class="form-group">
                   <label class="form-label">Овог</label>
-                  <input type="text" class="form-control" value="Батбаяр">
+                  <input type="text" id="lastName" class="form-control" value="">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Нэр</label>
-                  <input type="text" class="form-control" value="Баттулга">
+                  <input type="text" id="firstName" class="form-control" value="">
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label">Имэйл хаяг</label>
-                <input type="email" class="form-control" value="batbayar@email.com">
+                <input type="email" id="email" class="form-control" value="" readonly>
               </div>
 
               <div class="form-group">
                 <label class="form-label">Утасны дугаар</label>
-                <input type="tel" class="form-control" value="99001122">
+                <input type="tel" id="phone" class="form-control" value="">
               </div>
 
               <div class="form-group">
                 <label class="form-label">Регистр</label>
-                <input type="text" class="form-control" value="УА12345678" disabled>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Хаяг</label>
-                <textarea class="form-control" rows="3">УБ, Баянгол дүүрэг, 1-р хороо</textarea>
+                <input type="text" id="registerId" class="form-control" value="" disabled>
               </div>
 
               <button type="submit" class="btn btn-primary">Хадгалах</button>
@@ -302,6 +297,44 @@
   <script src="../js/api.js"></script>
   <script src="../js/auth-guard.js"></script>
   <script>
+    function handleLogout() {
+      if (confirm('Гарахдаа итгэлтэй байна уу?')) {
+        AuthAPI.logout();
+      }
+    }
+
+    // Load user profile
+    async function loadProfile() {
+      try {
+        const profile = await AuthAPI.getProfile();
+
+        if (profile) {
+          // Update header
+          const firstName = profile.first_name || '';
+          const lastName = profile.last_name || '';
+          const fullName = `${lastName} ${firstName}`.trim();
+
+          document.getElementById('userName').textContent = fullName || 'Хэрэглэгч';
+          document.getElementById('userEmail').textContent = profile.email || '';
+
+          // Avatar initials
+          const initials = (lastName.charAt(0) + firstName.charAt(0)).toUpperCase() || 'XX';
+          document.getElementById('userAvatar').textContent = initials;
+
+          // Update form fields
+          document.getElementById('firstName').value = firstName;
+          document.getElementById('lastName').value = lastName;
+          document.getElementById('email').value = profile.email || '';
+          document.getElementById('phone').value = profile.phone || '';
+          document.getElementById('registerId').value = profile.register_number || '';
+        }
+      } catch (error) {
+        console.error('Load profile error:', error);
+        Utils.showToast('Профайл уншихад алдаа гарлаа', 'error');
+      }
+    }
+
+    // Tabs
     const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -316,6 +349,13 @@
         document.getElementById(tabId).classList.add('active');
       });
     });
+
+    // Load profile on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadProfile);
+    } else {
+      loadProfile();
+    }
   </script>
 </body>
 </html>

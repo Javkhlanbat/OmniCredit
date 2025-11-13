@@ -5,7 +5,9 @@
 
 // API Base URL Configuration
 const API_CONFIG = {
-    BASE_URL: 'http://localhost:5000/api',
+    BASE_URL: window.location.hostname === 'localhost' 
+        ? 'http://localhost:5000/api'
+        : 'https://omnicredit-backend.vercel.app/api', // Change to your backend URL
     TIMEOUT: 10000 // 10 seconds
 };
 

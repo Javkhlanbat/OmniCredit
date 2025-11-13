@@ -34,7 +34,7 @@ const validateRegistration = (req, res, next) => {
   }
 
   // Email шалгах
-  if (!validateEmail(email)) {
+  if (email && !validateEmail(email)) {
     return res.status(400).json({
       error: 'И-мэйл буруу',
       message: 'Зөв и-мэйл хаяг оруулна уу'
@@ -70,12 +70,12 @@ const validateRegistration = (req, res, next) => {
 
 // Нэвтрэх өгөгдөл шалгах
 const validateLogin = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, phone, password } = req.body;
 
-  if (!email || !password) {
+  if ((!email && !phone) || !password) {
     return res.status(400).json({
       error: 'Дутуу мэдээлэл',
-      message: 'И-мэйл болон нууц үг оруулна уу'
+      message: 'И-мэйл эсвэл утас болон нууц үг оруулна уу'
     });
   }
 
@@ -83,6 +83,13 @@ const validateLogin = (req, res, next) => {
     return res.status(400).json({
       error: 'И-мэйл буруу',
       message: 'Зөв и-мэйл хаяг оруулна уу'
+    });
+  }
+
+  if (phone && !validatePhone(phone)) {
+    return res.status(400).json({
+      error: 'Утасны дугаар буруу',
+      message: '8 оронтой монгол дугаар оруулна уу'
     });
   }
 

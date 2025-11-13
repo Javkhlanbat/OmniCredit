@@ -4,10 +4,13 @@
  */
 
 // API Base URL Configuration
+const LOCAL_HOSTS = ['localhost', '127.0.0.1', '::1'];
+const isLocalHost = LOCAL_HOSTS.includes(window.location.hostname);
+
 const API_CONFIG = {
-    BASE_URL: window.location.hostname === 'localhost' 
+    BASE_URL: isLocalHost
         ? 'http://localhost:5000/api'
-        : 'https://omnicredit-backend.vercel.app/api', // Change to your backend URL
+        : 'http://localhost:5000/api', // Update this when you redeploy backend
     TIMEOUT: 10000 // 10 seconds
 };
 

@@ -28,6 +28,14 @@ const findUserByEmail = async (email) => {
   return result.rows[0];
 };
 
+const findUserByPhone = async (phone) => {
+  const result = await query(
+    'SELECT * FROM users WHERE phone = $1',
+    [phone]
+  );
+  return result.rows[0];
+};
+
 // ID-гаар хэрэглэгч хайх
 const findUserById = async (id) => {
   const result = await query(
@@ -88,6 +96,7 @@ const getAllUsers = async () => {
 module.exports = {
   createUser,
   findUserByEmail,
+  findUserByPhone,
   findUserById,
   verifyPassword,
   updateUser,

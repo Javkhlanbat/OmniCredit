@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, verifyPassword, findUserById } = require('../models/userModel');
+const { createUser, findUserByEmail, findUserByPhone, verifyPassword, findUserById } = require('../models/userModel');
 
 // JWT token үүсгэх
 const generateToken = (user) => {
@@ -65,10 +65,15 @@ const register = async (req, res) => {
 // Нэвтрэх
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, phone, password } = req.body;
 
     // Хэрэглэгч хайх
-    const user = await findUserByEmail(email);
+    let user = null;
+    if (email) {
+      user = await findUserByEmail(email);
+    } else if (phone) {
+      user = await findUserByPhone(phone);
+    }
     if (!user) {
       return res.status(401).json({
         error: 'Нэвтрэх нэр эсвэл нууц үг буруу',

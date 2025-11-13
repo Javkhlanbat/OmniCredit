@@ -1,0 +1,47 @@
+/* =============================================
+   OmniCredit - GREEN THEME (Ногоон - Амьсгалан)
+   ============================================= */
+
+:root {
+  /* Green өнгөнүүд */
+  --primary: #14b8a6;
+  --primary-dark: #0d9488;
+  --primary-light: #2dd4bf;
+  --secondary: #a7f3d0;
+  --accent: #10b981;
+
+  /* Gradient өнгөнүүд */
+  --gradient-peachy: linear-gradient(135deg, #14b8a6, #10b981);
+  --gradient-sunset: linear-gradient(135deg, #0d9488, #14b8a6);
+  --gradient-soft: linear-gradient(135deg, #E0F7FA, #E8F5E9);
+
+  /* Гэгээлэг арын дэвсгэр */
+  --bg: #f0fdf4;
+  --text: #064e3b;
+  --text-muted: #047857;
+  --card: #FFFFFF;
+  --card-hover: #d1fae5;
+  --line: #a7f3d0;
+
+  /* Сүүдэр */
+  --shadow-sm: 0 2px 8px rgba(20, 184, 166, 0.08);
+  --shadow: 0 8px 24px rgba(20, 184, 166, 0.12);
+  --shadow-lg: 0 16px 40px rgba(20, 184, 166, 0.15);
+  --shadow-hover: 0 12px 32px rgba(20, 184, 166, 0.18);
+
+  /* Радиусууд */
+  --radius-sm: 12px;
+  --radius: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  /* Transition */
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s ease;
+}
+
+
+
+
+
+

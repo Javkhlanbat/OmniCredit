@@ -90,8 +90,8 @@
 
     <div class="payment-container">
       <h1 style="margin-bottom: 8px;">Төлбөр төлөх</h1>
-      <p style="color: var(--text-muted); margin-bottom: 32px;">
-        Зээл #12345
+      <p id="pageSubtitle" style="color: var(--text-muted); margin-bottom: 32px;">
+        Зээлээ сонгоод төлбөр төлөх боломжтой
       </p>
 
       <div class="payment-grid">
@@ -175,39 +175,9 @@
             <div class="card-header">
               <h3>Нэхэмжлэх</h3>
             </div>
-            <div class="card-body">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                <span style="color: var(--text-muted);">Зээл #12345</span>
-                <span style="font-weight: 700;">Идэвхтэй</span>
-              </div>
-
-              <div style="padding: 16px; background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                  <span style="color: var(--text-muted);">Үндсэн зээл:</span>
-                  <span style="font-weight: 700;">₮120,000</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                  <span style="color: var(--text-muted);">Хүү:</span>
-                  <span style="font-weight: 700;">₮15,000</span>
-                </div>
-                <div style="height: 1px; background: var(--line); margin: 16px 0;"></div>
-                <div style="display: flex; justify-content: space-between;">
-                  <span style="font-weight: 700;">Нийт:</span>
-                  <span style="font-weight: 800; font-size: 1.25rem; color: var(--primary);">₮135,000</span>
-                </div>
-              </div>
-
-              <div style="padding: 12px; background: #DFFFD8; border-radius: var(--radius-sm); margin-bottom: 16px;">
-                <p style="margin: 0; font-size: 13px; color: #10b981;">
-                  ✅ Хугацаа: 2025-01-15<br>
-                  Өнөөдөр төлбөл хугацаа хэтрүүлэхгүй
-                </p>
-              </div>
-
-              <div style="font-size: 13px; color: var(--text-muted);">
-                <p><strong>Үлдэгдэл:</strong> ₮810,000</p>
-                <p><strong>Төлөгдсөн:</strong> ₮690,000</p>
-                <p><strong>Үлдсэн сар:</strong> 6</p>
+            <div class="card-body" id="invoiceDetails">
+              <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                <p>Зээл сонгоно уу</p>
               </div>
             </div>
           </div>
@@ -262,7 +232,8 @@
   <script src="js/auth-guard.js"></script>
   <script>
     let selectedLoanId = null;
-    let selectedMethod = null;
+    let selectedMethod = 'card';
+    let allLoans = [];
 
     // Get loan ID from URL parameter if present
     const urlParams = new URLSearchParams(window.location.search);
@@ -276,21 +247,105 @@
           loan.status === 'active' || loan.status === 'approved'
         );
 
+        allLoans = activeLoans;
+
         const loanSelect = document.getElementById('loanSelect');
         if (loanSelect && activeLoans.length > 0) {
-          loanSelect.innerHTML = activeLoans.map(loan => {
-            const remaining = loan.amount - (loan.paid_amount || 0);
+          loanSelect.innerHTML = '<option value="">Зээл сонгох...</option>' + activeLoans.map(loan => {
+            const remaining = loan.total_amount - (loan.paid_amount || 0);
             return `<option value="${loan.id}">Зээл #${loan.id} - Үлдэгдэл: ₮${remaining.toLocaleString()}</option>`;
           }).join('');
 
           // Select loan from URL if provided
           if (loanIdFromUrl) {
             loanSelect.value = loanIdFromUrl;
+            updateInvoice(parseInt(loanIdFromUrl));
           }
+
+          // Add change event listener
+          loanSelect.addEventListener('change', (e) => {
+            if (e.target.value) {
+              updateInvoice(parseInt(e.target.value));
+            } else {
+              clearInvoice();
+            }
+          });
+        } else {
+          loanSelect.innerHTML = '<option value="">Идэвхтэй зээл байхгүй байна</option>';
         }
       } catch (error) {
         console.error('Load loans error:', error);
+        const loanSelect = document.getElementById('loanSelect');
+        if (loanSelect) {
+          loanSelect.innerHTML = '<option value="">Алдаа гарлаа</option>';
+        }
       }
+    }
+
+    // Update invoice details based on selected loan
+    function updateInvoice(loanId) {
+      const loan = allLoans.find(l => l.id === loanId);
+      if (!loan) return;
+
+      selectedLoanId = loanId;
+
+      const paidAmount = loan.paid_amount || 0;
+      const remaining = loan.total_amount - paidAmount;
+      const interest = loan.total_amount - loan.amount;
+
+      const invoiceDetails = document.getElementById('invoiceDetails');
+      invoiceDetails.innerHTML = `
+        <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+          <span style="color: var(--text-muted);">Зээл #${loan.id}</span>
+          <span style="font-weight: 700; color: var(--success);">Идэвхтэй</span>
+        </div>
+
+        <div style="padding: 16px; background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-muted);">Үндсэн зээл:</span>
+            <span style="font-weight: 700;">₮${loan.amount.toLocaleString()}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-muted);">Хүү (${loan.interest_rate}%):</span>
+            <span style="font-weight: 700;">₮${interest.toLocaleString()}</span>
+          </div>
+          <div style="height: 1px; background: var(--line); margin: 16px 0;"></div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 700;">Нийт дүн:</span>
+            <span style="font-weight: 800; font-size: 1.25rem; color: var(--primary);">₮${loan.total_amount.toLocaleString()}</span>
+          </div>
+        </div>
+
+        <div style="padding: 12px; background: ${remaining > 0 ? '#DFFFD8' : '#E0E7FF'}; border-radius: var(--radius-sm); margin-bottom: 16px;">
+          <p style="margin: 0; font-size: 13px; color: ${remaining > 0 ? '#10b981' : '#4f46e5'};">
+            ${remaining > 0 ? '⏰ Сарын төлбөр: ₮' + loan.monthly_payment.toLocaleString() : '✅ Зээл бүрэн төлөгдсөн'}
+          </p>
+        </div>
+
+        <div style="font-size: 13px; color: var(--text-muted);">
+          <p><strong>Үлдэгдэл:</strong> ₮${remaining.toLocaleString()}</p>
+          <p><strong>Төлөгдсөн:</strong> ₮${paidAmount.toLocaleString()}</p>
+          <p><strong>Хугацаа:</strong> ${loan.term_months} сар</p>
+        </div>
+      `;
+
+      // Update amount input with monthly payment
+      const amountInput = document.getElementById('amount');
+      if (amountInput && remaining > 0) {
+        amountInput.value = Math.min(loan.monthly_payment, remaining);
+        amountInput.max = remaining;
+      }
+    }
+
+    // Clear invoice when no loan selected
+    function clearInvoice() {
+      const invoiceDetails = document.getElementById('invoiceDetails');
+      invoiceDetails.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <p>Зээл сонгоно уу</p>
+        </div>
+      `;
+      selectedLoanId = null;
     }
 
     // Payment method selection

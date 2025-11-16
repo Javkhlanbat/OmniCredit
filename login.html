@@ -186,7 +186,12 @@
   <script>
     // Check if already logged in
     if (TokenManager.isAuthenticated()) {
-      window.location.href = 'dashboard.html';
+      const user = UserManager.getUser();
+      if (user && user.is_admin) {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
     }
 
     // Format phone number input
@@ -238,9 +243,14 @@
 
         Utils.showToast('Амжилттай нэвтэрлээ!', 'success');
 
-        // Redirect to dashboard
+        // Redirect based on user role
         setTimeout(() => {
-          window.location.href = 'dashboard.html';
+          const user = UserManager.getUser();
+          if (user && user.is_admin) {
+            window.location.href = 'admin.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
         }, 500);
 
       } catch (error) {

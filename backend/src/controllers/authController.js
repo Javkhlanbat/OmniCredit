@@ -48,7 +48,8 @@ const register = async (req, res) => {
         first_name: newUser.first_name,
         last_name: newUser.last_name,
         phone: newUser.phone,
-        register_number: newUser.register_number
+        register_number: newUser.register_number,
+        is_admin: newUser.is_admin || false
       },
       token
     });
@@ -101,7 +102,8 @@ const login = async (req, res) => {
         first_name: user.first_name,
         last_name: user.last_name,
         phone: user.phone,
-        register_number: user.register_number
+        register_number: user.register_number,
+        is_admin: user.is_admin || false
       },
       token
     });
@@ -135,6 +137,7 @@ const getProfile = async (req, res) => {
         last_name: user.last_name,
         phone: user.phone,
         register_number: user.register_number,
+        is_admin: user.is_admin || false,
         created_at: user.created_at
       }
     });
@@ -165,7 +168,8 @@ const verifyToken = async (req, res) => {
         id: user.id,
         email: user.email,
         first_name: user.first_name,
-        last_name: user.last_name
+        last_name: user.last_name,
+        is_admin: user.is_admin || false
       }
     });
 

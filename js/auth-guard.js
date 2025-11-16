@@ -37,6 +37,20 @@
   if (TokenManager.isAuthenticated()) {
     const user = UserManager.getUser();
 
+    // Check if admin trying to access regular dashboard
+    if (user && user.is_admin && currentPage.includes('dashboard.html')) {
+      console.log('Admin user detected. Redirecting to admin dashboard...');
+      window.location.href = 'admin.html';
+      return;
+    }
+
+    // Check if regular user trying to access admin dashboard
+    if (user && !user.is_admin && currentPage.includes('admin.html')) {
+      console.log('Non-admin user detected. Redirecting to regular dashboard...');
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
     // Update auth buttons in navigation
     const authButtonsContainer = document.querySelector('.auth-buttons');
     if (authButtonsContainer && user) {

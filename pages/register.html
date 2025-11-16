@@ -143,7 +143,7 @@
 
             <div class="form-group">
               <label class="form-label required">Утасны дугаар</label>
-              <input type="tel" id="phone" class="form-control" placeholder="99119911" required>
+              <input type="tel" id="phone" class="form-control" placeholder="99119911" required maxlength="8" pattern="[0-9]{8}">
               <span class="form-text">8 оронтой дугаар оруулна уу</span>
             </div>
 
@@ -271,6 +271,12 @@
     const passwordError = document.getElementById('passwordError');
     const email = document.getElementById('email');
     const emailError = document.getElementById('emailError');
+    const phoneInput = document.getElementById('phone');
+
+    // Format phone number input
+    phoneInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').substring(0, 8);
+    });
 
     // File upload handlers
     const idFrontInput = document.getElementById('idFront');
@@ -391,6 +397,12 @@
 
       if (!idFrontFile || !idBackFile) {
         Utils.showToast('Иргэний үнэмлэхний зургийг оруулна уу', 'error');
+        return;
+      }
+
+      // Validate phone number
+      if (phoneValue.length !== 8 || !/^[0-9]{8}$/.test(phoneValue)) {
+        Utils.showToast('Утасны дугаар 8 оронтой байх ёстой', 'error');
         return;
       }
 

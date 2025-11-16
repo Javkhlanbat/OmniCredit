@@ -19,7 +19,7 @@ const initDatabase = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Users table үүсгэсэн');
+    console.log('Users table үүсгэсэн');
 
     // Loans table
     await pool.query(`
@@ -37,7 +37,7 @@ const initDatabase = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Loans table үүсгэсэн');
+    console.log('Loans table үүсгэсэн');
 
     // Payments table
     await pool.query(`
@@ -51,7 +51,7 @@ const initDatabase = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Payments table үүсгэсэн');
+    console.log('Payments table үүсгэсэн');
 
     // Purchase loans table (0% хүүтэй)
     await pool.query(`
@@ -66,12 +66,12 @@ const initDatabase = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Purchase loans table үүсгэсэн');
+    console.log('Purchase loans table үүсгэсэн');
 
-    console.log('🎉 Бүх tables амжилттай үүсгэгдлээ!');
+    console.log('Бүх tables амжилттай үүсгэгдлээ!');
     
   } catch (error) {
-    console.error('❌ Database initialization алдаа:', error);
+    console.error('Database initialization алдаа:', error);
     throw error;
   }
 };

@@ -13,11 +13,7 @@ const {
 // Хүүгийн хувь тооцоолох (зээлийн төрлөөс хамаарна)
 const calculateInterestRate = (loanType, amount, duration) => {
   const rates = {
-    'personal': 18.0,      // Хувийн зээл 18%
-    'business': 15.0,      // Бизнес зээл 15%
-    'auto': 12.0,          // Автомашины зээл 12%
-    'mortgage': 10.0,      // Ипотекийн зээл 10%
-    'education': 8.0,      // Боловсролын зээл 8%
+    'personal': 3.0,      // Хувийн зээл 3%
     'purchase': 0.0        // Худалдан авалтын зээл 0%
   };
 

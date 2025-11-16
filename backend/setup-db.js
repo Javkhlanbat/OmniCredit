@@ -6,25 +6,25 @@ const adminClient = new Client({
   password: 'asdf',
   host: 'localhost',
   port: 5432,
-  database: 'postgres' // Анхдагч өрөмбийг ашиглаж омницред үүсгэх
+  database: 'postgres' // Анхдагч системийн өгөгдлийн сан
 });
 
 const createDatabase = async () => {
   try {
     await adminClient.connect();
-    console.log('✅ PostgreSQL-тэй холбогдсон');
+    console.log('PostgreSQL tei holbolt amjilttai bolloo.');
 
     // Өрөмбийг үүсгэх
     await adminClient.query('CREATE DATABASE omnicredit;');
-    console.log('✅ "omnicredit" өрөмбийг амжилттай үүсгэсэн!');
+    console.log('"omnicredit" erembiig uusgesen!');
 
     await adminClient.end();
   } catch (error) {
     if (error.code === '42P04') {
-      console.log('ℹ️  "omnicredit" өрөмбийг аль хэдийнэ оршин байна');
+      console.log('"omnicredit" erembe baina. uusgeh shardlaggui.');
       await adminClient.end();
     } else {
-      console.error('❌ Алдаа:', error.message);
+      console.error('Алдаа:', error.message);
       process.exit(1);
     }
   }

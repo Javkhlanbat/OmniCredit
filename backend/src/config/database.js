@@ -8,11 +8,11 @@ const pool = new Pool({
 
 // Холболт тест
 pool.on('connect', () => {
-  console.log('✅ PostgreSQL холбогдсон');
+  console.log('PostgreSQL холбогдсон');
 });
 
 pool.on('error', (err) => {
-  console.error('❌ PostgreSQL алдаа:', err);
+  console.error('PostgreSQL алдаа:', err);
 });
 
 // Query function

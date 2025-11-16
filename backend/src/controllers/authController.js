@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, findUserByPhone, verifyPassword, findUserById } = require('../models/userModel');
+const { createUser, findUserByEmail, findUserByPhone, verifyPassword, findUserById, getAllUsers } = require('../models/userModel');
 
 // JWT token үүсгэх
 const generateToken = (user) => {
@@ -178,9 +178,29 @@ const verifyToken = async (req, res) => {
   }
 };
 
+// Бүх хэрэглэгчид авах (Admin)
+const adminGetAllUsers = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+
+    res.json({
+      count: users.length,
+      users
+    });
+
+  } catch (error) {
+    console.error('Admin get all users алдаа:', error);
+    res.status(500).json({
+      error: 'Серверт алдаа гарлаа',
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   getProfile,
-  verifyToken
+  verifyToken,
+  adminGetAllUsers
 };

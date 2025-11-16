@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getProfile, verifyToken } = require('../controllers/authController');
+const { register, login, getProfile, verifyToken, adminGetAllUsers } = require('../controllers/authController');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const { validateRegistration, validateLogin } = require('../middleware/validationMiddleware');
 
@@ -15,5 +15,8 @@ router.get('/profile', authenticateToken, getProfile);
 
 // GET /api/auth/verify - Token шалгах (хамгаалагдсан)
 router.get('/verify', authenticateToken, verifyToken);
+
+// GET /api/auth/admin/users - Бүх хэрэглэгчид (Admin)
+router.get('/admin/users', authenticateToken, adminGetAllUsers);
 
 module.exports = router;

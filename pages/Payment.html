@@ -294,11 +294,31 @@
     }
 
     // Payment method selection
+    const cardForm = document.getElementById('cardForm');
     document.querySelectorAll('.method-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
         selectedMethod = card.dataset.method;
+
+        // Show/hide card form based on payment method
+        if (selectedMethod === 'card') {
+          cardForm.style.display = 'block';
+        } else {
+          cardForm.style.display = 'none';
+        }
+
+        // Update submit button text
+        const submitBtn = document.querySelector('#paymentForm button[type="submit"]');
+        if (selectedMethod === 'qpay') {
+          submitBtn.textContent = 'QPay-ээр төлөх';
+        } else if (selectedMethod === 'social') {
+          submitBtn.textContent = 'SocialPay-ээр төлөх';
+        } else if (selectedMethod === 'bank') {
+          submitBtn.textContent = 'Шилжүүлгээр төлөх';
+        } else {
+          submitBtn.textContent = 'Төлбөр төлөх';
+        }
       });
     });
 

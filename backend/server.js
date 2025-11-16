@@ -22,7 +22,7 @@ const paymentRoutes = require('./src/routes/paymentRoutes');
 // Test route
 app.get('/', (req, res) => {
   res.json({
-    message: 'OmniCredit API ажиллаж байна! 🚀',
+    message: 'ajilaj baina',
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
@@ -40,7 +40,7 @@ app.get('/health', (req, res) => {
 // Database test
 app.get('/db-test', async (req, res) => {
   res.json({
-    message: 'Database холболт тестлэх',
+    message: 'Database holbolt testleh',
     database_url: process.env.DATABASE_URL ? 'Configured' : 'Not configured'
   });
 });
@@ -61,7 +61,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server ажиллаж байна: http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🗄️  Database: ${process.env.DATABASE_URL ? 'Configured' : 'Not configured'}`);
+  console.log(`Server ажиллаж байна: http://localhost:${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`Database: ${process.env.DATABASE_URL ? 'Configured' : 'Not configured'}`);
 });

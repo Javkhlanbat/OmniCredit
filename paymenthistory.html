@@ -206,20 +206,20 @@
 
     <div class="summary-card">
       <h3 style="margin-bottom: 4px;">Нийт статистик</h3>
-      <p style="opacity: 0.9; margin-bottom: 24px;">2024 оны нэгдсэн тайлан</p>
-      
+      <p style="opacity: 0.9; margin-bottom: 24px;"><span id="currentYear"></span> оны нэгдсэн тайлан</p>
+
       <div class="summary-grid">
         <div class="summary-item">
-          <h4>₮1,620,000</h4>
+          <h4 id="totalPaid">₮0</h4>
           <p>Нийт төлсөн</p>
         </div>
         <div class="summary-item">
-          <h4>12</h4>
+          <h4 id="paymentsCount">0</h4>
           <p>Гүйлгээний тоо</p>
         </div>
         <div class="summary-item">
-          <h4>100%</h4>
-          <p>Цаг хугацаандаа</p>
+          <h4 id="thisMonth">₮0</h4>
+          <p>Энэ сар</p>
         </div>
       </div>
     </div>
@@ -296,6 +296,9 @@
   <script src="js/api.js"></script>
   <script src="js/auth-guard.js"></script>
   <script>
+    // Set current year
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+
     // Load payment history
     async function loadPayments() {
       try {
@@ -345,17 +348,23 @@
           `;
         }).join('');
 
-        // Update summary stats
-        const stats = await PaymentsAPI.getMyPaymentStats();
-        if (stats) {
-          const totalPaidEl = document.getElementById('totalPaid');
-          const paymentsCountEl = document.getElementById('paymentsCount');
-          const thisMonthEl = document.getElementById('thisMonth');
+        // Calculate summary stats from payments
+        const totalPaid = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+        const paymentsCount = payments.length;
 
-          if (totalPaidEl) totalPaidEl.textContent = `₮${(stats.total_paid || 0).toLocaleString()}`;
-          if (paymentsCountEl) paymentsCountEl.textContent = stats.payment_count || 0;
-          if (thisMonthEl) thisMonthEl.textContent = `₮${(stats.this_month || 0).toLocaleString()}`;
-        }
+        // Calculate this month's payments
+        const now = new Date();
+        const thisMonthPayments = payments.filter(p => {
+          const paymentDate = new Date(p.payment_date || p.created_at);
+          return paymentDate.getMonth() === now.getMonth() &&
+                 paymentDate.getFullYear() === now.getFullYear();
+        });
+        const thisMonthTotal = thisMonthPayments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+        // Update summary
+        document.getElementById('totalPaid').textContent = `₮${totalPaid.toLocaleString()}`;
+        document.getElementById('paymentsCount').textContent = paymentsCount;
+        document.getElementById('thisMonth').textContent = `₮${thisMonthTotal.toLocaleString()}`;
 
       } catch (error) {
         console.error('Load payments error:', error);

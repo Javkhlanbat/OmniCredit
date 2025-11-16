@@ -79,13 +79,15 @@ const validateLogin = (req, res, next) => {
     });
   }
 
-  if (!validateEmail(email)) {
+  // И-мэйл байвал л шалгах
+  if (email && !validateEmail(email)) {
     return res.status(400).json({
       error: 'И-мэйл буруу',
       message: 'Зөв и-мэйл хаяг оруулна уу'
     });
   }
 
+  // Утас байвал л шалгах
   if (phone && !validatePhone(phone)) {
     return res.status(400).json({
       error: 'Утасны дугаар буруу',

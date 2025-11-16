@@ -1,9 +1,9 @@
-// =============================================
-// Utility Functions
-// =============================================
+// ==============================================
+// Туслах Функцууд - OmniCredit
+// ==============================================
 
 const Utils = {
-  // Format number as currency
+  // Тоог мөнгөн дүн болгон форматлах (жишээ: 1000000 -> ₮1,000,000)
   formatMoney(amount) {
     const formatter = new Intl.NumberFormat('mn-MN', {
       style: 'currency',
@@ -14,39 +14,43 @@ const Utils = {
     return formatter.format(amount).replace('MNT', '₮');
   },
 
-  // Format number with thousand separators
+  // Тоог мянгатын тэмдэглэгээтэй форматлах (жишээ: 1000000 -> 1,000,000)
   formatNumber(num) {
     return new Intl.NumberFormat('mn-MN').format(num);
   },
 
-  // Clamp number between min and max
+  // Тоог мин, макс хооронд хязгаарлах
   clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
   },
 
-  // Parse money string to number
+  // Мөнгөн string-ийг тоо болгон хөрвүүлэх (жишээ: "₮1,000" -> 1000)
   parseMoney(str) {
     return parseFloat(str.replace(/[₮,\s]/g, '')) || 0;
   },
 
-  // Calculate loan payment
+  // Зээлийн сарын төлбөр тооцоолох
   calculateLoanPayment(principal, annualRate, months) {
+    // Хүү 0% бол энгийн хуваах
     if (annualRate === 0) {
       return principal / months;
     }
+    // Сарын хүү тооцоолох
     const monthlyRate = annualRate / 100 / 12;
     return (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
   },
 
-  // Generate loan schedule
+  // Зээлийн төлбөрийн хуваарь үүсгэх
   generateLoanSchedule(principal, monthlyRatePercent, months) {
+    // Үндсэн дүн хамгийн багадаа 10,000
     principal = Math.max(10000, +principal || 0);
     months = Math.max(1, Math.floor(+months || 0));
-    
+
     const monthlyRate = (+monthlyRatePercent || 0) / 100;
     let payment, balance = principal;
     const schedule = [];
 
+    // Хүү 0% бол энгийн хуваах
     if (monthlyRate === 0) {
       payment = principal / months;
       for (let i = 1; i <= months; i++) {
@@ -54,16 +58,17 @@ const Utils = {
         const principalPaid = payment;
         balance = Math.max(0, balance - principalPaid);
         schedule.push({
-          month: i,
-          interest,
-          principal: principalPaid,
-          payment,
-          balance,
+          month: i,           // Сар
+          interest,           // Хүү
+          principal: principalPaid,  // Үндсэн төлбөр
+          payment,            // Нийт төлбөр
+          balance,            // Үлдэгдэл
         });
       }
     } else {
+      // Хүүтэй зээлийн тооцоолол
       payment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
-      
+
       for (let i = 1; i <= months; i++) {
         const interest = balance * monthlyRate;
         const principalPaid = Math.min(payment - interest, balance);
@@ -78,18 +83,19 @@ const Utils = {
       }
     }
 
+    // Нийт хүү ба төлбөр тооцоолох
     const totalInterest = schedule.reduce((sum, item) => sum + item.interest, 0);
     const totalPayment = schedule.reduce((sum, item) => sum + item.payment, 0);
 
     return {
-      payment,
-      totalInterest,
-      totalPayment,
-      schedule,
+      payment,          // Сарын төлбөр
+      totalInterest,    // Нийт хүү
+      totalPayment,     // Нийт төлбөр
+      schedule,         // Сар бүрийн хуваарь
     };
   },
 
-  // Format date
+  // Огноо форматлах (жишээ: 2025-01-15)
   formatDate(date, format = 'YYYY-MM-DD') {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -102,7 +108,7 @@ const Utils = {
       .replace('DD', day);
   },
 
-  // Debounce function
+  // Debounce функц (хэт олон удаа дуудагдахаас сэргийлэх)
   debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -115,7 +121,7 @@ const Utils = {
     };
   },
 
-  // Show toast notification
+  // Toast мэдэгдэл харуулах
   showToast(message, type = 'info', duration = 3000) {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
@@ -136,26 +142,28 @@ const Utils = {
 
     document.body.appendChild(toast);
 
+    // Хугацаа дууссаны дараа арилгах
     setTimeout(() => {
       toast.style.animation = 'slideOut 0.3s ease';
       setTimeout(() => toast.remove(), 300);
     }, duration);
   },
 
-  // Validate email
+  // И-мэйл шалгах
   isValidEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   },
 
-  // Validate phone (Mongolian format)
+  // Утасны дугаар шалгах (Монголын формат: 8 орон)
   isValidPhone(phone) {
     const re = /^[0-9]{8}$/;
     return re.test(phone.replace(/\s/g, ''));
   },
 
-  // Store in localStorage
+  // LocalStorage хадгалах системчилсэн функцууд
   storage: {
+    // Утга хадгалах
     set(key, value) {
       try {
         localStorage.setItem(key, JSON.stringify(value));
@@ -165,6 +173,7 @@ const Utils = {
         return false;
       }
     },
+    // Утга авах
     get(key) {
       try {
         const item = localStorage.getItem(key);
@@ -174,20 +183,22 @@ const Utils = {
         return null;
       }
     },
+    // Утга устгах
     remove(key) {
       localStorage.removeItem(key);
     },
+    // Бүгдийг цэвэрлэх
     clear() {
       localStorage.clear();
     },
   },
 
-  // Smooth scroll to element
+  // Элемент рүү зөөлөн scroll хийх
   scrollTo(element, offset = 0) {
-    const el = typeof element === 'string' 
-      ? document.querySelector(element) 
+    const el = typeof element === 'string'
+      ? document.querySelector(element)
       : element;
-    
+
     if (el) {
       const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
       window.scrollTo({ top, behavior: 'smooth' });
@@ -195,7 +206,7 @@ const Utils = {
   },
 };
 
-// Export for use in other files
+// Экспорт (бусад файлд ашиглах)
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = Utils;
 }

@@ -125,7 +125,7 @@
               <label class="form-label required">Нууц үг</label>
               <div style="position: relative;">
                 <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required style="padding-right: 40px;">
-                <button type="button" id="toggleLoginPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">👁️</button>
+                <button type="button" id="toggleLoginPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">Show</button>
               </div>
             </div>
 
@@ -202,7 +202,7 @@
     toggleLoginPassword.addEventListener('click', () => {
       const type = loginPassword.type === 'password' ? 'text' : 'password';
       loginPassword.type = type;
-      toggleLoginPassword.textContent = type === 'password' ? '👁️' : '🙈';
+      toggleLoginPassword.textContent = type === 'password' ? 'Show' : 'Hide';
     });
 
     // Login form submit

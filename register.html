@@ -158,7 +158,7 @@
               <label class="form-label required">Иргэний үнэмлэх (Урд тал)</label>
               <div style="border: 2px dashed var(--line); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; transition: var(--transition);" id="idFrontUpload" onclick="document.getElementById('idFront').click()">
                 <input type="file" id="idFront" accept="image/*,.pdf" style="display: none;" required>
-                <div style="font-size: 48px; margin-bottom: 8px;">📄</div>
+                <div style="font-size: 48px; margin-bottom: 8px;"></div>
                 <div style="font-weight: 600; margin-bottom: 4px;" id="idFrontText">Файл сонгох</div>
                 <div style="font-size: 13px; color: var(--text-muted);">PNG, JPG эсвэл PDF</div>
               </div>
@@ -168,7 +168,7 @@
               <label class="form-label required">Иргэний үнэмлэх (Ард тал)</label>
               <div style="border: 2px dashed var(--line); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; transition: var(--transition);" id="idBackUpload" onclick="document.getElementById('idBack').click()">
                 <input type="file" id="idBack" accept="image/*,.pdf" style="display: none;" required>
-                <div style="font-size: 48px; margin-bottom: 8px;">📄</div>
+                <div style="font-size: 48px; margin-bottom: 8px;"></div>
                 <div style="font-weight: 600; margin-bottom: 4px;" id="idBackText">Файл сонгох</div>
                 <div style="font-size: 13px; color: var(--text-muted);">PNG, JPG эсвэл PDF</div>
               </div>
@@ -178,7 +178,7 @@
               <label class="form-label required">Нууц үг</label>
               <div style="position: relative;">
                 <input type="password" id="password" class="form-control" placeholder="••••••••" required style="padding-right: 40px;">
-                <button type="button" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">👁️</button>
+                <button type="button" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">Show</button>
               </div>
               <div class="password-strength">
                 <div class="password-strength-bar" id="strengthBar"></div>
@@ -190,7 +190,7 @@
               <label class="form-label required">Нууц үг давтах</label>
               <div style="position: relative;">
                 <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" required style="padding-right: 40px;">
-                <button type="button" id="toggleConfirmPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">👁️</button>
+                <button type="button" id="toggleConfirmPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">Show</button>
               </div>
               <div class="form-feedback invalid" id="passwordError" style="display: none;"></div>
             </div>
@@ -355,13 +355,13 @@
     togglePassword.addEventListener('click', () => {
       const type = password.type === 'password' ? 'text' : 'password';
       password.type = type;
-      togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+      togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
     });
 
     toggleConfirmPassword.addEventListener('click', () => {
       const type = confirmPassword.type === 'password' ? 'text' : 'password';
       confirmPassword.type = type;
-      toggleConfirmPassword.textContent = type === 'password' ? '👁️' : '🙈';
+      toggleConfirmPassword.textContent = type === 'password' ? 'Show' : 'Hide';
     });
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {

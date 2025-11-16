@@ -204,14 +204,14 @@
         <a href="admin.html" class="active">Admin</a>
       </div>
       <div class="auth-buttons">
-        <a href="profile.html" class="btn btn-ghost btn-sm">👤 Профайл</a>
+        <a href="profile.html" class="btn btn-ghost btn-sm">Профайл</a>
         <button class="btn btn-primary btn-sm" onclick="handleLogout()">Гарах</button>
       </div>
       <button class="mobile-menu-toggle">☰</button>
     </nav>
 
     <div class="admin-header">
-      <h1>🔐 Admin Dashboard</h1>
+      <h1>Admin Dashboard</h1>
       <p style="opacity: 0.9; margin-top: 8px;">Системийн удирдлагын самбар</p>
     </div>
 
@@ -237,16 +237,16 @@
 
     <!-- Tabs -->
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchTab('loans')">📋 Зээлийн хүсэлт</button>
-      <button class="admin-tab" onclick="switchTab('users')">👥 Хэрэглэгчид</button>
-      <button class="admin-tab" onclick="switchTab('payments')">💳 Төлбөр</button>
-      <button class="admin-tab" onclick="switchTab('settings')">⚙️ Тохиргоо</button>
+      <button class="admin-tab active" onclick="switchTab('loans')">Зээлийн хүсэлт</button>
+      <button class="admin-tab" onclick="switchTab('users')">Хэрэглэгчид</button>
+      <button class="admin-tab" onclick="switchTab('payments')">Төлбөр</button>
+      <button class="admin-tab" onclick="switchTab('settings')">Тохиргоо</button>
     </div>
 
     <!-- Loans Tab -->
     <div id="loans-tab" class="tab-content active">
       <div class="search-box">
-        <input type="text" placeholder="🔍 Хайх (ID, нэр, дүн)..." id="loanSearch" onkeyup="filterLoans()">
+        <input type="text" placeholder="Хайх (ID, нэр, дүн)..." id="loanSearch" onkeyup="filterLoans()">
         <select class="btn btn-secondary" id="loanStatusFilter" onchange="filterLoans()">
           <option value="all">Бүх төлөв</option>
           <option value="pending">Хүлээгдэж буй</option>
@@ -283,7 +283,7 @@
     <!-- Users Tab -->
     <div id="users-tab" class="tab-content">
       <div class="search-box">
-        <input type="text" placeholder="🔍 Хэрэглэгч хайх..." id="userSearch" onkeyup="filterUsers()">
+        <input type="text" placeholder="Хэрэглэгч хайх..." id="userSearch" onkeyup="filterUsers()">
       </div>
 
       <div class="data-table">
@@ -312,7 +312,7 @@
     <!-- Payments Tab -->
     <div id="payments-tab" class="tab-content">
       <div class="search-box">
-        <input type="text" placeholder="🔍 Төлбөр хайх..." id="paymentSearch" onkeyup="filterPayments()">
+        <input type="text" placeholder="Төлбөр хайх..." id="paymentSearch" onkeyup="filterPayments()">
       </div>
 
       <div class="data-table">
@@ -520,10 +520,10 @@
             <td>
               <div class="action-buttons">
                 ${loan.status === 'pending' ? `
-                  <button class="btn btn-primary btn-icon" onclick="approveLoan(${loan.id})">✓</button>
-                  <button class="btn btn-secondary btn-icon" onclick="rejectLoan(${loan.id})">✗</button>
+                  <button class="btn btn-primary btn-icon" onclick="approveLoan(${loan.id})">Approve</button>
+                  <button class="btn btn-secondary btn-icon" onclick="rejectLoan(${loan.id})">Reject</button>
                 ` : `
-                  <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">👁</button>
+                  <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">View</button>
                 `}
               </div>
             </td>
@@ -666,7 +666,7 @@
             <td>${user.phone || '-'}</td>
             <td>${date}</td>
             <td>
-              <button class="btn btn-secondary btn-icon" onclick="viewUserDetails(${user.id})">👁</button>
+              <button class="btn btn-secondary btn-icon" onclick="viewUserDetails(${user.id})">View</button>
             </td>
           </tr>
         `;

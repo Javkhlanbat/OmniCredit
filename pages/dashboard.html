@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniCredit — Dashboard</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/navigation.css">
+  <link rel="stylesheet" href="../css/buttons.css">
+  <link rel="stylesheet" href="../css/cards.css">
+  <link rel="stylesheet" href="../css/footer.css">
+
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin: 32px 0;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .action-card {
+      padding: 24px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .action-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .action-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .recent-section {
+      margin-top: 48px;
+    }
+
+    @media (max-width: 968px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">OmniCredit</div>
+      <div class="nav-links">
+        <a href="index.html">Нүүр</a>
+        <a href="zeelhuudas.html">Зээлийн тооцоолуур</a>
+        <a href="aboutus.html">Бидний тухай</a>
+        <a href="FAQ.html">Түгээмэл асуулт</a>
+        <a href="my-loans.html">Миний зээл</a>
+      </div>
+      <div class="auth-buttons">
+        <a href="profile.html" class="btn btn-ghost btn-sm">👤 Профайл</a>
+        <button class="btn btn-primary btn-sm" onclick="handleLogout()">Гарах</button>
+      </div>
+      <button class="mobile-menu-toggle">☰</button>
+    </nav>
+
+    <div style="margin: 48px 0 32px;">
+      <h1 id="welcomeMessage">Сайн байна уу! 👋</h1>
+      <p style="color: var(--text-muted);">Таны санхүүгийн тойм</p>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="stats-card">
+        <div class="stats-card-value" id="activeLoansCount">0</div>
+        <div class="stats-card-label">Идэвхтэй зээл</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-card-value" id="totalBalance">₮0</div>
+        <div class="stats-card-label">Үлдэгдэл</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-card-value" id="nextPayment">₮0</div>
+        <div class="stats-card-label">Дараагийн төлбөр</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-card-value" id="daysUntilPayment">-</div>
+        <div class="stats-card-label">Төлбөрийн хугацаа</div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <a href="Payment.html" class="action-card">
+        <div class="action-icon">💳</div>
+        <h4>Төлбөр төлөх</h4>
+        <p style="font-size: 13px; color: var(--text-muted);">Сарын төлбөр төлөх</p>
+      </a>
+
+      <a href="Application.html" class="action-card">
+        <div class="action-icon">💰</div>
+        <h4>Зээл авах</h4>
+        <p style="font-size: 13px; color: var(--text-muted);">Шинэ зээл хүсэх</p>
+      </a>
+
+      <a href="paymenthistory.html" class="action-card">
+        <div class="action-icon">📊</div>
+        <h4>Түүх</h4>
+        <p style="font-size: 13px; color: var(--text-muted);">Төлбөрийн түүх харах</p>
+      </a>
+    </div>
+
+    <div class="recent-section" id="activeLoansSection" style="display: none;">
+      <h2 style="margin-bottom: 24px;">Идэвхтэй зээл</h2>
+      <div id="activeLoansContainer"></div>
+    </div>
+
+    <div class="recent-section" id="noLoansSection" style="display: none;">
+      <div class="card" style="text-align: center; padding: 48px;">
+        <div style="font-size: 64px; margin-bottom: 16px;">💼</div>
+        <h3>Зээл байхгүй байна</h3>
+        <p style="color: var(--text-muted); margin: 16px 0 24px;">
+          Та одоогоор ямар ч зээл аваагүй байна
+        </p>
+        <a href="Application.html" class="btn btn-primary btn-lg">
+          Зээл авах
+        </a>
+      </div>
+    </div>
+
+    <div class="recent-section">
+      <h2 style="margin-bottom: 24px;">Сүүлийн гүйлгээ</h2>
+      
+      <div class="card">
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line);">
+            <div>
+              <div style="font-weight: 700; margin-bottom: 4px;">Сарын төлбөр</div>
+              <div style="font-size: 13px; color: var(--text-muted);">2024-12-15</div>
+            </div>
+            <div style="font-weight: 800; font-size: 1.125rem; color: #10b981;">-₮135,000</div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line);">
+            <div>
+              <div style="font-weight: 700; margin-bottom: 4px;">Сарын төлбөр</div>
+              <div style="font-size: 13px; color: var(--text-muted);">2024-11-15</div>
+            </div>
+            <div style="font-weight: 800; font-size: 1.125rem; color: #10b981;">-₮135,000</div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0;">
+            <div>
+              <div style="font-weight: 700; margin-bottom: 4px;">Сарын төлбөр</div>
+              <div style="font-size: 13px; color: var(--text-muted);">2024-10-15</div>
+            </div>
+            <div style="font-weight: 800; font-size: 1.125rem; color: #10b981;">-₮135,000</div>
+          </div>
+
+          <a href="paymenthistory.html" class="btn btn-secondary btn-block" style="margin-top: 16px;">
+            Бүх түүх харах
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin: 64px 0 80px;">
+      <div class="card card-peachy" style="padding: 48px; text-align: center;">
+        <h3 style="color: white; margin-bottom: 16px;">Тусламж хэрэгтэй юу?</h3>
+        <p style="color: white; opacity: 0.95; margin-bottom: 24px;">
+          Бидний дэмжлэгийн баг танд туслахад бэлэн байна
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a href="FAQ.html" class="btn btn-secondary" style="background: white; color: var(--primary);">FAQ харах</a>
+          <a href="mailto:support@omnicredit.mn" class="btn btn-ghost" style="border-color: white; color: white;">Холбогдох</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-brand">OmniCredit</div>
+          <p>Монголын хамгийн хялбар бөгөөд найдвартай зээлийн үйлчилгээ.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          <span>© 2025 OmniCredit. Бүх эрх хуулиар хамгаалагдсан.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth-guard.js"></script>
+  <script>
+    // Logout handler
+    function handleLogout() {
+      if (confirm('Гарахдаа итгэлтэй байна уу?')) {
+        AuthAPI.logout();
+      }
+    }
+
+    // Load dashboard data
+    async function loadDashboard() {
+      try {
+        // Get user data
+        const user = UserManager.getUser();
+
+        if (user) {
+          // Update welcome message
+          const welcomeMessage = document.getElementById('welcomeMessage');
+          const firstName = user.first_name || user.firstName || 'Хэрэглэгч';
+          welcomeMessage.textContent = `Сайн байна уу, ${firstName}! 👋`;
+        }
+
+        // Load user's loans
+        const loans = await LoansAPI.getMyLoans();
+
+        if (loans && loans.length > 0) {
+          // Filter active loans
+          const activeLoans = loans.filter(loan =>
+            loan.status === 'active' || loan.status === 'approved'
+          );
+
+          // Update statistics
+          document.getElementById('activeLoansCount').textContent = activeLoans.length;
+
+          // Calculate total balance and next payment
+          let totalBalance = 0;
+          let nextPayment = 0;
+          let earliestPaymentDate = null;
+
+          activeLoans.forEach(loan => {
+            const remaining = loan.amount - (loan.paid_amount || 0);
+            totalBalance += remaining;
+
+            // Calculate monthly payment (simple calculation)
+            const monthlyPayment = loan.amount / loan.term;
+            if (monthlyPayment > nextPayment) {
+              nextPayment = monthlyPayment;
+            }
+          });
+
+          document.getElementById('totalBalance').textContent =
+            `₮${Math.round(totalBalance).toLocaleString()}`;
+          document.getElementById('nextPayment').textContent =
+            `₮${Math.round(nextPayment).toLocaleString()}`;
+
+          // Show active loans section
+          if (activeLoans.length > 0) {
+            document.getElementById('activeLoansSection').style.display = 'block';
+            document.getElementById('noLoansSection').style.display = 'none';
+
+            // Display active loans
+            const container = document.getElementById('activeLoansContainer');
+            container.innerHTML = activeLoans.map(loan => {
+              const paidAmount = loan.paid_amount || 0;
+              const remaining = loan.amount - paidAmount;
+              const progress = (paidAmount / loan.amount * 100).toFixed(0);
+              const createdDate = new Date(loan.created_at).toLocaleDateString('mn-MN');
+
+              return `
+                <div class="card" style="margin-bottom: 16px;">
+                  <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                      <div>
+                        <h3>Зээл #${loan.id}</h3>
+                        <p style="color: var(--text-muted); margin: 4px 0;">Үүсгэсэн: ${createdDate}</p>
+                      </div>
+                      <span style="padding: 6px 12px; background: #DFFFD8; color: #10b981; border-radius: 999px; font-size: 12px; font-weight: 700;">ИДЭВХТЭЙ</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 24px 0;">
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Зээлийн дүн</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">₮${loan.amount.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Төлөгдсөн</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">₮${paidAmount.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Үлдэгдэл</div>
+                        <div style="font-weight: 700; font-size: 1.125rem; color: var(--primary);">₮${remaining.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Хугацаа</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">${loan.term} сар</div>
+                      </div>
+                    </div>
+
+                    <div style="background: var(--line); height: 8px; border-radius: 999px; overflow: hidden; margin: 16px 0;">
+                      <div style="height: 100%; width: ${progress}%; background: var(--gradient-peachy);"></div>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+                      ${progress}% төлөгдсөн
+                    </p>
+
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                      <a href="Payment.html?loan=${loan.id}" class="btn btn-primary">Төлбөр төлөх</a>
+                      <a href="my-loans.html" class="btn btn-secondary">Дэлгэрэнгүй</a>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            document.getElementById('activeLoansSection').style.display = 'none';
+            document.getElementById('noLoansSection').style.display = 'block';
+          }
+        } else {
+          // No loans at all
+          document.getElementById('activeLoansSection').style.display = 'none';
+          document.getElementById('noLoansSection').style.display = 'block';
+          document.getElementById('activeLoansCount').textContent = '0';
+          document.getElementById('totalBalance').textContent = '₮0';
+          document.getElementById('nextPayment').textContent = '₮0';
+        }
+
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+        // Show no loans section on error
+        document.getElementById('activeLoansSection').style.display = 'none';
+        document.getElementById('noLoansSection').style.display = 'block';
+      }
+    }
+
+    // Load dashboard when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDashboard);
+    } else {
+      loadDashboard();
+    }
+  </script>
+</body>
+</html>

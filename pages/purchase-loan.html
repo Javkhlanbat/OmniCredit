@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniCredit — Зээлийн хүүдэс</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/navigation.css">
+  <link rel="stylesheet" href="../css/buttons.css">
+  <link rel="stylesheet" href="../css/cards.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/footer.css">
+
+  <style>
+    .page-header {
+      margin: 48px 0 32px;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      margin-bottom: 8px;
+      background: var(--gradient-peachy);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .loan-type-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .loan-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #FFF5F0 0%, #FFE8DD 100%);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+
+    .info-box h3 {
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .info-box p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    .validation-form {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      font-size: 16px;
+      transition: var(--transition);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(255, 155, 113, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #cbd5e1;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 32px 0;
+    }
+
+    .feature-list li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-peachy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .feature-content h4 {
+      margin: 0 0 4px 0;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    .feature-content p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .validation-form {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <nav class="nav">
+      <div class="brand">OmniCredit</div>
+      <div class="nav-links">
+        <a href="index.html">Нүүр</a>
+        <a href="zeelhuudas.html" class="active">Зээлийн тооцоолуур</a>
+        <a href="aboutus.html">Бидний тухай</a>
+        <a href="FAQ.html">Түгээмэл асуулт</a>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-ghost btn-sm">Нэвтрэх</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Бүртгүүлэх</a>
+      </div>
+      <button class="mobile-menu-toggle">☰</button>
+    </nav>
+
+    <div style="background: linear-gradient(135deg, #E0F7FA 0%, #E8F5E9 100%); padding: 24px; border-radius: 16px; margin-top: 24px; margin-bottom: 24px;">
+      <div style="text-align: center; margin-bottom: 4px;">
+        <span style="display: inline-block; background: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #0d9488; letter-spacing: 0.5px;">
+          ТООЦООЛУУР
+        </span>
+      </div>
+      <h2 style="margin: 0; text-align: center; font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #0d9488, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+        Зээлийн нөхцөл харах ба баталгаажуулах
+      </h2>
+    </div>
+
+    <div class="loan-type-tabs">
+      <a href="zeelhuudas.html" class="btn btn-secondary">Хэрэглээний зээл</a>
+      <a href="purchase-loan.html" class="btn btn-primary">Худалдан авалтын зээл</a>
+    </div>
+
+    <div class="loan-content">
+      <div class="info-box">
+        <h3>🛍️ Худалдан авалтын зээл (0% хүү, урьдчилгаагүй)</h3>
+        <p>
+          Хамтрагч байгууллагаас авсан <strong>нэхэмжлэхийн код</strong>-оо оруулж баталгаажуулна. 
+        </p>
+      </div>
+
+      <div class="validation-form">
+        <h3 style="margin-bottom: 24px; text-align: center;">Худалдан авалтын зээл (0% хүү, урьдчилгаагүй)</h3>
+        
+        <form id="purchaseLoanForm">
+          <div class="form-group">
+            <label for="invoiceCode">Нэхэмжлэхийн код</label>
+            <input 
+              type="text" 
+              id="invoiceCode" 
+              placeholder="AA12-BC34-5678" 
+              pattern="[A-Z0-9\-]+"
+              required
+            />
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
+              Хамтрагч байгууллагаас авсан нэхэмжлэхийн код шаардлагатай
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Утасны дугаар</label>
+            <input 
+              type="tel" 
+              id="phoneNumber" 
+              placeholder="99xxxxxx" 
+              pattern="[0-9]{8}"
+              maxlength="8"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 8px;">
+            Илгээх 
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-brand">OmniCredit</div>
+          <p>Монголын хамгийн хялбар бөгөөд найдвартай зээлийн үйлчилгээ.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Үйлчилгээ</h4>
+          <ul class="footer-links">
+            <li><a href="zeelhuudas.html">Зээл авах</a></li>
+            <li><a href="purchase-loan.html">Худалдан авалтын зээл</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Тусламж</h4>
+          <ul class="footer-links">
+            <li><a href="aboutus.html">Бидний тухай</a></li>
+            <li><a href="FAQ.html">Түгээмэл асуулт</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          <span>© 2025 OmniCredit. Бүх эрх хуулиар хамгаалагдсан.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/api.js"></script>
+  <script>
+    document.getElementById('purchaseLoanForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Check if user is logged in
+      if (typeof TokenManager !== 'undefined' && !TokenManager.isAuthenticated()) {
+        if (confirm('Зээл авахын тулд нэвтрэх хэрэгтэй. Нэвтрэх хуудас руу шилжих үү?')) {
+          window.location.href = 'login.html';
+        }
+        return;
+      }
+
+      const invoiceCode = document.getElementById('invoiceCode').value;
+      const phoneNumber = document.getElementById('phoneNumber').value;
+      const submitBtn = this.querySelector('button[type="submit"]');
+
+      if (!invoiceCode || !phoneNumber) {
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('Бүх талбарыг бөглөнө үү', 'error');
+        } else {
+          alert('Бүх талбарыг бөглөнө үү');
+        }
+        return;
+      }
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Баталгаажуулж байна...';
+
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('Нэхэмжлэх баталгаажуулж байна...', 'info');
+        }
+
+        // Call API if available
+        if (typeof LoansAPI !== 'undefined') {
+          await LoansAPI.applyForPurchaseLoan({
+            invoice_code: invoiceCode,
+            phone: phoneNumber,
+            merchant_name: 'Demo Merchant',
+            amount: 0
+          });
+
+          if (typeof Utils !== 'undefined') {
+            Utils.showToast('Амжилттай баталгаажлаа!', 'success');
+          } else {
+            alert('Амжилттай баталгаажлаа!');
+          }
+
+          setTimeout(() => {
+            window.location.href = 'my-loans.html';
+          }, 1500);
+        } else {
+          // Fallback
+          alert('Худалдан авалтын зээл баталгаажуулалт амжилттай!\n\nКод: ' + invoiceCode + '\nУтас: ' + phoneNumber);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Баталгаажуулах';
+        }
+      } catch (error) {
+        console.error('Purchase loan error:', error);
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast(error.message || 'Баталгаажуулахад алдаа гарлаа', 'error');
+        } else {
+          alert('Алдаа гарлаа: ' + (error.message || ''));
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Баталгаажуулах';
+      }
+    });
+
+    document.getElementById('invoiceCode').addEventListener('input', function(e) {
+      this.value = this.value.toUpperCase();
+    });
+
+    document.getElementById('phoneNumber').addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '').substring(0, 8);
+    });
+  </script>
+</body>
+</html>

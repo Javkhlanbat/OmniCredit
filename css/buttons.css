@@ -1,0 +1,152 @@
+/* =============================================
+   Button Components - Peachy Theme
+   ============================================= */
+
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  font-family: inherit;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Button - Peachy gradient */
+.btn-primary {
+  background: var(--gradient-peachy);
+  color: var(--text);
+  font-weight: 800;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  filter: brightness(1.05);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary Button - Outline */
+.btn-secondary {
+  background: white;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--primary-light);
+  color: white;
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+/* Ghost Button - Transparent */
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  box-shadow: none;
+  border: 1px solid var(--line);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--card-hover);
+  border-color: var(--primary-light);
+}
+
+/* Accent Button - Pink/Red */
+.btn-accent {
+  background: var(--gradient-sunset);
+  color: white;
+}
+
+.btn-accent:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  filter: brightness(1.1);
+}
+
+/* Small Button */
+.btn-sm {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+/* Large Button */
+.btn-lg {
+  padding: 18px 36px;
+  font-size: 17px;
+}
+
+/* Full width button */
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* Button group */
+.btn-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-group .btn {
+    width: 100%;
+  }
+}
+
+/* Icon buttons */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-icon svg,
+.btn-icon i {
+  font-size: 18px;
+}
+
+/* Social Login Buttons */
+.btn-social {
+  background: white;
+  color: var(--text);
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-social:hover {
+  border-color: var(--primary);
+  background: var(--card-hover);
+  transform: translateY(-2px);
+}

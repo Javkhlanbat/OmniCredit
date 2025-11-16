@@ -283,7 +283,7 @@
     <!-- Users Tab -->
     <div id="users-tab" class="tab-content">
       <div class="search-box">
-        <input type="text" placeholder="Хэрэглэгч хайх..." id="userSearch" onkeyup="filterUsers()">
+        <input type="text" placeholder="Нэр, и-мэйл, утас, регистрээр хайх..." id="userSearch" onkeyup="filterUsers()">
       </div>
 
       <div class="data-table">
@@ -294,13 +294,14 @@
               <th>Нэр</th>
               <th>И-мэйл</th>
               <th>Утас</th>
+              <th>Регистр</th>
               <th>Бүртгэсэн огноо</th>
               <th>Үйлдэл</th>
             </tr>
           </thead>
           <tbody id="usersTableBody">
             <tr>
-              <td colspan="6" style="text-align: center; padding: 48px; color: var(--text-muted);">
+              <td colspan="7" style="text-align: center; padding: 48px; color: var(--text-muted);">
                 Ачааллаж байна...
               </td>
             </tr>
@@ -647,7 +648,7 @@
       if (!users || users.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" style="text-align: center; padding: 48px; color: var(--text-muted);">
+            <td colspan="7" style="text-align: center; padding: 48px; color: var(--text-muted);">
               Хэрэглэгч байхгүй байна
             </td>
           </tr>
@@ -657,16 +658,18 @@
 
       tbody.innerHTML = users.map(user => {
         const date = new Date(user.created_at).toLocaleDateString('mn-MN');
+        const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim() || '-';
 
         return `
           <tr>
             <td>#${user.id}</td>
-            <td>${user.first_name} ${user.last_name}</td>
+            <td style="font-weight: 600;">${fullName}</td>
             <td>${user.email}</td>
             <td>${user.phone || '-'}</td>
+            <td>${user.register_number || '-'}</td>
             <td>${date}</td>
             <td>
-              <button class="btn btn-secondary btn-icon" onclick="viewUserDetails(${user.id})">View</button>
+              <button class="btn btn-secondary btn-icon" onclick="viewUserProfile(${user.id}, '${user.email}')">Profile</button>
             </td>
           </tr>
         `;
@@ -675,21 +678,67 @@
 
     // Filter users
     function filterUsers() {
-      const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+      const searchTerm = document.getElementById('userSearch').value.toLowerCase().trim();
 
-      const filtered = allUsers.filter(user =>
-        user.id.toString().includes(searchTerm) ||
-        (user.first_name + ' ' + user.last_name).toLowerCase().includes(searchTerm) ||
-        user.email.toLowerCase().includes(searchTerm) ||
-        (user.phone && user.phone.includes(searchTerm))
-      );
+      if (!searchTerm) {
+        displayUsers(allUsers);
+        return;
+      }
+
+      const filtered = allUsers.filter(user => {
+        const fullName = `${user.last_name || ''} ${user.first_name || ''}`.toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        const phone = (user.phone || '').toLowerCase();
+        const register = (user.register_number || '').toLowerCase();
+
+        return user.id.toString().includes(searchTerm) ||
+               fullName.includes(searchTerm) ||
+               email.includes(searchTerm) ||
+               phone.includes(searchTerm) ||
+               register.includes(searchTerm);
+      });
 
       displayUsers(filtered);
     }
 
-    // View user details
-    function viewUserDetails(userId) {
-      alert(`Хэрэглэгчийн дэлгэрэнгүй мэдээлэл #${userId}\n\nЭнэ функц удахгүй нэмэгдэнэ.`);
+    // View user profile modal
+    async function viewUserProfile(userId, userEmail) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/auth/admin/users`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const user = data.users.find(u => u.id === userId);
+
+          if (user) {
+            const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim();
+            const createdDate = new Date(user.created_at).toLocaleString('mn-MN');
+
+            const profileInfo = `
+📋 ХЭРЭГЛЭГЧИЙН PROFILE
+
+👤 Нэр: ${fullName}
+📧 И-мэйл: ${user.email || '-'}
+📱 Утас: ${user.phone || '-'}
+🆔 Регистр: ${user.register_number || '-'}
+📍 Хаяг: ${user.address || '-'}
+📅 Бүртгүүлсэн: ${createdDate}
+👑 Админ эрх: ${user.is_admin ? 'Тийм' : 'Үгүй'}
+            `.trim();
+
+            alert(profileInfo);
+          } else {
+            alert('Хэрэглэгч олдсонгүй');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        alert('Алдаа: Хэрэглэгчийн мэдээллийг ачаалж чадсангүй');
+      }
     }
 
     // Load payments

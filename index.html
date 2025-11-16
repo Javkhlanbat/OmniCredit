@@ -404,6 +404,43 @@
         </div>
       </div>
     </section>
+    <!-- Admin Only: Registered Users Section -->
+    <section id="registeredUsersSection" style="display: none; margin-top: 60px;">
+      <h2 class="section-title">Бүртгэлтэй хэрэглэгчид</h2>
+      <div style="background: var(--card); padding: 32px; border-radius: var(--radius-lg); box-shadow: var(--shadow);">
+        <div style="margin-bottom: 24px; display: flex; gap: 12px; align-items: center;">
+          <input type="text" id="adminUserSearch" placeholder="Нэр, и-мэйл, утас, регистрээр хайх..." style="flex: 1; padding: 12px 16px; border: 2px solid var(--line); border-radius: var(--radius); font-size: 1rem;">
+          <button class="btn btn-primary" onclick="searchUsers()">Хайх</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: var(--bg); border-bottom: 2px solid var(--line);">
+                <th style="padding: 12px; text-align: left; font-weight: 700;">ID</th>
+                <th style="padding: 12px; text-align: left; font-weight: 700;">Нэр</th>
+                <th style="padding: 12px; text-align: left; font-weight: 700;">И-мэйл</th>
+                <th style="padding: 12px; text-align: left; font-weight: 700;">Утас</th>
+                <th style="padding: 12px; text-align: left; font-weight: 700;">Регистр</th>
+                <th style="padding: 12px; text-align: left; font-weight: 700;">Бүртгүүлсэн</th>
+              </tr>
+            </thead>
+            <tbody id="usersListTable">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                  Ачааллаж байна...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="usersCount" style="margin-top: 16px; text-align: center; color: var(--text-muted); font-size: 0.875rem;">
+          Нийт: 0 хэрэглэгч
+        </div>
+      </div>
+    </section>
+
     <section class="partners" id="partners">
       <h2 class="section-title">Бидэнтэй хамтран ажиллах уу?</h2>
       <p style="max-width:700px;margin:auto;color:var(--text-muted)">
@@ -586,6 +623,144 @@
         text: reviewText
       });
     });
+
+    // Admin: Show registered users section if admin
+    let allRegisteredUsers = [];
+
+    async function checkAdminAndLoadUsers() {
+      const currentUser = UserManager.getUser();
+      const token = TokenManager.getToken();
+
+      if (currentUser && token) {
+        // Check if user is admin
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/profile', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const user = data.user;
+
+            if (user.is_admin) {
+              // Show the registered users section
+              document.getElementById('registeredUsersSection').style.display = 'block';
+              loadAllUsers();
+            }
+          }
+        } catch (error) {
+          console.error('Error checking admin status:', error);
+        }
+      }
+    }
+
+    // Load all registered users
+    async function loadAllUsers() {
+      const token = TokenManager.getToken();
+
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/admin/users', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          allRegisteredUsers = data.users || [];
+          displayUsers(allRegisteredUsers);
+        } else {
+          document.getElementById('usersListTable').innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 32px; color: #EF4444;">
+                Хэрэглэгчдийг ачаалж чадсангүй
+              </td>
+            </tr>
+          `;
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersListTable').innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 32px; color: #EF4444;">
+              Алдаа: ${error.message}
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // Display users in table
+    function displayUsers(users) {
+      const tbody = document.getElementById('usersListTable');
+      const countDiv = document.getElementById('usersCount');
+
+      if (!users || users.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">
+              Бүртгэлтэй хэрэглэгч олдсонгүй
+            </td>
+          </tr>
+        `;
+        countDiv.textContent = 'Нийт: 0 хэрэглэгч';
+        return;
+      }
+
+      tbody.innerHTML = users.map(user => {
+        const date = new Date(user.created_at).toLocaleDateString('mn-MN');
+        const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim() || '-';
+
+        return `
+          <tr style="border-bottom: 1px solid var(--line);">
+            <td style="padding: 12px;">#${user.id}</td>
+            <td style="padding: 12px; font-weight: 600;">${fullName}</td>
+            <td style="padding: 12px;">${user.email || '-'}</td>
+            <td style="padding: 12px;">${user.phone || '-'}</td>
+            <td style="padding: 12px;">${user.register_number || '-'}</td>
+            <td style="padding: 12px; color: var(--text-muted);">${date}</td>
+          </tr>
+        `;
+      }).join('');
+
+      countDiv.textContent = `Нийт: ${users.length} хэрэглэгч`;
+    }
+
+    // Search users by name, email, phone, or register number
+    function searchUsers() {
+      const searchTerm = document.getElementById('adminUserSearch').value.toLowerCase().trim();
+
+      if (!searchTerm) {
+        displayUsers(allRegisteredUsers);
+        return;
+      }
+
+      const filtered = allRegisteredUsers.filter(user => {
+        const fullName = `${user.last_name || ''} ${user.first_name || ''}`.toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        const phone = (user.phone || '').toLowerCase();
+        const register = (user.register_number || '').toLowerCase();
+
+        return fullName.includes(searchTerm) ||
+               email.includes(searchTerm) ||
+               phone.includes(searchTerm) ||
+               register.includes(searchTerm);
+      });
+
+      displayUsers(filtered);
+    }
+
+    // Allow search on Enter key
+    document.getElementById('adminUserSearch')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        searchUsers();
+      }
+    });
+
+    // Check admin status on page load
+    checkAdminAndLoadUsers();
   </script>
 </body>
 </html>

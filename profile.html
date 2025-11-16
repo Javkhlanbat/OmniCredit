@@ -43,6 +43,42 @@
       color: white;
       font-weight: 800;
       flex-shrink: 0;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .profile-avatar:hover {
+      transform: scale(1.05);
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-upload-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      text-align: center;
+      padding: 4px;
+      font-size: 10px;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .profile-avatar:hover .avatar-upload-overlay {
+      opacity: 1;
+    }
+
+    #avatarInput {
+      display: none;
     }
 
     .tabs {
@@ -109,7 +145,11 @@
 
     <div class="profile-container">
       <div class="profile-header">
-        <div class="profile-avatar" id="userAvatar">--</div>
+        <div class="profile-avatar" id="userAvatar" onclick="document.getElementById('avatarInput').click()">
+          <span id="avatarInitials">--</span>
+          <div class="avatar-upload-overlay">Зураг солих</div>
+        </div>
+        <input type="file" id="avatarInput" accept="image/*">
         <div>
           <h1 style="margin-bottom: 8px;" id="userName">Уншиж байна...</h1>
           <p style="color: var(--text-muted); margin-bottom: 12px;" id="userEmail">--</p>
@@ -317,9 +357,25 @@
           document.getElementById('userName').textContent = fullName || 'Хэрэглэгч';
           document.getElementById('userEmail').textContent = profile.email || '';
 
-          // Avatar initials
+          // Avatar initials or image
           const initials = (lastName.charAt(0) + firstName.charAt(0)).toUpperCase() || 'XX';
-          document.getElementById('userAvatar').textContent = initials;
+          const avatarInitialsElement = document.getElementById('avatarInitials');
+
+          // Check if user has uploaded avatar (stored in localStorage)
+          const savedAvatar = localStorage.getItem(`avatar_${profile.id}`);
+          if (savedAvatar) {
+            // Display saved avatar image
+            const avatarContainer = document.getElementById('userAvatar');
+            avatarContainer.style.background = 'none';
+            avatarInitialsElement.style.display = 'none';
+
+            const img = document.createElement('img');
+            img.src = savedAvatar;
+            img.alt = 'Profile Avatar';
+            avatarContainer.insertBefore(img, avatarContainer.firstChild);
+          } else {
+            avatarInitialsElement.textContent = initials;
+          }
 
           // Update form fields
           document.getElementById('firstName').value = firstName;
@@ -333,6 +389,65 @@
         Utils.showToast('Профайл уншихад алдаа гарлаа', 'error');
       }
     }
+
+    // Handle avatar upload
+    document.getElementById('avatarInput').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+
+      if (!file) return;
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Зөвхөн зураг файл оруулна уу');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Зургийн хэмжээ 5MB-аас бага байх ёстой');
+        return;
+      }
+
+      // Read and display image
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const imageDataUrl = event.target.result;
+
+        // Update avatar display
+        const avatarContainer = document.getElementById('userAvatar');
+        const avatarInitialsElement = document.getElementById('avatarInitials');
+
+        // Remove existing image if any
+        const existingImg = avatarContainer.querySelector('img');
+        if (existingImg) {
+          existingImg.remove();
+        }
+
+        // Hide initials and change background
+        avatarInitialsElement.style.display = 'none';
+        avatarContainer.style.background = 'none';
+
+        // Add new image
+        const img = document.createElement('img');
+        img.src = imageDataUrl;
+        img.alt = 'Profile Avatar';
+        avatarContainer.insertBefore(img, avatarContainer.firstChild);
+
+        // Save to localStorage
+        const profile = UserManager.getUser();
+        if (profile && profile.id) {
+          localStorage.setItem(`avatar_${profile.id}`, imageDataUrl);
+          alert('Профайл зураг амжилттай солигдлоо!');
+        }
+      };
+
+      reader.onerror = function() {
+        alert('Зураг уншихад алдаа гарлаа');
+      };
+
+      reader.readAsDataURL(file);
+    });
 
     // Tabs
     const tabs = document.querySelectorAll('.tab');

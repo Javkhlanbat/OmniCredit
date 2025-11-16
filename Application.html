@@ -514,7 +514,8 @@
 
         const loanData = {
           amount: parseFloat(formData.get('amount')),
-          term: parseInt(formData.get('term')),
+          duration_months: parseInt(formData.get('term')),
+          loan_type: 'personal',
           purpose: purpose,
           monthly_income: parseFloat(formData.get('income')),
           occupation: formData.get('occupation')

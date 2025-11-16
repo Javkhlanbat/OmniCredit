@@ -146,36 +146,12 @@
 
     <div class="recent-section">
       <h2 style="margin-bottom: 24px;">Сүүлийн гүйлгээ</h2>
-      
+
       <div class="card">
-        <div class="card-body">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line);">
-            <div>
-              <div style="font-weight: 700; margin-bottom: 4px;">Сарын төлбөр</div>
-              <div style="font-size: 13px; color: var(--text-muted);">2024-12-15</div>
-            </div>
-            <div style="font-weight: 800; font-size: 1.125rem; color: #10b981;">-₮135,000</div>
+        <div class="card-body" id="recentTransactions">
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>Төлбөрийн түүх байхгүй байна</p>
           </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line);">
-            <div>
-              <div style="font-weight: 700; margin-bottom: 4px;">Сарын төлбөр</div>
-              <div style="font-size: 13px; color: var(--text-muted);">2024-11-15</div>
-            </div>
-            <div style="font-weight: 800; font-size: 1.125rem; color: #10b981;">-₮135,000</div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0;">
-            <div>
-              <div style="font-weight: 700; margin-bottom: 4px;">Сарын төлбөр</div>
-              <div style="font-size: 13px; color: var(--text-muted);">2024-10-15</div>
-            </div>
-            <div style="font-weight: 800; font-size: 1.125rem; color: #10b981;">-₮135,000</div>
-          </div>
-
-          <a href="paymenthistory.html" class="btn btn-secondary btn-block" style="margin-top: 16px;">
-            Бүх түүх харах
-          </a>
         </div>
       </div>
     </div>
@@ -339,11 +315,69 @@
           document.getElementById('nextPayment').textContent = '₮0';
         }
 
+        // Load recent payments
+        await loadRecentPayments();
+
       } catch (error) {
         console.error('Dashboard load error:', error);
         // Show no loans section on error
         document.getElementById('activeLoansSection').style.display = 'none';
         document.getElementById('noLoansSection').style.display = 'block';
+      }
+    }
+
+    // Load recent payment transactions
+    async function loadRecentPayments() {
+      try {
+        const payments = await PaymentsAPI.getMyPayments();
+
+        const container = document.getElementById('recentTransactions');
+
+        if (payments && payments.length > 0) {
+          // Show only last 3 payments
+          const recentPayments = payments.slice(0, 3);
+
+          container.innerHTML = recentPayments.map((payment, index) => {
+            const date = new Date(payment.payment_date || payment.created_at);
+            const formattedDate = date.toLocaleDateString('mn-MN', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
+            });
+
+            const borderStyle = index < recentPayments.length - 1
+              ? 'border-bottom: 1px solid var(--line);'
+              : '';
+
+            return `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStyle}">
+                <div>
+                  <div style="font-weight: 700; margin-bottom: 4px;">
+                    ${payment.payment_method === 'card' ? '💳 Картаар' :
+                      payment.payment_method === 'qpay' ? '📱 QPay' :
+                      payment.payment_method === 'social' ? '💰 SocialPay' : '🏦 Шилжүүлэг'}
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-muted);">${formattedDate}</div>
+                </div>
+                <div style="font-weight: 800; font-size: 1.125rem; color: #10b981;">
+                  -₮${payment.amount.toLocaleString()}
+                </div>
+              </div>
+            `;
+          }).join('') + `
+            <a href="paymenthistory.html" class="btn btn-secondary btn-block" style="margin-top: 16px;">
+              Бүх түүх харах
+            </a>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <p>Төлбөрийн түүх байхгүй байна</p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Load payments error:', error);
       }
     }
 

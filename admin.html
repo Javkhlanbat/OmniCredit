@@ -680,17 +680,25 @@
       tbody.innerHTML = users.map(user => {
         const date = new Date(user.created_at).toLocaleDateString('mn-MN');
         const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim() || '-';
+        const isCurrentUser = user.id === UserManager.getUser()?.id;
+        const isAdminUser = user.is_admin;
 
         return `
           <tr>
             <td>#${user.id}</td>
-            <td style="font-weight: 600;">${fullName}</td>
+            <td style="font-weight: 600;">
+              ${fullName}
+              ${isAdminUser ? '<span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-left: 8px;">ADMIN</span>' : ''}
+            </td>
             <td>${user.email}</td>
             <td>${user.phone || '-'}</td>
             <td>${user.register_number || '-'}</td>
             <td>${date}</td>
             <td>
-              <button class="btn btn-secondary btn-icon" onclick="viewUserProfile(${user.id}, '${user.email}')">Profile</button>
+              <div class="action-buttons">
+                <button class="btn btn-secondary btn-icon" onclick="viewUserProfile(${user.id}, '${user.email}')">Profile</button>
+                ${!isCurrentUser ? `<button class="btn btn-secondary btn-icon" style="background: #EF4444; border-color: #EF4444;" onclick="deleteUser(${user.id}, '${fullName}')">Delete</button>` : ''}
+              </div>
             </td>
           </tr>
         `;
@@ -725,9 +733,10 @@
     // View user profile modal
     async function viewUserProfile(userId, userEmail) {
       try {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
         const response = await fetch(`http://localhost:5000/api/auth/admin/users`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
           }
         });
 
@@ -759,6 +768,40 @@
       } catch (error) {
         console.error('Error loading user profile:', error);
         alert('Алдаа: Хэрэглэгчийн мэдээллийг ачаалж чадсангүй');
+      }
+    }
+
+    // Delete user
+    async function deleteUser(userId, userName) {
+      if (!confirm(`Та "${userName}" хэрэглэгчийг устгахдаа итгэлтэй байна уу?\n\nЭнэ үйлдлийг буцаах боломжгүй!`)) {
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5000/api/auth/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || errorData.error || 'Алдаа гарлаа');
+        }
+
+        const data = await response.json();
+
+        Utils.showToast(`${userName} амжилттай устгагдлаа`, 'success');
+
+        // Жагсаалтыг дахин ачаалах
+        await loadUsers();
+        await loadStatistics();
+
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        Utils.showToast('Алдаа: ' + error.message, 'error');
       }
     }
 

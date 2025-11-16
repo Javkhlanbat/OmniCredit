@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getProfile, verifyToken, adminGetAllUsers } = require('../controllers/authController');
+const { register, login, getProfile, verifyToken, adminGetAllUsers, adminDeleteUser } = require('../controllers/authController');
 const { authenticateToken } = require('../middleware/authMiddleware');
+const { requireAdmin } = require('../middleware/adminMiddleware');
 const { validateRegistration, validateLogin } = require('../middleware/validationMiddleware');
 
 // POST /api/auth/register - Бүртгэл
@@ -17,6 +18,9 @@ router.get('/profile', authenticateToken, getProfile);
 router.get('/verify', authenticateToken, verifyToken);
 
 // GET /api/auth/admin/users - Бүх хэрэглэгчид (Admin)
-router.get('/admin/users', authenticateToken, adminGetAllUsers);
+router.get('/admin/users', authenticateToken, requireAdmin, adminGetAllUsers);
+
+// DELETE /api/auth/admin/users/:id - Хэрэглэгч устгах (Admin)
+router.delete('/admin/users/:id', authenticateToken, requireAdmin, adminDeleteUser);
 
 module.exports = router;

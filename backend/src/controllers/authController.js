@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, findUserByPhone, verifyPassword, findUserById, getAllUsers } = require('../models/userModel');
+const { createUser, findUserByEmail, findUserByPhone, verifyPassword, findUserById, getAllUsers, deleteUser } = require('../models/userModel');
 
 // JWT token үүсгэх
 const generateToken = (user) => {
@@ -201,10 +201,55 @@ const adminGetAllUsers = async (req, res) => {
   }
 };
 
+// Хэрэглэгч устгах (Admin)
+const adminDeleteUser = async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+
+    // Өөрийгөө устгахыг зөвшөөрөхгүй
+    if (userId === req.user.id) {
+      return res.status(400).json({
+        error: 'Өөрийгөө устгах боломжгүй',
+        message: 'Та өөрийн account-ийг устгах боломжгүй'
+      });
+    }
+
+    // Хэрэглэгч байгаа эсэхийг шалгах
+    const user = await findUserById(userId);
+    if (!user) {
+      return res.status(404).json({
+        error: 'Хэрэглэгч олдсонгүй',
+        message: 'Устгах хэрэглэгч олдсонгүй'
+      });
+    }
+
+    // Хэрэглэгчийг устгах
+    await deleteUser(userId);
+
+    res.json({
+      message: 'Хэрэглэгч амжилттай устгагдлаа',
+      deletedUser: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name
+      }
+    });
+
+  } catch (error) {
+    console.error('Admin delete user алдаа:', error);
+    res.status(500).json({
+      error: 'Серверт алдаа гарлаа',
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   getProfile,
   verifyToken,
-  adminGetAllUsers
+  adminGetAllUsers,
+  adminDeleteUser
 };

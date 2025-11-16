@@ -10,8 +10,8 @@ const pool = new Pool({
 
 const createAdmin = async () => {
   try {
-    console.log('🔄 PostgreSQL-д холбогдож байна...');
-    console.log('📍 URL:', process.env.DATABASE_URL?.replace(/:[^:]*@/, ':****@'));
+    console.log('PostgreSQL-д холбогдож байна...');
+    console.log('URL:', process.env.DATABASE_URL?.replace(/:[^:]*@/, ':****@'));
 
     // Check if admin user already exists
     const existingAdmin = await pool.query(
@@ -20,7 +20,7 @@ const createAdmin = async () => {
     );
 
     if (existingAdmin.rows.length > 0) {
-      console.log('⚠️  Admin хэрэглэгч аль хэдийн байна!');
+      console.log('Admin хэрэглэгч аль хэдийн байна!');
       console.log('   Email:', existingAdmin.rows[0].email);
       console.log('   Phone:', existingAdmin.rows[0].phone);
       console.log('   Is Admin:', existingAdmin.rows[0].is_admin);
@@ -30,7 +30,7 @@ const createAdmin = async () => {
         'UPDATE users SET is_admin = true WHERE id = $1',
         [existingAdmin.rows[0].id]
       );
-      console.log('✅ Хэрэглэгчийг admin болголоо');
+      console.log('Хэрэглэгчийг admin болголоо');
 
       await pool.end();
       process.exit(0);
@@ -65,22 +65,22 @@ const createAdmin = async () => {
       ]
     );
 
-    console.log('\n🎉 Admin хэрэглэгч амжилттай үүслээ!');
-    console.log('\n📊 Admin мэдээлэл:');
+    console.log('\nAdmin хэрэглэгч амжилттай үүслээ!');
+    console.log('\nAdmin мэдээлэл:');
     console.log(`   ID: ${result.rows[0].id}`);
     console.log(`   Email: ${result.rows[0].email}`);
     console.log(`   Phone: ${result.rows[0].phone}`);
     console.log(`   Password: admin123`);
     console.log(`   Is Admin: ${result.rows[0].is_admin}`);
-    console.log('\n✅ Утас: 95556339');
-    console.log('✅ Нууц үг: admin123');
+    console.log('\nУтас: 95556339');
+    console.log('Нууц үг: admin123');
 
     await pool.end();
     process.exit(0);
 
   } catch (error) {
-    console.error('❌ Алдаа гарлаа:', error.message);
-    console.error('📝 Дэлгэрэнгүй:', error);
+    console.error('Алдаа гарлаа:', error.message);
+    console.error('Дэлгэрэнгүй:', error);
     await pool.end();
     process.exit(1);
   }

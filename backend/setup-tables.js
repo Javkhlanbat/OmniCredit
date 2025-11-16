@@ -9,8 +9,8 @@ const pool = new Pool({
 
 const createTables = async () => {
   try {
-    console.log('🔄 Railway PostgreSQL-д холбогдож байна...');
-    console.log('📍 URL:', process.env.DATABASE_URL?.replace(/:[^:]*@/, ':****@'));
+    console.log('Railway PostgreSQL-д холбогдож байна...');
+    console.log('URL:', process.env.DATABASE_URL?.replace(/:[^:]*@/, ':****@'));
 
     // Users table
     await pool.query(`
@@ -30,7 +30,7 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Users table үүслээ');
+    console.log('Users table үүслээ');
 
     // Loans table
     await pool.query(`
@@ -49,7 +49,7 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Loans table үүслээ');
+    console.log('Loans table үүслээ');
 
     // Payments table
     await pool.query(`
@@ -64,7 +64,7 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Payments table үүслээ');
+    console.log('Payments table үүслээ');
 
     // Purchase loans table
     await pool.query(`
@@ -84,9 +84,9 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Purchase_loans table үүслээ');
+    console.log('Purchase_loans table үүслээ');
 
-    console.log('\n🎉 Бүх tables амжилттай үүслээ!');
+    console.log('\nБүх tables амжилттай үүслээ!');
 
     // Count check
     const result = await pool.query(`
@@ -97,7 +97,7 @@ const createTables = async () => {
         (SELECT COUNT(*) FROM purchase_loans) as purchase_loans_count
     `);
 
-    console.log('\n📊 Database статистик:');
+    console.log('\nDatabase статистик:');
     console.log(`   Users: ${result.rows[0].users_count}`);
     console.log(`   Loans: ${result.rows[0].loans_count}`);
     console.log(`   Payments: ${result.rows[0].payments_count}`);
@@ -107,8 +107,8 @@ const createTables = async () => {
     process.exit(0);
 
   } catch (error) {
-    console.error('❌ Алдаа гарлаа:', error.message);
-    console.error('📝 Дэлгэрэнгүй:', error);
+    console.error('Алдаа гарлаа:', error.message);
+    console.error('Дэлгэрэнгүй:', error);
     await pool.end();
     process.exit(1);
   }

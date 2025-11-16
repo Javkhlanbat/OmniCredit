@@ -9,8 +9,8 @@ const pool = new Pool({
 
 const checkUsers = async () => {
   try {
-    console.log('🔄 PostgreSQL-д холбогдож байна...');
-    console.log('📍 URL:', process.env.DATABASE_URL?.replace(/:[^:]*@/, ':****@'));
+    console.log('PostgreSQL-д холбогдож байна...');
+    console.log('URL:', process.env.DATABASE_URL?.replace(/:[^:]*@/, ':****@'));
 
     // Get all users with their phone numbers
     const result = await pool.query(
@@ -19,7 +19,7 @@ const checkUsers = async () => {
        ORDER BY created_at DESC`
     );
 
-    console.log('\n📊 Нийт хэрэглэгчид:', result.rows.length);
+    console.log('\nНийт хэрэглэгчид:', result.rows.length);
     console.log('\n' + '='.repeat(80));
 
     result.rows.forEach((user, index) => {
@@ -37,8 +37,8 @@ const checkUsers = async () => {
     process.exit(0);
 
   } catch (error) {
-    console.error('❌ Алдаа гарлаа:', error.message);
-    console.error('📝 Дэлгэрэнгүй:', error);
+    console.error('Алдаа гарлаа:', error.message);
+    console.error('Дэлгэрэнгүй:', error);
     await pool.end();
     process.exit(1);
   }

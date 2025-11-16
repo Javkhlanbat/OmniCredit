@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin API Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .test-section {
+      border: 2px solid #ccc;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #5568d3;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #667eea;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Admin API Test</h1>
+
+  <!-- Step 1: Check Token -->
+  <div class="test-section">
+    <h2>Step 1: Check Token</h2>
+    <button onclick="checkToken()">Check Token</button>
+    <div id="tokenResult"></div>
+  </div>
+
+  <!-- Step 2: Login as Admin -->
+  <div class="test-section">
+    <h2>Step 2: Login as Admin</h2>
+    <input type="text" id="phone" value="95556339" placeholder="Phone">
+    <input type="password" id="password" value="admin123" placeholder="Password">
+    <button onclick="loginAsAdmin()">Login</button>
+    <div id="loginResult"></div>
+  </div>
+
+  <!-- Step 3: Get All Users -->
+  <div class="test-section">
+    <h2>Step 3: Get All Users</h2>
+    <button onclick="getAllUsers()">Get Users</button>
+    <div id="usersResult"></div>
+  </div>
+
+  <!-- Step 4: Get All Loans -->
+  <div class="test-section">
+    <h2>Step 4: Get All Loans</h2>
+    <button onclick="getAllLoans()">Get Loans</button>
+    <div id="loansResult"></div>
+  </div>
+
+  <script>
+    // Check what token is stored
+    function checkToken() {
+      const authToken = localStorage.getItem('authToken');
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('userData');
+
+      const html = `
+        <pre>
+authToken: ${authToken ? authToken.substring(0, 50) + '...' : 'NOT FOUND'}
+token: ${token ? token.substring(0, 50) + '...' : 'NOT FOUND'}
+userData: ${userData || 'NOT FOUND'}
+        </pre>
+      `;
+      document.getElementById('tokenResult').innerHTML = html;
+    }
+
+    // Login as admin
+    async function loginAsAdmin() {
+      try {
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || data.error);
+        }
+
+        // Save token
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userData', JSON.stringify(data.user));
+
+        const html = `
+          <p class="success">✅ Login successful!</p>
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+        document.getElementById('loginResult').innerHTML = html;
+
+      } catch (error) {
+        document.getElementById('loginResult').innerHTML = `
+          <p class="error">❌ Error: ${error.message}</p>
+        `;
+      }
+    }
+
+    // Get all users
+    async function getAllUsers() {
+      try {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+
+        if (!token) {
+          throw new Error('No token found. Please login first.');
+        }
+
+        const response = await fetch('http://localhost:5000/api/auth/admin/users', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || data.error);
+        }
+
+        // Create table
+        let tableHTML = `
+          <p class="success">✅ Users loaded: ${data.users.length}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Is Admin</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.users.forEach(user => {
+          tableHTML += `
+            <tr>
+              <td>#${user.id}</td>
+              <td>${user.first_name} ${user.last_name}</td>
+              <td>${user.email}</td>
+              <td>${user.phone || '-'}</td>
+              <td><strong>${user.is_admin ? 'YES' : 'NO'}</strong></td>
+              <td>${new Date(user.created_at).toLocaleString()}</td>
+            </tr>
+          `;
+        });
+
+        tableHTML += '</tbody></table>';
+        document.getElementById('usersResult').innerHTML = tableHTML;
+
+      } catch (error) {
+        document.getElementById('usersResult').innerHTML = `
+          <p class="error">❌ Error: ${error.message}</p>
+        `;
+      }
+    }
+
+    // Get all loans
+    async function getAllLoans() {
+      try {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+
+        if (!token) {
+          throw new Error('No token found. Please login first.');
+        }
+
+        const response = await fetch('http://localhost:5000/api/loans/admin/all', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || data.error);
+        }
+
+        const html = `
+          <p class="success">✅ Loans loaded: ${data.loans?.length || 0}</p>
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+        document.getElementById('loansResult').innerHTML = html;
+
+      } catch (error) {
+        document.getElementById('loansResult').innerHTML = `
+          <p class="error">❌ Error: ${error.message}</p>
+        `;
+      }
+    }
+
+    // Auto-check token on load
+    window.addEventListener('load', () => {
+      checkToken();
+    });
+  </script>
+</body>
+</html>

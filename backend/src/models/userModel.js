@@ -39,7 +39,7 @@ const findUserByPhone = async (phone) => {
 // ID-гаар хэрэглэгч хайх
 const findUserById = async (id) => {
   const result = await query(
-    'SELECT id, email, first_name, last_name, phone, register_number, created_at FROM users WHERE id = $1',
+    'SELECT id, email, first_name, last_name, phone, register_number, is_admin, created_at FROM users WHERE id = $1',
     [id]
   );
   return result.rows[0];
@@ -88,7 +88,7 @@ const deleteUser = async (id) => {
 // Бүх хэрэглэгчид (админд зориулсан)
 const getAllUsers = async () => {
   const result = await query(
-    'SELECT id, email, first_name, last_name, phone, register_number, created_at FROM users ORDER BY created_at DESC'
+    'SELECT id, email, first_name, last_name, phone, register_number, is_admin, created_at FROM users ORDER BY created_at DESC'
   );
   return result.rows;
 };

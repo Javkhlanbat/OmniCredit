@@ -427,10 +427,12 @@
     // Load statistics
     async function loadStatistics() {
       try {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+
         // Load all loans
         const response = await fetch('http://localhost:5000/api/loans/admin/all', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
           }
         });
         const data = await response.json();
@@ -439,7 +441,7 @@
         // Load all users
         const usersResponse = await fetch('http://localhost:5000/api/auth/admin/users', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
           }
         });
         const userData = await usersResponse.json();
@@ -464,11 +466,18 @@
     // Load loans
     async function loadLoans() {
       try {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
         const response = await fetch('http://localhost:5000/api/loans/admin/all', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
           }
         });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || errorData.error || 'Алдаа гарлаа');
+        }
+
         const data = await response.json();
         allLoans = data.loans || [];
         displayLoans(allLoans);
@@ -621,19 +630,31 @@
     // Load users
     async function loadUsers() {
       try {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        console.log('Loading users with token:', token ? 'Token exists' : 'No token');
+
         const response = await fetch('http://localhost:5000/api/auth/admin/users', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
           }
         });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || errorData.error || 'Алдаа гарлаа');
+        }
+
         const data = await response.json();
+        console.log('Users loaded:', data.users?.length || 0);
         allUsers = data.users || [];
         displayUsers(allUsers);
       } catch (error) {
         console.error('Error loading users:', error);
         document.getElementById('usersTableBody').innerHTML = `
           <tr>
-            <td colspan="6" style="text-align: center; padding: 48px; color: #EF4444;">
+            <td colspan="7" style="text-align: center; padding: 48px; color: #EF4444;">
               Алдаа гарлаа: ${error.message}
             </td>
           </tr>

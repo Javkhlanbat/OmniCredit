@@ -10,7 +10,7 @@ const isLocalHost = LOCAL_HOSTS.includes(window.location.hostname);
 const API_CONFIG = {
     BASE_URL: isLocalHost
         ? 'http://localhost:5000/api'
-        : 'https://omnicredit-backend.vercel.app/api', // Production backend URL
+        : 'https://omnicredit-api.vercel.app/api', // Production backend URL
     TIMEOUT: 10000 // 10 seconds
 };
 

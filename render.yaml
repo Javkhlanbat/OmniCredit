@@ -20,10 +20,9 @@ services:
   - type: web
     name: omnicredit
     env: static
-    region: singapore
     plan: free
-    buildCommand: echo "Static site - no build needed"
-    staticPublishPath: frontend
+    buildCommand: echo "Static site"
+    staticPublishPath: .
     routes:
       - type: rewrite
         source: /*

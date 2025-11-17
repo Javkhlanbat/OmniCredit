@@ -37,8 +37,30 @@ const calculateMonthlyPayment = (amount, interestRate, durationMonths) => {
 // Зээл хүсэлт илгээх
 const applyForLoan = async (req, res) => {
   try {
-    const { loan_type, amount, duration_months } = req.body;
+    const {
+      loan_type = 'personal',
+      amount,
+      duration_months,
+      purpose,
+      monthly_income,
+      occupation
+    } = req.body;
     const userId = req.user.id;
+
+    // Validation
+    if (!amount || amount < 100000 || amount > 10000000) {
+      return res.status(400).json({
+        error: 'Буруу дүн',
+        message: 'Зээлийн дүн 100,000-10,000,000 хооронд байх ёстой'
+      });
+    }
+
+    if (!duration_months || duration_months < 1 || duration_months > 60) {
+      return res.status(400).json({
+        error: 'Буруу хугацаа',
+        message: 'Зээлийн хугацаа 1-60 сар хооронд байх ёстой'
+      });
+    }
 
     // Хүү тооцоолох
     const interestRate = calculateInterestRate(loan_type, amount, duration_months);
@@ -46,14 +68,21 @@ const applyForLoan = async (req, res) => {
     // Сарын төлбөр тооцоолох
     const monthlyPayment = calculateMonthlyPayment(amount, interestRate, duration_months);
 
+    // Нийт төлөх дүн
+    const totalAmount = monthlyPayment * duration_months;
+
     // Зээл үүсгэх
     const loan = await createLoan({
       user_id: userId,
       loan_type,
       amount,
       interest_rate: interestRate,
-      duration_months,
-      monthly_payment: monthlyPayment
+      term_months: duration_months,
+      monthly_payment: monthlyPayment,
+      total_amount: totalAmount,
+      purpose,
+      monthly_income,
+      occupation
     });
 
     res.status(201).json({
@@ -63,10 +92,11 @@ const applyForLoan = async (req, res) => {
         loan_type: loan.loan_type,
         amount: loan.amount,
         interest_rate: loan.interest_rate,
-        duration_months: loan.duration_months,
+        term_months: loan.term_months,
         monthly_payment: loan.monthly_payment,
+        total_amount: loan.total_amount,
         status: loan.status,
-        applied_at: loan.applied_at
+        created_at: loan.created_at
       }
     });
 

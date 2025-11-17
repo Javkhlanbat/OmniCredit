@@ -2,13 +2,27 @@ const { query } = require('../config/database');
 
 // Зээл үүсгэх
 const createLoan = async (loanData) => {
-  const { user_id, loan_type, amount, interest_rate, duration_months, monthly_payment } = loanData;
+  const {
+    user_id,
+    loan_type = 'personal',
+    amount,
+    interest_rate,
+    term_months,
+    monthly_payment,
+    total_amount,
+    purpose,
+    monthly_income,
+    occupation
+  } = loanData;
 
   const result = await query(
-    `INSERT INTO loans (user_id, loan_type, amount, interest_rate, duration_months, monthly_payment, status)
-     VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+    `INSERT INTO loans (
+      user_id, loan_type, amount, interest_rate, term_months,
+      monthly_payment, total_amount, purpose, monthly_income, occupation, status
+    )
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending')
      RETURNING *`,
-    [user_id, loan_type, amount, interest_rate, duration_months, monthly_payment]
+    [user_id, loan_type, amount, interest_rate, term_months, monthly_payment, total_amount, purpose, monthly_income, occupation]
   );
 
   return result.rows[0];

@@ -1,6 +1,4 @@
-// =============================================
-// Navigation Component JS
-// =============================================
+
 
 class Navigation {
   constructor() {
@@ -42,7 +40,6 @@ class Navigation {
     }
   }
 
-  // Set active link based on current page
   setupActiveLinks() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-links a');
@@ -56,7 +53,7 @@ class Navigation {
     });
   }
 
-  // Sticky navigation with scroll effect
+
   setupStickyNav() {
     const nav = document.querySelector('.nav');
     let lastScroll = 0;
@@ -74,7 +71,7 @@ class Navigation {
     });
   }
 
-  // Generate navigation HTML
+
   static render() {
     return `
       <nav class="nav">
@@ -96,12 +93,11 @@ class Navigation {
   }
 }
 
-// Initialize navigation when DOM is ready
+
 document.addEventListener('DOMContentLoaded', () => {
   new Navigation();
 });
 
-// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = Navigation;
 }

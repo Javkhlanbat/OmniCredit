@@ -1,7 +1,3 @@
-/**
- * Authentication Guard
- * Protects pages that require user authentication
- */
 
 (function() {
   // Check if api.js is loaded

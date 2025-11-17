@@ -1,11 +1,4 @@
-/**
- * API Тохиргоо ба Туслах Функцууд
- * OmniCredit - Frontend-Backend Холбох Хэсэг
- */
 
-// ==============================================
-// API Үндсэн URL Тохиргоо
-// ==============================================
 const LOCAL_HOSTS = ['localhost', '127.0.0.1', '::1'];
 const isLocalHost = LOCAL_HOSTS.includes(window.location.hostname);
 
@@ -16,9 +9,6 @@ const API_CONFIG = {
     TIMEOUT: 10000 // 10 секунд (хүсэлтийн хугацаа)
 };
 
-// ==============================================
-// Token (Нэвтрэх эрхийн түлхүүр) Удирдлага
-// ==============================================
 const TokenManager = {
     // Token хадгалах
     setToken(token) {
@@ -41,9 +31,6 @@ const TokenManager = {
     }
 };
 
-// ==============================================
-// Хэрэглэгчийн Мэдээлэл Удирдлага
-// ==============================================
 const UserManager = {
     // Хэрэглэгчийн мэдээлэл хадгалах
     setUser(user) {
@@ -69,9 +56,7 @@ const UserManager = {
     }
 };
 
-// ==============================================
-// API Client - Алдаа шийдвэрлэлттэй
-// ==============================================
+
 class APIClient {
     constructor(baseURL) {
         this.baseURL = baseURL;
@@ -176,14 +161,10 @@ class APIClient {
     }
 }
 
-// ==============================================
-// API Client эхлүүлэх
-// ==============================================
+
 const api = new APIClient(API_CONFIG.BASE_URL);
 
-// ==============================================
-// Нэвтрэх/Бүртгэлийн API
-// ==============================================
+
 const AuthAPI = {
     // Шинэ хэрэглэгч бүртгэх
     async register(userData) {
@@ -238,9 +219,7 @@ const AuthAPI = {
     }
 };
 
-// ==============================================
-// Зээлийн API
-// ==============================================
+
 const LoansAPI = {
     // Зээлийн хүсэлт илгээх
     async applyForLoan(loanData) {
@@ -272,10 +251,6 @@ const LoansAPI = {
         return await api.get('/loans/purchase/my');
     },
 
-    // ==============================================
-    // Admin функцууд
-    // ==============================================
-
     // Бүх зээлүүд авах (Admin)
     async getAllLoans() {
         return await api.get('/loans/admin/all');
@@ -287,9 +262,6 @@ const LoansAPI = {
     }
 };
 
-// ==============================================
-// Төлбөрийн API
-// ==============================================
 const PaymentsAPI = {
     // Төлбөр төлөх
     async makePayment(paymentData) {
@@ -321,19 +293,13 @@ const PaymentsAPI = {
         return await api.get(`/payments/loan/${loanId}/balance`);
     },
 
-    // ==============================================
-    // Admin функцууд
-    // ==============================================
-
     // Бүх төлбөрүүд авах (Admin)
     async getAllPayments() {
         return await api.get('/payments/admin/all');
     }
 };
 
-// ==============================================
-// Window объект руу экспорт хийх
-// ==============================================
+
 if (typeof window !== 'undefined') {
     window.API_CONFIG = API_CONFIG;
     window.TokenManager = TokenManager;

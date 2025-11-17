@@ -47,18 +47,41 @@ const applyForLoan = async (req, res) => {
     } = req.body;
     const userId = req.user.id;
 
+    console.log('Received loan application:', req.body);
+
     // Validation
-    if (!amount || amount < 100000 || amount > 10000000) {
+    if (!amount || isNaN(amount) || amount < 100000 || amount > 10000000) {
       return res.status(400).json({
         error: 'Буруу дүн',
         message: 'Зээлийн дүн 100,000-10,000,000 хооронд байх ёстой'
       });
     }
 
-    if (!duration_months || duration_months < 1 || duration_months > 60) {
+    if (!duration_months || isNaN(duration_months) || duration_months < 1 || duration_months > 60) {
       return res.status(400).json({
         error: 'Буруу хугацаа',
         message: 'Зээлийн хугацаа 1-60 сар хооронд байх ёстой'
+      });
+    }
+
+    if (!monthly_income || isNaN(monthly_income) || monthly_income < 300000) {
+      return res.status(400).json({
+        error: 'Буруу орлого',
+        message: 'Сарын орлого доод тал нь 300,000₮ байх ёстой'
+      });
+    }
+
+    if (!occupation || occupation.trim() === '') {
+      return res.status(400).json({
+        error: 'Буруу мэдээлэл',
+        message: 'Ажил мэргэжил заавал бөглөх шаардлагатай'
+      });
+    }
+
+    if (!purpose || purpose.trim() === '') {
+      return res.status(400).json({
+        error: 'Буруу мэдээлэл',
+        message: 'Зээлийн зориулалт заавал бөглөх шаардлагатай'
       });
     }
 

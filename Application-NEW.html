@@ -104,7 +104,7 @@
               <label class="form-label required">Зориулалт</label>
               <select class="form-control form-select" name="purpose" id="purposeSelect" required>
                 <option value="">Сонгох</option>
-                <option value="personal">Хувийн зарцуулалт</option>
+                <option value="personal" selected>Хувийн зарцуулалт</option>
                 <option value="business">Бизнес</option>
                 <option value="education">Боловсрол</option>
                 <option value="medical">Эмнэлэг</option>
@@ -121,14 +121,14 @@
               <label class="form-label required">Сарын орлого</label>
               <div class="number-display">
                 <span class="currency">₮</span>
-                <input type="number" name="monthly_income" id="monthlyIncome" min="300000" step="50000" placeholder="800000" required>
+                <input type="number" name="monthly_income" id="monthlyIncome" value="800000" min="300000" step="50000" placeholder="800000" required>
               </div>
               <span class="form-text">Таны сарын цалин эсвэл орлого</span>
             </div>
 
             <div class="form-group">
               <label class="form-label required">Ажил мэргэжил</label>
-              <input type="text" class="form-control" name="occupation" placeholder="Жишээ: Офисын ажилтан" required>
+              <input type="text" class="form-control" name="occupation" id="occupation" placeholder="Жишээ: Офисын ажилтан" required>
             </div>
 
             <hr style="margin: 32px 0; border: none; border-top: 1px solid var(--line);">
@@ -277,19 +277,58 @@
       submitBtn.textContent = 'Илгээж байна...';
 
       try {
-        let purpose = formData.get('purpose');
-        if (purpose === 'other') {
-          purpose = formData.get('otherPurpose') || 'Бусад';
+        // Get form values
+        const amountValue = formData.get('amount');
+        const termValue = formData.get('term');
+        const monthlyIncomeValue = formData.get('monthly_income');
+        const occupationValue = formData.get('occupation');
+        let purposeValue = formData.get('purpose');
+
+        // Validation
+        if (!amountValue || amountValue === '') {
+          throw new Error('Зээлийн дүн оруулна уу');
+        }
+        if (!termValue || termValue === '') {
+          throw new Error('Зээлийн хугацаа сонгоно уу');
+        }
+        if (!monthlyIncomeValue || monthlyIncomeValue === '') {
+          throw new Error('Сарын орлого оруулна уу');
+        }
+        if (!occupationValue || occupationValue.trim() === '') {
+          throw new Error('Ажил мэргэжил оруулна уу');
+        }
+        if (!purposeValue || purposeValue === '') {
+          throw new Error('Зээлийн зориулалт сонгоно уу');
+        }
+
+        // Handle "other" purpose
+        if (purposeValue === 'other') {
+          const otherPurpose = formData.get('otherPurpose');
+          if (!otherPurpose || otherPurpose.trim() === '') {
+            throw new Error('Зориулалтаа дэлгэрэнгүй тодорхойлно уу');
+          }
+          purposeValue = otherPurpose;
         }
 
         const loanData = {
-          amount: parseFloat(formData.get('amount')),
-          duration_months: parseInt(formData.get('term')),
+          amount: parseFloat(amountValue),
+          duration_months: parseInt(termValue),
           loan_type: 'personal',
-          purpose: purpose,
-          monthly_income: parseFloat(formData.get('monthly_income')),
-          occupation: formData.get('occupation')
+          purpose: purposeValue,
+          monthly_income: parseFloat(monthlyIncomeValue),
+          occupation: occupationValue.trim()
         };
+
+        // Validate parsed values
+        if (isNaN(loanData.amount)) {
+          throw new Error('Зээлийн дүн буруу байна');
+        }
+        if (isNaN(loanData.duration_months)) {
+          throw new Error('Зээлийн хугацаа буруу байна');
+        }
+        if (isNaN(loanData.monthly_income)) {
+          throw new Error('Сарын орлого буруу байна');
+        }
 
         console.log('Sending loan data:', loanData);
 

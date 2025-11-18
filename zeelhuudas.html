@@ -354,7 +354,7 @@
             <th>Зорилго</th>
             <td>Хэрэглээний зээл</td>
             <th>Хугацаа</th>
-            <td>0–24 сар</td>
+            <td>1–24 сар</td>
           </tr>
           <tr>
             <th>Хүү</th>
@@ -422,11 +422,11 @@
         <div class="control">
           <label>Зээлийн хугацаа (сар)</label>
           <div class="display">
-            <input id="termNum" type="number" value="12" min="0" max="24" step="1" /><span>сар</span>
+            <input id="termNum" type="number" value="12" min="1" max="24" step="1" /><span>сар</span>
           </div>
-          <input id="termRange" type="range" min="0" max="24" step="1" value="12" />
+          <input id="termRange" type="range" min="1" max="24" step="1" value="12" />
           <div style="display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-top:6px">
-            <span>0 сар</span><span>24 сар</span>
+            <span>1 сар</span><span>24 сар</span>
           </div>
         </div>
 
@@ -496,7 +496,7 @@
     }
     bind(amountNum, amountRange, 10000, 3000000);
     bind(rateNum, rateRange, 2, 5);
-    bind(termNum, termRange, 0, 24);
+    bind(termNum, termRange, 1, 24);
 
     function clearCanvas(ctx) { ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); }
 
@@ -548,7 +548,7 @@
 
     let schedule = [], geomPay = null, geomBal = null;
     function recalc() {
-      const P = +amountNum.value || 0, r = +rateNum.value || 0, n = +termNum.value || 1;
+      const P = +amountNum.value || 10000, r = +rateNum.value || 2, n = +termNum.value || 1;
       const res = computeSchedule(P, r, n); schedule = res.schedule;
       kpiPayment.textContent = money(res.payment);
       kpiInterest.textContent = money(res.totalInterest);
@@ -583,7 +583,7 @@
 
     document.getElementById('pdfBtn').addEventListener('click', () => window.print());
     document.getElementById('applyBtn').addEventListener('click', async () => {
-      // Check if user is logged in
+
       if (typeof TokenManager !== 'undefined' && !TokenManager.isAuthenticated()) {
         if (confirm('Зээл авахын тулд нэвтрэх хэрэгтэй. Нэвтрэх хуудас руу шилжих үү?')) {
           window.location.href = 'login.html';
@@ -595,13 +595,23 @@
       const term = parseInt(termNum.value);
       const rate = parseFloat(rateNum.value);
 
-      if (!amount || amount < 10000) {
-        alert('Зээлийн дүн доод тал нь ₮10,000 байх ёстой');
+      if (isNaN(amount) || isNaN(term) || isNaN(rate)) {
+        alert('Зээлийн төрөл, дүн, хугацаа оруулна уу');
         return;
       }
 
-      if (!term || term < 1) {
-        alert('Хугацаа сонгоно уу');
+      if (amount < 10000 || amount > 3000000) {
+        alert('Зээлийн дүн ₮10,000 - ₮3,000,000 хооронд байх ёстой');
+        return;
+      }
+
+      if (term < 1 || term > 24) {
+        alert('Хугацаа 1-24 сарын хооронд байх ёстой');
+        return;
+      }
+
+      if (rate < 2 || rate > 5) {
+        alert('Хүү 2%-5% хооронд байх ёстой');
         return;
       }
 
@@ -611,7 +621,6 @@
           applyBtn.disabled = true;
           applyBtn.textContent = 'Илгээж байна...';
 
-          // Call API if available
           if (typeof LoansAPI !== 'undefined') {
             await LoansAPI.applyForLoan({
               amount: amount,
@@ -631,7 +640,6 @@
               window.location.href = 'my-loans.html';
             }, 1500);
           } else {
-            // Fallback: redirect to application page with params
             window.location.href = `Application.html?amount=${amount}&term=${term}`;
           }
         } catch (error) {

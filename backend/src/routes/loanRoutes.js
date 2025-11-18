@@ -11,6 +11,7 @@ const {
   adminUpdateLoanStatus
 } = require('../controllers/loanController');
 const { authenticateToken } = require('../middleware/authMiddleware');
+const { requireAdmin } = require('../middleware/adminMiddleware');
 const { validateLoanApplication } = require('../middleware/validationMiddleware');
 
 // POST /api/loans/apply - Зээл хүсэлт илгээх (хамгаалагдсан)
@@ -30,10 +31,10 @@ router.get('/purchase/my', authenticateToken, getMyPurchaseLoans);
 
 // Admin routes - specific routes BEFORE :id parameter routes
 // GET /api/loans/admin/all - Бүх зээлүүд
-router.get('/admin/all', authenticateToken, adminGetAllLoans);
+router.get('/admin/all', authenticateToken, requireAdmin, adminGetAllLoans);
 
 // PUT /api/loans/admin/:id/status - Зээлийн статус өөрчлөх
-router.put('/admin/:id/status', authenticateToken, adminUpdateLoanStatus);
+router.put('/admin/:id/status', authenticateToken, requireAdmin, adminUpdateLoanStatus);
 
 // GET /api/loans/:id - Зээлийн дэлгэрэнгүй (must be LAST to avoid conflict)
 router.get('/:id', authenticateToken, getLoanDetails);

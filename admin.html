@@ -450,7 +450,7 @@
         // Calculate statistics
         const pendingLoans = loans.filter(l => l.status === 'pending').length;
         const activeLoans = loans.filter(l => l.status === 'active' || l.status === 'approved').length;
-        const totalAmount = loans.reduce((sum, l) => sum + (l.amount || 0), 0);
+        const totalAmount = loans.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
 
         // Update UI
         document.getElementById('totalUsers').textContent = users.length;
@@ -518,13 +518,14 @@
         }[loan.status] || loan.status;
 
         const date = new Date(loan.created_at).toLocaleDateString('mn-MN');
+        const amount = parseFloat(loan.amount) || 0;
 
         return `
           <tr>
             <td>#${loan.id}</td>
-            <td>${loan.user_id}</td>
-            <td style="font-weight: 700;">₮${loan.amount.toLocaleString()}</td>
-            <td>${loan.term} сар</td>
+            <td>${loan.first_name || ''} ${loan.last_name || ''} (${loan.email || loan.user_id})</td>
+            <td style="font-weight: 700;">₮${amount.toLocaleString()}</td>
+            <td>${loan.term_months} сар</td>
             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
             <td>${date}</td>
             <td>

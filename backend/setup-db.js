@@ -1,6 +1,6 @@
 const { Client } = require('pg');
 
-// Анхдагч postgres өрөмбөлсөн холболт
+// Анхдагч postgres холболт
 const adminClient = new Client({
   user: 'postgres',
   password: 'asdf',
@@ -13,11 +13,8 @@ const createDatabase = async () => {
   try {
     await adminClient.connect();
     console.log('PostgreSQL tei holbolt amjilttai bolloo.');
-
-    // Өрөмбийг үүсгэх
     await adminClient.query('CREATE DATABASE omnicredit;');
     console.log('"omnicredit" erembiig uusgesen!');
-
     await adminClient.end();
   } catch (error) {
     if (error.code === '42P04') {

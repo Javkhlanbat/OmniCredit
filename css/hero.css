@@ -1,6 +1,3 @@
-/* =============================================
-   Hero Section - Peachy Theme
-   ============================================= */
 
 .hero {
   margin-top: 32px;
@@ -64,7 +61,6 @@
   flex-wrap: wrap;
 }
 
-/* Hero variant - Dark */
 .hero-dark {
   background: 
     radial-gradient(1200px 280px at 20% -10%, rgba(255, 155, 113, 0.3), transparent),
@@ -82,7 +78,6 @@
   color: #FFD4C2;
 }
 
-/* Hero variant - Compact */
 .hero-compact {
   padding: 48px 32px;
   text-align: left;
@@ -100,7 +95,6 @@
   justify-content: flex-start;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .hero {
     padding: 48px 24px;
@@ -124,7 +118,6 @@
   }
 }
 
-/* Badge/Tag in hero */
 .hero-badge {
   display: inline-block;
   padding: 8px 16px;

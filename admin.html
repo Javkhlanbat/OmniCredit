@@ -427,25 +427,13 @@
     // Load statistics
     async function loadStatistics() {
       try {
-        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
-
-        // Load all loans
-        const response = await fetch('http://localhost:5000/api/loans/admin/all', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await response.json();
+        // Load all loans using LoansAPI
+        const data = await LoansAPI.getAllLoans();
         const loans = data.loans || [];
 
-        // Load all users
-        const usersResponse = await fetch('http://localhost:5000/api/auth/admin/users', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const userData = await usersResponse.json();
-        const users = userData.users || [];
+        // Load all users using API
+        const usersResponse = await api.get('/auth/admin/users');
+        const users = usersResponse.users || [];
 
         // Calculate statistics
         const pendingLoans = loans.filter(l => l.status === 'pending').length;
@@ -466,19 +454,7 @@
     // Load loans
     async function loadLoans() {
       try {
-        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/loans/admin/all', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || errorData.error || 'Алдаа гарлаа');
-        }
-
-        const data = await response.json();
+        const data = await LoansAPI.getAllLoans();
         allLoans = data.loans || [];
         displayLoans(allLoans);
       } catch (error) {
@@ -572,23 +548,10 @@
       if (!confirm('Энэ зээлийг зөвшөөрөх үү?')) return;
 
       try {
-        const response = await fetch(`http://localhost:5000/api/loans/admin/${loanId}/status`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ status: 'approved' })
-        });
-
-        if (response.ok) {
-          alert('Зээл амжилттай зөвшөөрөгдлөө');
-          loadLoans();
-          loadStatistics();
-        } else {
-          const error = await response.json();
-          alert('Алдаа гарлаа: ' + (error.message || 'Тодорхойгүй алдаа'));
-        }
+        await LoansAPI.updateLoanStatus(loanId, 'approved');
+        alert('Зээл амжилттай зөвшөөрөгдлөө');
+        loadLoans();
+        loadStatistics();
       } catch (error) {
         console.error('Error approving loan:', error);
         alert('Алдаа гарлаа: ' + error.message);
@@ -600,23 +563,10 @@
       if (!confirm('Энэ зээлийг татгалзах уу?')) return;
 
       try {
-        const response = await fetch(`http://localhost:5000/api/loans/admin/${loanId}/status`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ status: 'rejected' })
-        });
-
-        if (response.ok) {
-          alert('Зээл татгалзагдлаа');
-          loadLoans();
-          loadStatistics();
-        } else {
-          const error = await response.json();
-          alert('Алдаа гарлаа: ' + (error.message || 'Тодорхойгүй алдаа'));
-        }
+        await LoansAPI.updateLoanStatus(loanId, 'rejected');
+        alert('Зээл татгалзагдлаа');
+        loadLoans();
+        loadStatistics();
       } catch (error) {
         console.error('Error rejecting loan:', error);
         alert('Алдаа гарлаа: ' + error.message);
@@ -631,23 +581,7 @@
     // Load users
     async function loadUsers() {
       try {
-        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
-        console.log('Loading users with token:', token ? 'Token exists' : 'No token');
-
-        const response = await fetch('http://localhost:5000/api/auth/admin/users', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        console.log('Response status:', response.status);
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || errorData.error || 'Алдаа гарлаа');
-        }
-
-        const data = await response.json();
+        const data = await api.get('/auth/admin/users');
         console.log('Users loaded:', data.users?.length || 0);
         allUsers = data.users || [];
         displayUsers(allUsers);
@@ -734,22 +668,14 @@
     // View user profile modal
     async function viewUserProfile(userId, userEmail) {
       try {
-        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/auth/admin/users`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const data = await api.get('/auth/admin/users');
+        const user = data.users.find(u => u.id === userId);
 
-        if (response.ok) {
-          const data = await response.json();
-          const user = data.users.find(u => u.id === userId);
+        if (user) {
+          const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim();
+          const createdDate = new Date(user.created_at).toLocaleString('mn-MN');
 
-          if (user) {
-            const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim();
-            const createdDate = new Date(user.created_at).toLocaleString('mn-MN');
-
-            const profileInfo = `
+          const profileInfo = `
 📋 ХЭРЭГЛЭГЧИЙН PROFILE
 
 👤 Нэр: ${fullName}
@@ -759,12 +685,11 @@
 📍 Хаяг: ${user.address || '-'}
 📅 Бүртгүүлсэн: ${createdDate}
 👑 Админ эрх: ${user.is_admin ? 'Тийм' : 'Үгүй'}
-            `.trim();
+          `.trim();
 
-            alert(profileInfo);
-          } else {
-            alert('Хэрэглэгч олдсонгүй');
-          }
+          alert(profileInfo);
+        } else {
+          alert('Хэрэглэгч олдсонгүй');
         }
       } catch (error) {
         console.error('Error loading user profile:', error);
@@ -779,21 +704,7 @@
       }
 
       try {
-        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/auth/admin/users/${userId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || errorData.error || 'Алдаа гарлаа');
-        }
-
-        const data = await response.json();
-
+        await api.delete(`/auth/admin/users/${userId}`);
         Utils.showToast(`${userName} амжилттай устгагдлаа`, 'success');
 
         // Жагсаалтыг дахин ачаалах

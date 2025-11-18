@@ -6,7 +6,7 @@ const API_CONFIG = {
     BASE_URL: isLocalHost
         ? 'http://localhost:5000/api'  // Локал хөгжүүлэлтийн сервер
         : 'https://omnicredit-backend.onrender.com/api', // Production сервер (Render)
-    TIMEOUT: 10000 // 10 секунд (хүсэлтийн хугацаа)
+    TIMEOUT: 30000 // 30 секунд (Render cold start-ийг харгалзан)
 };
 
 const TokenManager = {
@@ -102,9 +102,11 @@ class APIClient {
             // Алдаа шалгах
             if (!response.ok) {
                 // 401 (Эрх дууссан) шалгах
-                if (response.status === 401) {
-                    UserManager.logout();
-                    throw new Error('Нэвтрэх эрх дууссан байна. Дахин нэвтэрнэ үү.');
+                if (response.status === 401 || response.status === 403) {
+                    TokenManager.removeToken();
+                    UserManager.removeUser();
+                    // Нэвтрэх хуудсанд шууд чиглүүлэхгүй, хэрэглэгчид мэдэгдэл харуулах
+                    throw new Error('Нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү.');
                 }
 
                 throw new Error(data.message || data.error || 'Алдаа гарлаа');
@@ -115,12 +117,17 @@ class APIClient {
         } catch (error) {
             // Timeout алдаа
             if (error.name === 'AbortError') {
-                throw new Error('Хүсэлт хугацаа хэтэрсэн байна');
+                throw new Error('Серверт холбогдох хугацаа хэтэрсэн байна. Дахин оролдоно уу.');
             }
 
             // Интернэт холболт алдаа
             if (!navigator.onLine) {
                 throw new Error('Интернэт холболт алга байна');
+            }
+
+            // Render сервер унтарсан эсвэл асаагдаж байгаа тохиолдол
+            if (error.message && error.message.includes('Failed to fetch')) {
+                throw new Error('Серверт холбогдож чадсангүй. Render сервер асаагдах хүртэл хэдэн секунд хүлээнэ үү.');
             }
 
             throw error;

@@ -153,6 +153,11 @@
       color: #0284C7;
     }
 
+    .status-disbursed {
+      background: #D1FAE5;
+      color: #059669;
+    }
+
     .action-buttons {
       display: flex;
       gap: 8px;
@@ -251,6 +256,7 @@
           <option value="all">Бүх төлөв</option>
           <option value="pending">Хүлээгдэж буй</option>
           <option value="approved">Зөвшөөрөгдсөн</option>
+          <option value="disbursed">Олгогдсон</option>
           <option value="rejected">Татгалзсан</option>
           <option value="active">Идэвхтэй</option>
         </select>
@@ -490,11 +496,30 @@
           'pending': 'Хүлээгдэж буй',
           'approved': 'Зөвшөөрөгдсөн',
           'rejected': 'Татгалзсан',
-          'active': 'Идэвхтэй'
+          'active': 'Идэвхтэй',
+          'disbursed': 'Олгогдсон'
         }[loan.status] || loan.status;
 
         const date = new Date(loan.created_at).toLocaleDateString('mn-MN');
         const amount = parseFloat(loan.amount) || 0;
+
+        // Товчны логик: pending -> Approve/Reject, approved -> Disburse, бусад -> View
+        let actionButtons = '';
+        if (loan.status === 'pending') {
+          actionButtons = `
+            <button class="btn btn-primary btn-icon" onclick="approveLoan(${loan.id})">Approve</button>
+            <button class="btn btn-secondary btn-icon" onclick="rejectLoan(${loan.id})">Reject</button>
+          `;
+        } else if (loan.status === 'approved') {
+          actionButtons = `
+            <button class="btn btn-accent btn-icon" onclick="disburseLoan(${loan.id})">Disburse</button>
+            <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">View</button>
+          `;
+        } else {
+          actionButtons = `
+            <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">View</button>
+          `;
+        }
 
         return `
           <tr>
@@ -506,12 +531,7 @@
             <td>${date}</td>
             <td>
               <div class="action-buttons">
-                ${loan.status === 'pending' ? `
-                  <button class="btn btn-primary btn-icon" onclick="approveLoan(${loan.id})">Approve</button>
-                  <button class="btn btn-secondary btn-icon" onclick="rejectLoan(${loan.id})">Reject</button>
-                ` : `
-                  <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">View</button>
-                `}
+                ${actionButtons}
               </div>
             </td>
           </tr>
@@ -569,6 +589,21 @@
         loadStatistics();
       } catch (error) {
         console.error('Error rejecting loan:', error);
+        alert('Алдаа гарлаа: ' + error.message);
+      }
+    }
+
+    // Disburse loan - зээл олгох
+    async function disburseLoan(loanId) {
+      if (!confirm('Энэ зээлийг олгох уу?\n\nЗээлийн дүн хэрэглэгчийн дансанд шилжүүлэгдэнэ.')) return;
+
+      try {
+        const result = await LoansAPI.disburseLoan(loanId);
+        alert(`Зээл амжилттай олгогдлоо!\n\nДүн: ₮${result.disbursement.amount.toLocaleString()}\nХэрэглэгч ID: ${result.disbursement.recipient_user_id}`);
+        loadLoans();
+        loadStatistics();
+      } catch (error) {
+        console.error('Error disbursing loan:', error);
         alert('Алдаа гарлаа: ' + error.message);
       }
     }

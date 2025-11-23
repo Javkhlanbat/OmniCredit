@@ -10,6 +10,7 @@ class Navigation {
     this.setupActiveLinks();
     this.setupStickyNav();
     this.updateAuthButtons();
+    this.setupScrollEffect();
   }
 
   // Update navigation links based on login status
@@ -79,22 +80,29 @@ class Navigation {
     });
   }
 
-  // Sticky navigation with scroll effect
+  // Sticky navigation with scroll effect (legacy - kept for compatibility)
   setupStickyNav() {
+    // Now handled by setupScrollEffect
+  }
+
+  // Scroll effect - add/remove scrolled class
+  setupScrollEffect() {
     const nav = document.querySelector('.nav');
-    let lastScroll = 0;
+    if (!nav) return;
 
-    window.addEventListener('scroll', () => {
-      const currentScroll = window.pageYOffset;
-
-      if (currentScroll > 100) {
-        nav.style.boxShadow = 'var(--shadow)';
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
       } else {
-        nav.style.boxShadow = 'none';
+        nav.classList.remove('scrolled');
       }
+    };
 
-      lastScroll = currentScroll;
-    });
+    // Check initial scroll position
+    handleScroll();
+
+    // Listen for scroll events
+    window.addEventListener('scroll', handleScroll, { passive: true });
   }
 
   // Update auth buttons based on login status

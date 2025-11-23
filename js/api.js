@@ -266,6 +266,11 @@ const LoansAPI = {
     // Зээлийн төлөв шинэчлэх (Admin)
     async updateLoanStatus(loanId, status) {
         return await api.put(`/loans/admin/${loanId}/status`, { status });
+    },
+
+    // Зээл олгох - approved зээлийг disbursed болгох (Admin)
+    async disburseLoan(loanId) {
+        return await api.post(`/loans/admin/${loanId}/disburse`);
     }
 };
 

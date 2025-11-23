@@ -1,18 +1,24 @@
-
+/* ================================================
+   BUTTONS - Finco.mn inspired design
+   ================================================ */
 
 .btn {
-  display: inline-block;
-  padding: 14px 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
   border: none;
-  border-radius: 999px;
-  font-weight: 800;
+  border-radius: 12px;
+  font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  transition: var(--transition);
-  text-align: center;
+  transition: all 0.2s ease;
   text-decoration: none;
-  box-shadow: var(--shadow);
+  text-align: center;
   font-family: inherit;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn:disabled {
@@ -20,82 +26,146 @@
   cursor: not-allowed;
 }
 
-/* Primary Button - Peachy gradient */
+/* Ripple effect */
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* ================================================
+   PRIMARY BUTTON - Green gradient
+   ================================================ */
+
 .btn-primary {
-  background: var(--gradient-peachy);
-  color: var(--text);
-  font-weight: 800;
+  background: linear-gradient(135deg, #14b8a6, #10b981);
+  color: white;
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.4);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-  filter: brightness(1.05);
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5);
 }
 
 .btn-primary:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(20, 184, 166, 0.4);
 }
 
-/* Secondary Button - Outline */
+/* ================================================
+   SECONDARY BUTTON - White with border
+   ================================================ */
+
 .btn-secondary {
   background: white;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  box-shadow: var(--shadow-sm);
+  color: #14b8a6;
+  border: 2px solid #14b8a6;
+  box-shadow: none;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--primary-light);
-  color: white;
-  border-color: var(--primary-light);
+  background: #E8F5E9;
   transform: translateY(-2px);
 }
 
-/* Ghost Button - Transparent */
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ================================================
+   GHOST BUTTON - Transparent
+   ================================================ */
+
 .btn-ghost {
   background: transparent;
-  color: var(--primary);
+  color: #14b8a6;
+  border: 2px solid transparent;
   box-shadow: none;
-  border: 1px solid var(--line);
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--card-hover);
-  border-color: var(--primary-light);
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.05);
 }
 
-/* Accent Button - Pink/Red */
+/* ================================================
+   ACCENT BUTTON - For special actions
+   ================================================ */
+
 .btn-accent {
-  background: var(--gradient-sunset);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
   color: white;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
 }
 
 .btn-accent:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
 }
+
+/* ================================================
+   DANGER BUTTON - For destructive actions
+   ================================================ */
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+}
+
+.btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+/* ================================================
+   SIZE VARIANTS
+   ================================================ */
 
 /* Small Button */
 .btn-sm {
   padding: 10px 20px;
   font-size: 14px;
+  border-radius: 10px;
 }
 
 /* Large Button */
 .btn-lg {
-  padding: 18px 36px;
-  font-size: 17px;
+  padding: 16px 40px;
+  font-size: 16px;
+  border-radius: 14px;
+}
+
+/* Extra Large Button */
+.btn-xl {
+  padding: 20px 48px;
+  font-size: 18px;
+  border-radius: 16px;
 }
 
 /* Full width button */
 .btn-block {
-  display: block;
+  display: flex;
   width: 100%;
 }
 
-/* Button group */
+/* ================================================
+   BUTTON GROUP
+   ================================================ */
+
 .btn-group {
   display: flex;
   gap: 12px;
@@ -113,7 +183,10 @@
   }
 }
 
-/* Icon buttons */
+/* ================================================
+   ICON BUTTONS
+   ================================================ */
+
 .btn-icon {
   display: inline-flex;
   align-items: center;
@@ -126,25 +199,103 @@
   font-size: 18px;
 }
 
-/* Social Login Buttons */
+/* Icon only button */
+.btn-icon-only {
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.btn-icon-only.btn-sm {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.btn-icon-only.btn-lg {
+  padding: 16px;
+  border-radius: 14px;
+}
+
+/* ================================================
+   SOCIAL LOGIN BUTTONS
+   ================================================ */
+
 .btn-social {
   background: white;
-  color: var(--text);
-  border: 2px solid var(--line);
+  color: #1f2937;
+  border: 2px solid #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: var(--radius-sm);
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .btn-social:hover {
-  border-color: var(--primary);
-  background: var(--card-hover);
+  border-color: #14b8a6;
+  background: #f9fafb;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-social img,
+.btn-social svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ================================================
+   LOADING STATE
+   ================================================ */
+
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.btn-loading::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: btn-spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================================================
+   OUTLINE VARIANTS
+   ================================================ */
+
+.btn-outline-primary {
+  background: transparent;
+  color: #14b8a6;
+  border: 2px solid #14b8a6;
+}
+
+.btn-outline-primary:hover:not(:disabled) {
+  background: #14b8a6;
+  color: white;
+}
+
+.btn-outline-danger {
+  background: transparent;
+  color: #ef4444;
+  border: 2px solid #ef4444;
+}
+
+.btn-outline-danger:hover:not(:disabled) {
+  background: #ef4444;
+  color: white;
 }

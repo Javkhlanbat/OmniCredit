@@ -70,6 +70,19 @@ const updateLoanStatus = async (id, status) => {
   return result.rows[0];
 };
 
+// Зээл олгох (disburse) - approved зээлийг disbursed болгох
+const disburseLoan = async (id) => {
+  const result = await query(
+    `UPDATE loans
+     SET status = 'disbursed',
+         disbursed_at = CURRENT_TIMESTAMP
+     WHERE id = $1 AND status = 'approved'
+     RETURNING *`,
+    [id]
+  );
+  return result.rows[0];
+};
+
 // Зээл устгах
 const deleteLoan = async (id) => {
   await query('DELETE FROM loans WHERE id = $1', [id]);
@@ -128,6 +141,7 @@ module.exports = {
   getLoanById,
   getAllLoans,
   updateLoanStatus,
+  disburseLoan,
   deleteLoan,
   getLoanStats,
   createPurchaseLoan,

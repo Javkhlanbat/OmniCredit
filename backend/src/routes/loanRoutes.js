@@ -8,7 +8,8 @@ const {
   applyForPurchaseLoan,
   getMyPurchaseLoans,
   adminGetAllLoans,
-  adminUpdateLoanStatus
+  adminUpdateLoanStatus,
+  adminDisburseLoan
 } = require('../controllers/loanController');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const { requireAdmin } = require('../middleware/adminMiddleware');
@@ -35,6 +36,9 @@ router.get('/admin/all', authenticateToken, requireAdmin, adminGetAllLoans);
 
 // PUT /api/loans/admin/:id/status - Зээлийн статус өөрчлөх
 router.put('/admin/:id/status', authenticateToken, requireAdmin, adminUpdateLoanStatus);
+
+// POST /api/loans/admin/:id/disburse - Зээл олгох (approved -> disbursed)
+router.post('/admin/:id/disburse', authenticateToken, requireAdmin, adminDisburseLoan);
 
 // GET /api/loans/:id - Зээлийн дэлгэрэнгүй (must be LAST to avoid conflict)
 router.get('/:id', authenticateToken, getLoanDetails);

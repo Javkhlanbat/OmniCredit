@@ -14,113 +14,229 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/navigation.css">
   <link rel="stylesheet" href="css/buttons.css">
+  <link rel="stylesheet" href="css/hero.css">
   <link rel="stylesheet" href="css/footer.css">
 
   <style>
-    .hero {
+    /* ================================================
+       FEATURES SECTION
+       ================================================ */
+    .features-hero {
+      padding: 80px 0;
+      background: linear-gradient(180deg, #f0fdf4 0%, white 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .features-grid {
       display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 28px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(20, 184, 166, 0.08);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      border: 2px solid rgba(167, 243, 208, 0.3);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 40px rgba(20, 184, 166, 0.2);
+      border-color: #14b8a6;
+    }
+
+    .feature-card.featured {
+      background: linear-gradient(135deg, #14b8a6 0%, #10b981 100%);
+      border: none;
+    }
+
+    .feature-card.featured .feature-content h3,
+    .feature-card.featured .feature-content p {
+      color: white;
+    }
+
+    .feature-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #14b8a6;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .feature-image {
+      height: 280px;
+      background: linear-gradient(135deg, #E8F5E9, #d1fae5);
+      display: flex;
       align-items: center;
-      padding: 18px 0 6px;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .eyebrow {
+    .feature-card.featured .feature-image {
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+    }
+
+    .feature-image img {
+      width: 60%;
+      height: auto;
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 10px 30px rgba(20, 184, 166, 0.3));
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .feature-overlay {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+
+    .feature-tag {
+      background: white;
+      color: #14b8a6;
+      padding: 6px 14px;
+      border-radius: 999px;
       font-size: 12px;
-      letter-spacing: .18em;
+      font-weight: 700;
       text-transform: uppercase;
-      color: var(--text-muted);
-      font-weight: 800;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    h1 {
-      font-size: 44px;
-      line-height: 1.1;
-      margin: 10px 0 18px;
-      background: var(--gradient-peachy);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .feature-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+      animation: glow 3s ease-in-out infinite;
     }
 
-    .lead {
-      color: var(--text-muted);
-      max-width: 560px;
+    @keyframes glow {
+      0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
     }
 
-    .pill {
+    .feature-content {
+      padding: 32px;
+    }
+
+    .feature-content h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #064e3b;
+      margin-bottom: 12px;
+    }
+
+    .feature-content p {
+      color: #047857;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .feature-content .btn {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      border-radius: 999px;
-      background: var(--gradient-sunset);
-      color: #fff;
-      padding: 14px 20px;
-      font-weight: 800;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-      text-decoration: none;
-    }
-    .pill:hover { transform: translateY(-2px); }
-
-    .products { display: grid; gap: 18px; }
-
-    .card {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      gap: 18px;
-      align-items: center;
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      transition: transform .25s, box-shadow .25s;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-hover);
+      gap: 8px;
+      transition: gap 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .thumb {
+    .feature-content .btn:hover {
+      gap: 12px;
+    }
+
+    .btn-white {
+      background: white !important;
+      color: #14b8a6 !important;
+      border: none;
+    }
+
+    .btn-white:hover {
+      background: rgba(255, 255, 255, 0.95) !important;
+      transform: translateY(-2px);
+    }
+
+    .feature-decoration {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .feature-decoration .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(20, 184, 166, 0.1), transparent);
+    }
+
+    .feature-decoration .circle-1 {
       width: 150px;
       height: 150px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      position: relative;
-    }
-    .thumb::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: .7;
-      background: linear-gradient(135deg, #6ee7b7, #10b981);
-    }
-    .thumb.blue::before {
-      background: linear-gradient(135deg, #5eead4, #14b8a6);
+      top: -50px;
+      right: -50px;
+      animation: float-circle 8s ease-in-out infinite;
     }
 
-    .card h3 { margin: 0 0 6px; font-size: 22px; }
-    .card p { margin: 0 0 12px; color: var(--text-muted); }
-
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 26px;
-      text-align: center;
+    .feature-decoration .circle-2 {
+      width: 100px;
+      height: 100px;
+      bottom: -30px;
+      left: -30px;
+      animation: float-circle 6s ease-in-out infinite reverse;
     }
-    .stat {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      transition: var(--transition);
-    }
-    .stat:hover { transform: translateY(-3px); }
-    .stat h4 { font-size: 28px; margin: 0; color: var(--primary); }
 
+    @keyframes float-circle {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(20px, 20px); }
+    }
+
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .feature-image {
+        height: 240px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .features-hero {
+        padding: 40px 0;
+      }
+    }
+
+    /* ================================================
+       OTHER SECTIONS
+       ================================================ */
     h2.section-title {
       text-align: center;
       font-size: 32px;
@@ -130,43 +246,6 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
-    .testimonials {
-      margin-top: 60px;
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      padding: 32px 20px;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-    }
-    .testimonial-cards {
-      display: flex;
-      gap: 24px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 10px;
-    }
-    .testimonial {
-      flex: 0 0 300px;
-      scroll-snap-align: start;
-      background: linear-gradient(180deg, #d1fae5, #a7f3d0);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-    }
-    .testimonial:hover { transform: translateY(-5px); }
-    .testimonial p { font-style: italic; color: var(--text-muted); }
-    .testimonial .name {
-      margin-top: 10px;
-      font-weight: 700;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .stars { color: #facc15; font-size: 16px; }
 
     .why-us {
       padding: 50px 20px;
@@ -239,17 +318,14 @@
       box-shadow: var(--shadow-hover);
     }
 
-    @media(max-width:900px) {
-      .hero { grid-template-columns: 1fr; }
-    }
     @media(max-width:640px) {
       .testimonial { flex: 0 0 260px; }
-      h1 { font-size: 36px; }
     }
   </style>
 </head>
 
 <body>
+  <!-- Navigation -->
   <div class="container">
     <nav class="nav">
       <div class="brand">OmniCredit</div>
@@ -265,119 +341,91 @@
       </div>
       <button class="mobile-menu-toggle">☰</button>
     </nav>
+  </div>
 
-    <section class="hero">
-      <div>
-        <div class="eyebrow">Танилцуулга</div>
-        <h1>Санхүүжилтийн шийдэл таны гарт</h1>
-        <p class="lead">
-         Хялбар, шуурхай, найдвартай. OmniCredit-ээр хүссэн зээлээ 5 минутад авах боломжтой.
-         Та зөвхөн өөрийн зээлийн нөхцөлийг тооцож, шууд хүсэлт илгээхэд л болно.
+  <!-- Hero Section - Full Width -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge">ТАНИЛЦУУЛГА</div>
+        <h1>Бид ногоон ирээдүйг
+          <span class="highlight">Санхүүжүүлдэг!</span>
+        </h1>
+        <p class="hero-description">
+          Хялбар, шуурхай, найдвартай. OmniCredit-ээр хүссэн
+          зээлээ 5 минутад авах боломжтой. Та зөвхөн өөрийн
+          зээлийн нөхцөлийг сонгоод, шууд хүсэлт илгээж болно.
         </p>
-
-        <div style="display:flex;gap:12px;margin-top:16px">
-          <a href="zeelhuudas.html" class="pill">Зээл авах </a>
-          <a href="#reviews" class="btn btn-secondary" style="text-decoration:none">Сэтгэгдэл үзэх</a>
+        <div class="hero-buttons">
+          <a href="zeelhuudas.html" class="btn btn-primary btn-lg">Зээл авах</a>
+          <a href="#why" class="btn btn-secondary btn-lg">Дэлгэрэнгүй</a>
         </div>
       </div>
 
-      <div class="products" id="products">
-        <article class="card">
-          <div class="thumb"></div>
-          <div>
+      <div class="hero-image">
+        <img src="images/hero-illustration.svg" alt="OmniCredit - Ногоон санхүүжилт">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-hero" id="products">
+    <div class="container">
+      <div class="features-grid">
+
+        <!-- Card 1: Хэрэглээний зээл -->
+        <div class="feature-card">
+          <div class="feature-image">
+            <img src="images/consumer-loan.svg" alt="Хэрэглээний зээл">
+            <div class="feature-overlay">
+              <span class="feature-tag">Түгээмэл</span>
+            </div>
+          </div>
+          <div class="feature-content">
             <h3>Хэрэглээний зээл</h3>
             <p>Өдөр тутмын зардал, гэр ахуйн хэрэгцээнд зориулсан хурдан зээл.</p>
-            <div class="actions">
-              <a href="zeelhuudas.html" class="btn btn-primary">Дэлгэрэнгүй </a>
-            </div>
+            <a href="zeelhuudas.html" class="btn btn-primary">
+              Дэлгэрэнгүй
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
           </div>
-        </article>
+          <div class="feature-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+          </div>
+        </div>
 
-        <article class="card">
-          <div class="thumb blue"></div>
-          <div>
+        <!-- Card 2: Худалдан авалтын зээл -->
+        <div class="feature-card featured">
+          <div class="feature-badge">Хит</div>
+          <div class="feature-image">
+            <img src="images/purchase-loan.svg" alt="Худалдан авалтын зээл">
+            <div class="feature-glow"></div>
+          </div>
+          <div class="feature-content">
             <h3>Худалдан авалтын зээл</h3>
             <p>Бараа авахдаа урьдчилгаа төлөхгүйгээр хэсэгчлэн төлөх боломж.</p>
-            <div class="actions">
-              <a href="purchase-loan.html" class="btn btn-primary">Дэлгэрэнгүй </a>
-            </div>
+            <a href="purchase-loan.html" class="btn btn-white">
+              Дэлгэрэнгүй
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
           </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="stats">
-      <div class="stat">
-        <h4>100+</h4>
-        <div>Зээл олгосон</div>
-      </div>
-      <div class="stat">
-        <h4>4.8 ★</h4>
-        <div>Үнэлгээ</div>
-      </div>
-      <div class="stat">
-        <h4>500+</h4>
-        <div>Харилцагч</div>
-      </div>
-    </section>
-
-    <section class="testimonials" id="reviews">
-      <h2 class="section-title">Манай хэрэглэгчдийн туршлагаас</h2>
-      <div class="testimonial-cards">
-        <div class="testimonial">
-          <p>"Мобайлаар 2 минутанд хүсэлтээ илгээчихсөн. Мөнгө шууд орсон!"</p>
-          <div class="name">Б. Ууганцэцэг <span class="stars">★★★★★</span></div>
-        </div>
-        <div class="testimonial">
-          <p>"Хүү, шимтгэл тодорхой, тооцоолуур нь ойлгомжтой байлаа."</p>
-          <div class="name">Д. Амарсанаа <span class="stars">★★★★☆</span></div>
-        </div>
-        <div class="testimonial">
-          <p>"Худалдан авалтын зээлээр хүссэн бараагаа урьдчилгаагүй авч чадсан."</p>
-          <div class="name">Э. Мөнх-Эрдэнэ <span class="stars">★★★★★</span></div>
-        </div>
-        <div class="testimonial">
-          <p>"Дэмжлэгийн баг нь хурдан хариулдаг нь таалагдсан."</p>
-          <div class="name">Н. Саруул <span class="stars">★★★★☆</span></div>
-        </div>
-      </div>
-
-      <!-- Review Form -->
-      <div id="reviewFormContainer" style="max-width: 600px; margin: 48px auto 0; padding: 32px; background: var(--card); border-radius: var(--radius-lg); box-shadow: var(--shadow);">
-        <h3 style="text-align: center; margin-bottom: 24px; color: var(--text);">Таны сэтгэгдэл</h3>
-        <div id="loginPrompt" style="display: none; text-align: center;">
-          <p style="color: var(--text-muted); margin-bottom: 24px;">Сэтгэгдэл үлдээхийн тулд нэвтэрнэ үү</p>
-          <a href="login.html" class="btn btn-primary">Нэвтрэх</a>
-        </div>
-        <form id="reviewForm">
-          <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Таны нэр</label>
-            <input type="text" id="reviewerName" placeholder="Овог. Нэр" required readonly style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius); font-size: 1rem; background-color: var(--bg);">
+          <div class="feature-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
           </div>
+        </div>
 
-          <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Үнэлгээ</label>
-            <div id="starRating" style="font-size: 32px; cursor: pointer; user-select: none;">
-              <span class="star" data-rating="1">☆</span>
-              <span class="star" data-rating="2">☆</span>
-              <span class="star" data-rating="3">☆</span>
-              <span class="star" data-rating="4">☆</span>
-              <span class="star" data-rating="5">☆</span>
-            </div>
-            <input type="hidden" id="rating" required>
-          </div>
-
-          <div style="margin-bottom: 24px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Сэтгэгдэл</label>
-            <textarea id="reviewText" rows="4" placeholder="Таны туршлагыг хуваалцана уу..." required style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius); font-size: 1rem; resize: vertical;"></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block btn-lg">
-            Сэтгэгдэл илгээх
-          </button>
-        </form>
       </div>
-    </section>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
 
     <section class="why-us" id="why">
       <h2 class="section-title">Та яагаад биднийг сонгох ёстой вэ?</h2>
@@ -491,40 +539,7 @@
   <script src="js/api.js"></script>
   <script src="js/navigation.js"></script>
   <script>
-    const counters = document.querySelectorAll('.stat h4');
-    const speed = 120;
-
-    const animateCounters = () => {
-      counters.forEach(counter => {
-        const targetText = counter.textContent;
-        const target = parseInt(targetText);
-        if (!isNaN(target)) {
-          let count = 0;
-          const update = () => {
-            count += Math.ceil(target / speed);
-            if (count < target) {
-              counter.textContent = count + '+';
-              requestAnimationFrame(update);
-            } else {
-              counter.textContent = targetText;
-            }
-          };
-          update();
-        }
-      });
-    };
-
-    const statsSection = document.querySelector('.stats');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          animateCounters();
-          observer.unobserve(statsSection);
-        }
-      });
-    }, { threshold: 0.4 });
-    observer.observe(statsSection);
-
+    // Mobile menu toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
 
@@ -533,96 +548,6 @@
         navLinks.classList.toggle('active');
       });
     }
-
-    // Check if user is logged in and populate review form
-    const reviewForm = document.getElementById('reviewForm');
-    const loginPrompt = document.getElementById('loginPrompt');
-    const reviewerNameInput = document.getElementById('reviewerName');
-
-    const currentUser = UserManager.getUser();
-
-    if (currentUser) {
-      // User is logged in, show form and populate name
-      reviewForm.style.display = 'block';
-      loginPrompt.style.display = 'none';
-      reviewerNameInput.value = `${currentUser.last_name || currentUser.lastName || ''} ${currentUser.first_name || currentUser.firstName || ''}`.trim();
-    } else {
-      // User is not logged in, show login prompt
-      reviewForm.style.display = 'none';
-      loginPrompt.style.display = 'block';
-    }
-
-    // Star rating functionality
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('rating');
-    let selectedRating = 0;
-
-    stars.forEach(star => {
-      star.addEventListener('click', () => {
-        selectedRating = parseInt(star.getAttribute('data-rating'));
-        ratingInput.value = selectedRating;
-        updateStars();
-      });
-
-      star.addEventListener('mouseenter', () => {
-        const rating = parseInt(star.getAttribute('data-rating'));
-        highlightStars(rating);
-      });
-    });
-
-    document.getElementById('starRating').addEventListener('mouseleave', () => {
-      updateStars();
-    });
-
-    function highlightStars(rating) {
-      stars.forEach((star, index) => {
-        if (index < rating) {
-          star.textContent = '★';
-          star.style.color = '#FFD700';
-        } else {
-          star.textContent = '☆';
-          star.style.color = 'var(--text-muted)';
-        }
-      });
-    }
-
-    function updateStars() {
-      highlightStars(selectedRating);
-    }
-
-    // Review form submission
-    document.getElementById('reviewForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const reviewerName = document.getElementById('reviewerName').value;
-      const rating = document.getElementById('rating').value;
-      const reviewText = document.getElementById('reviewText').value;
-
-      if (!rating) {
-        alert('Үнэлгээ сонгоно уу');
-        return;
-      }
-
-      if (!reviewerName || !reviewText) {
-        alert('Бүх талбарыг бөглөнө үү');
-        return;
-      }
-
-      // Display success message
-      alert('Таны сэтгэгдлийг хүлээн авлаа! Баярлалаа! 🎉');
-
-      // Reset form
-      document.getElementById('reviewForm').reset();
-      selectedRating = 0;
-      updateStars();
-
-      // In production, you would send this to the backend
-      console.log('Review submitted:', {
-        name: reviewerName,
-        rating: rating,
-        text: reviewText
-      });
-    });
 
     // Admin: Show registered users section if admin
     let allRegisteredUsers = [];

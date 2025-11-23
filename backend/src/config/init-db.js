@@ -34,10 +34,25 @@ const initDatabase = async () => {
         status VARCHAR(50) DEFAULT 'pending',
         applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         approved_at TIMESTAMP,
+        disbursed_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
     console.log('Loans table үүсгэсэн');
+
+    // Add disbursed_at column if it doesn't exist
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'disbursed_at'
+        ) THEN
+          ALTER TABLE loans ADD COLUMN disbursed_at TIMESTAMP;
+        END IF;
+      END $$;
+    `);
+    console.log('Loans table-д disbursed_at column нэмэгдлээ');
 
     // Payments table
     await pool.query(`

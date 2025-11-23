@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="cartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f0fdf4"/>
+    </linearGradient>
+    <linearGradient id="boxGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="boxGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#14b8a6"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+    <filter id="cartShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="rgba(255,255,255,0.4)"/>
+    </filter>
+  </defs>
+
+  <!-- Background elements -->
+  <circle cx="200" cy="150" r="130" fill="rgba(255,255,255,0.15)"/>
+  <circle cx="100" cy="80" r="50" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="320" cy="240" r="40" fill="rgba(255,255,255,0.1)"/>
+
+  <!-- Shopping cart -->
+  <g filter="url(#cartShadow)">
+    <!-- Cart body -->
+    <path d="M100 120 L120 120 L145 200 L280 200 L300 140 L140 140"
+          stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Cart basket -->
+    <path d="M140 140 L145 200 L280 200 L300 140 Z" fill="url(#cartGrad)" opacity="0.9"/>
+
+    <!-- Cart wheels -->
+    <circle cx="165" cy="220" r="18" fill="white"/>
+    <circle cx="165" cy="220" r="10" fill="#14b8a6"/>
+    <circle cx="260" cy="220" r="18" fill="white"/>
+    <circle cx="260" cy="220" r="10" fill="#14b8a6"/>
+
+    <!-- Handle -->
+    <line x1="100" y1="120" x2="80" y2="100" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Products in cart -->
+  <g filter="url(#cartShadow)">
+    <!-- Box 1 -->
+    <rect x="150" y="100" width="50" height="45" rx="6" fill="url(#boxGrad1)"/>
+    <rect x="155" y="115" width="40" height="3" fill="rgba(255,255,255,0.5)"/>
+    <rect x="155" y="122" width="30" height="3" fill="rgba(255,255,255,0.5)"/>
+
+    <!-- Box 2 -->
+    <rect x="210" y="90" width="55" height="55" rx="6" fill="url(#boxGrad2)"/>
+    <circle cx="237" cy="117" r="15" fill="rgba(255,255,255,0.3)"/>
+    <path d="M230 117 L235 122 L247 110" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Price tag -->
+  <g filter="url(#cartShadow)">
+    <path d="M300 80 L340 80 L355 95 L340 110 L300 110 Z" fill="white"/>
+    <circle cx="310" cy="95" r="5" fill="#14b8a6"/>
+    <text x="325" y="100" font-size="12" fill="#14b8a6" font-weight="bold">0%</text>
+  </g>
+
+  <!-- Floating elements -->
+  <g filter="url(#cartShadow)">
+    <circle cx="70" cy="160" r="22" fill="white"/>
+    <text x="70" y="166" font-size="16" fill="#14b8a6" text-anchor="middle" font-weight="bold">₮</text>
+  </g>
+
+  <g filter="url(#cartShadow)">
+    <circle cx="340" cy="170" r="18" fill="white"/>
+    <text x="340" y="176" font-size="14" fill="#10b981" text-anchor="middle" font-weight="bold">%</text>
+  </g>
+
+  <!-- Stars -->
+  <text x="90" y="70" font-size="20" fill="white" opacity="0.8">★</text>
+  <text x="320" cy="60" font-size="16" fill="white" opacity="0.6">★</text>
+  <text x="60" y="220" font-size="14" fill="white" opacity="0.5">★</text>
+</svg>

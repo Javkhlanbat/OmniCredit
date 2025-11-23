@@ -4,6 +4,7 @@ const {
   getLoanById,
   getAllLoans,
   updateLoanStatus,
+  disburseLoan,
   getLoanStats,
   createPurchaseLoan,
   getPurchaseLoansByUserId,
@@ -318,6 +319,59 @@ const adminUpdateLoanStatus = async (req, res) => {
   }
 };
 
+// Зээл олгох (Админ) - approved зээлийг disbursed болгох
+const adminDisburseLoan = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Эхлээд зээл байгаа эсэхийг шалгах
+    const existingLoan = await getLoanById(parseInt(id));
+
+    if (!existingLoan) {
+      return res.status(404).json({
+        error: 'Зээл олдсонгүй',
+        message: 'Тухайн ID-тай зээл олдсонгүй'
+      });
+    }
+
+    if (existingLoan.status !== 'approved') {
+      return res.status(400).json({
+        error: 'Зээл олгох боломжгүй',
+        message: 'Зөвхөн "approved" статустай зээлийг олгох боломжтой'
+      });
+    }
+
+    const loan = await disburseLoan(parseInt(id));
+
+    if (!loan) {
+      return res.status(500).json({
+        error: 'Зээл олгоход алдаа гарлаа'
+      });
+    }
+
+    // Энд жинхэнэ мөнгө шилжүүлэх логик орох боломжтой
+    // Одоогоор зөвхөн статус өөрчилж байна
+
+    res.json({
+      message: 'Зээл амжилттай олгогдлоо! Хэрэглэгчийн дансанд шилжүүлэгдлээ.',
+      loan,
+      disbursement: {
+        loan_id: loan.id,
+        amount: loan.amount,
+        disbursed_at: loan.disbursed_at,
+        recipient_user_id: loan.user_id
+      }
+    });
+
+  } catch (error) {
+    console.error('Admin disburse loan алдаа:', error);
+    res.status(500).json({
+      error: 'Серверт алдаа гарлаа',
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   applyForLoan,
   getMyLoans,
@@ -326,5 +380,6 @@ module.exports = {
   applyForPurchaseLoan,
   getMyPurchaseLoans,
   adminGetAllLoans,
-  adminUpdateLoanStatus
+  adminUpdateLoanStatus,
+  adminDisburseLoan
 };

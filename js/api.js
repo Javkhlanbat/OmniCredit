@@ -206,7 +206,18 @@ const AuthAPI = {
 
     // Хувийн мэдээлэл авах
     async getProfile() {
-        return await api.get('/auth/profile');
+        const response = await api.get('/auth/profile');
+        return response.user;
+    },
+
+    // Профайл зураг оруулах
+    async uploadProfileImage(imageBase64) {
+        return await api.post('/auth/profile/image', { profile_image: imageBase64 });
+    },
+
+    // Нэг хэрэглэгчийн дэлгэрэнгүй мэдээлэл (Admin - ID зургуудтай)
+    async getAdminUserDetails(userId) {
+        return await api.get(`/auth/admin/users/${userId}`);
     },
 
     // Token баталгаажуулах

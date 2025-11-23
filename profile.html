@@ -128,7 +128,7 @@
 <body>
   <div class="container">
     <nav class="nav">
-      <div class="brand">OmniCredit</div>
+      <a href="index.html" class="brand">OmniCredit</a>
       <div class="nav-links">
         <a href="index.html">Нүүр</a>
         <a href="zeelhuudas.html">Зээлийн тооцоолуур</a>
@@ -361,16 +361,15 @@
           const initials = (lastName.charAt(0) + firstName.charAt(0)).toUpperCase() || 'XX';
           const avatarInitialsElement = document.getElementById('avatarInitials');
 
-          // Check if user has uploaded avatar (stored in localStorage)
-          const savedAvatar = localStorage.getItem(`avatar_${profile.id}`);
-          if (savedAvatar) {
-            // Display saved avatar image
+          // Check if user has profile image from database
+          if (profile.profile_image) {
+            // Display saved avatar image from database
             const avatarContainer = document.getElementById('userAvatar');
             avatarContainer.style.background = 'none';
             avatarInitialsElement.style.display = 'none';
 
             const img = document.createElement('img');
-            img.src = savedAvatar;
+            img.src = profile.profile_image;
             img.alt = 'Profile Avatar';
             avatarContainer.insertBefore(img, avatarContainer.firstChild);
           } else {
@@ -398,52 +397,57 @@
 
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Зөвхөн зураг файл оруулна уу');
+        Utils.showToast('Зөвхөн зураг файл оруулна уу', 'error');
         return;
       }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Зургийн хэмжээ 5MB-аас бага байх ёстой');
+      // Validate file size (max 2MB for database storage)
+      if (file.size > 2 * 1024 * 1024) {
+        Utils.showToast('Зургийн хэмжээ 2MB-аас бага байх ёстой', 'error');
         return;
       }
 
       // Read and display image
       const reader = new FileReader();
 
-      reader.onload = function(event) {
+      reader.onload = async function(event) {
         const imageDataUrl = event.target.result;
 
-        // Update avatar display
-        const avatarContainer = document.getElementById('userAvatar');
-        const avatarInitialsElement = document.getElementById('avatarInitials');
+        try {
+          // Save to database
+          Utils.showToast('Зураг хадгалж байна...', 'info');
+          await AuthAPI.uploadProfileImage(imageDataUrl);
 
-        // Remove existing image if any
-        const existingImg = avatarContainer.querySelector('img');
-        if (existingImg) {
-          existingImg.remove();
-        }
+          // Update avatar display
+          const avatarContainer = document.getElementById('userAvatar');
+          const avatarInitialsElement = document.getElementById('avatarInitials');
 
-        // Hide initials and change background
-        avatarInitialsElement.style.display = 'none';
-        avatarContainer.style.background = 'none';
+          // Remove existing image if any
+          const existingImg = avatarContainer.querySelector('img');
+          if (existingImg) {
+            existingImg.remove();
+          }
 
-        // Add new image
-        const img = document.createElement('img');
-        img.src = imageDataUrl;
-        img.alt = 'Profile Avatar';
-        avatarContainer.insertBefore(img, avatarContainer.firstChild);
+          // Hide initials and change background
+          avatarInitialsElement.style.display = 'none';
+          avatarContainer.style.background = 'none';
 
-        // Save to localStorage
-        const profile = UserManager.getUser();
-        if (profile && profile.id) {
-          localStorage.setItem(`avatar_${profile.id}`, imageDataUrl);
-          alert('Профайл зураг амжилттай солигдлоо!');
+          // Add new image
+          const img = document.createElement('img');
+          img.src = imageDataUrl;
+          img.alt = 'Profile Avatar';
+          avatarContainer.insertBefore(img, avatarContainer.firstChild);
+
+          Utils.showToast('Профайл зураг амжилттай солигдлоо!', 'success');
+
+        } catch (error) {
+          console.error('Error uploading profile image:', error);
+          Utils.showToast('Зураг хадгалахад алдаа гарлаа: ' + error.message, 'error');
         }
       };
 
       reader.onerror = function() {
-        alert('Зураг уншихад алдаа гарлаа');
+        Utils.showToast('Зураг уншихад алдаа гарлаа', 'error');
       };
 
       reader.readAsDataURL(file);

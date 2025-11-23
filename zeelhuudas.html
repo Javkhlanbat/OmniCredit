@@ -14,6 +14,11 @@
   <link rel="stylesheet" href="css/buttons.css">
   <link rel="stylesheet" href="css/footer.css">
 
+  <!-- Load navigation dependencies early -->
+  <script src="js/utils.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/navigation.js" defer></script>
+
   <style>
     * {
       box-sizing: border-box
@@ -30,24 +35,6 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 24px
-    }
-
-    .hero {
-      margin-top: 18px;
-      background: radial-gradient(1200px 280px at 20% -10%, rgba(34, 211, 238, .25), transparent), radial-gradient(800px 240px at 90% -20%, rgba(74, 222, 128, .22), transparent), #0b1220;
-      color: #e5f7f1;
-      border-radius: 26px;
-      padding: 28px
-    }
-
-    .hero h1 {
-      margin: 0 0 8px;
-      font-size: 34px
-    }
-
-    .hero p {
-      margin: 0;
-      color: #cfe6df
     }
 
     .info-tabs {
@@ -291,13 +278,195 @@
         grid-template-columns: 1fr
       }
     }
+
+    /* Mobile responsive improvements */
+    @media(max-width:768px) {
+      .container {
+        padding: 12px;
+      }
+
+      .info-tabs {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .info-tabs label {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+
+      .kpis-wide {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .kpi {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+
+      .kpi b {
+        font-size: 1rem;
+      }
+
+      /* Тохиргоо хэсэг - Card */
+      .card.pad {
+        padding: 12px;
+      }
+
+      .card h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      .control {
+        margin-bottom: 14px;
+      }
+
+      .control label {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+      }
+
+      .display {
+        padding: 8px 10px;
+        border-radius: 12px;
+      }
+
+      .display input[type=number] {
+        font-size: 1.25rem;
+      }
+
+      .display span {
+        font-size: 0.9rem;
+      }
+
+      input[type=range] {
+        height: 8px;
+      }
+
+      input[type=range]::-webkit-slider-thumb {
+        width: 22px;
+        height: 22px;
+      }
+
+      .chart-tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chart-tabs label {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 8px 10px;
+      }
+
+      /* Canvas responsive - wrapper needed */
+      .panels {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .panel {
+        min-width: 100%;
+      }
+
+      .panel canvas {
+        width: 100% !important;
+        height: 250px !important;
+      }
+
+      /* Loan type buttons */
+      .loan-type-buttons {
+        flex-direction: column !important;
+      }
+
+      .pane {
+        padding: 12px;
+      }
+
+      .pane h3 {
+        font-size: 1rem;
+      }
+
+      .pane table {
+        font-size: 0.8rem;
+      }
+
+      .pane th, .pane td {
+        display: block;
+        padding: 2px 0;
+      }
+
+      .pane th {
+        font-weight: 700;
+        color: #064e3b;
+      }
+
+      /* CTA buttons */
+      .cta {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .cta .btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+      }
+
+      /* Section title */
+      div[style*="font-size: 32px"] {
+        font-size: 1.25rem !important;
+      }
+
+      div[style*="padding: 24px"] {
+        padding: 16px !important;
+      }
+    }
+
+    @media(max-width:480px) {
+      .container {
+        padding: 10px;
+      }
+
+      .display input[type=number] {
+        font-size: 1.1rem;
+      }
+
+      .panel canvas {
+        height: 200px !important;
+      }
+
+      .kpi {
+        padding: 8px;
+      }
+
+      .kpi b {
+        font-size: 0.95rem;
+      }
+
+      .info-tabs label {
+        padding: 8px;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media(max-width:360px) {
+      .display input[type=number] {
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
     <nav class="nav">
-      <div class="brand">OmniCredit</div>
+      <a href="index.html" class="brand">OmniCredit</a>
       <div class="nav-links">
         <a href="index.html">Нүүр</a>
         <a href="zeelhuudas.html" class="active">Зээлийн тооцоолуур</a>
@@ -311,12 +480,7 @@
       <button class="mobile-menu-toggle">☰</button>
     </nav>
 
-    <header class="hero">
-      <h1>Зээлийн тооцоолуур</h1>
-      <p>Тооцоогоо бодоод, онлайнаар хүсэлтээ илгээгээрэй. Танд хамгийн тохирох нөхцлийг санал болгоно.</p>
-    </header>
-
-    <div style="background: linear-gradient(135deg, #E0F7FA 0%, #E8F5E9 100%); padding: 24px; border-radius: 16px; margin-top: 24px; margin-bottom: 24px;">
+    <div style="background: linear-gradient(135deg, #E0F7FA 0%, #E8F5E9 100%); padding: 24px; border-radius: 16px; margin-top: 16px; margin-bottom: 24px;">
       <div style="text-align: center; margin-bottom: 4px;">
         <span style="display: inline-block; background: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #0d9488; letter-spacing: 0.5px;">
           ТООЦООЛУУР
@@ -327,7 +491,7 @@
       </h2>
     </div>
 
-    <div style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: center;">
+    <div class="loan-type-buttons" style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: center; flex-wrap: wrap;">
       <button class="btn btn-primary loan-type-btn active" data-type="consumer">
         Хэрэглээний зээл
       </button>
@@ -657,21 +821,21 @@
       }
     });
 
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
+    recalc();
 
-    if (mobileMenuToggle) {
-      mobileMenuToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-      });
+    // Responsive canvas resize
+    function resizeCanvases() {
+      const container = document.querySelector('.panels');
+      if (container && window.innerWidth <= 768) {
+        const width = container.offsetWidth - 24;
+        paymentsCanvas.style.width = width + 'px';
+        balanceCanvas.style.width = width + 'px';
+      }
     }
 
-    recalc();
+    window.addEventListener('resize', resizeCanvases);
+    resizeCanvases();
   </script>
-
-  <script src="js/utils.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/navigation.js"></script>
 
   <footer class="footer">
     <div class="container">

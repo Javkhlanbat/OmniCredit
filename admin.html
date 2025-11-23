@@ -197,6 +197,138 @@
         padding-bottom: 8px;
       }
     }
+
+    /* User Profile Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .user-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .user-info-item {
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius);
+    }
+
+    .user-info-item label {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .user-info-item span {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .id-images-section h3 {
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .id-images-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .id-image-card {
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .id-image-card h4 {
+      padding: 12px;
+      background: var(--bg);
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .id-image-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      background: #f5f5f5;
+    }
+
+    .id-image-card .no-image {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      background: #f5f5f5;
+    }
+
+    @media (max-width: 600px) {
+      .user-info-grid,
+      .id-images-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -372,6 +504,19 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- User Profile Modal -->
+  <div id="userProfileModal" class="modal-overlay" onclick="closeUserModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Хэрэглэгчийн мэдээлэл</h2>
+        <button class="modal-close" onclick="closeUserModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="userProfileModalBody">
+        <!-- User info will be loaded here -->
+      </div>
+    </div>
   </div>
 
   <footer class="footer">
@@ -700,36 +845,87 @@
       displayUsers(filtered);
     }
 
-    // View user profile modal
+    // View user profile modal with ID card images
     async function viewUserProfile(userId, userEmail) {
+      const modalBody = document.getElementById('userProfileModalBody');
+      modalBody.innerHTML = '<p style="text-align: center; padding: 40px;">Ачааллаж байна...</p>';
+      document.getElementById('userProfileModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+
       try {
-        const data = await api.get('/auth/admin/users');
-        const user = data.users.find(u => u.id === userId);
+        const response = await AuthAPI.getAdminUserDetails(userId);
+        const user = response.user;
 
         if (user) {
-          const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim();
+          const fullName = `${user.last_name || ''} ${user.first_name || ''}`.trim() || '-';
           const createdDate = new Date(user.created_at).toLocaleString('mn-MN');
 
-          const profileInfo = `
-📋 ХЭРЭГЛЭГЧИЙН PROFILE
+          modalBody.innerHTML = `
+            <div class="user-info-grid">
+              <div class="user-info-item">
+                <label>Бүтэн нэр</label>
+                <span>${fullName}</span>
+              </div>
+              <div class="user-info-item">
+                <label>И-мэйл</label>
+                <span>${user.email || '-'}</span>
+              </div>
+              <div class="user-info-item">
+                <label>Утасны дугаар</label>
+                <span>${user.phone || '-'}</span>
+              </div>
+              <div class="user-info-item">
+                <label>Регистрийн дугаар</label>
+                <span>${user.register_number || '-'}</span>
+              </div>
+              <div class="user-info-item">
+                <label>Бүртгүүлсэн огноо</label>
+                <span>${createdDate}</span>
+              </div>
+              <div class="user-info-item">
+                <label>Админ эрх</label>
+                <span>${user.is_admin ? 'Тийм' : 'Үгүй'}</span>
+              </div>
+            </div>
 
-👤 Нэр: ${fullName}
-📧 И-мэйл: ${user.email || '-'}
-📱 Утас: ${user.phone || '-'}
-🆔 Регистр: ${user.register_number || '-'}
-📍 Хаяг: ${user.address || '-'}
-📅 Бүртгүүлсэн: ${createdDate}
-👑 Админ эрх: ${user.is_admin ? 'Тийм' : 'Үгүй'}
-          `.trim();
-
-          alert(profileInfo);
+            <div class="id-images-section">
+              <h3>Иргэний үнэмлэхний зурагнууд</h3>
+              <div class="id-images-grid">
+                <div class="id-image-card">
+                  <h4>Урд тал</h4>
+                  ${user.id_front
+                    ? `<img src="${user.id_front}" alt="ID Front" onclick="openImageInNewTab('${user.id_front}')" style="cursor: pointer;" title="Томруулахын тулд дарна уу">`
+                    : '<div class="no-image">Зураг байхгүй</div>'}
+                </div>
+                <div class="id-image-card">
+                  <h4>Ард тал</h4>
+                  ${user.id_back
+                    ? `<img src="${user.id_back}" alt="ID Back" onclick="openImageInNewTab('${user.id_back}')" style="cursor: pointer;" title="Томруулахын тулд дарна уу">`
+                    : '<div class="no-image">Зураг байхгүй</div>'}
+                </div>
+              </div>
+            </div>
+          `;
         } else {
-          alert('Хэрэглэгч олдсонгүй');
+          modalBody.innerHTML = '<p style="text-align: center; padding: 40px; color: #EF4444;">Хэрэглэгч олдсонгүй</p>';
         }
       } catch (error) {
         console.error('Error loading user profile:', error);
-        alert('Алдаа: Хэрэглэгчийн мэдээллийг ачаалж чадсангүй');
+        modalBody.innerHTML = `<p style="text-align: center; padding: 40px; color: #EF4444;">Алдаа: ${error.message}</p>`;
       }
+    }
+
+    // Close user profile modal
+    function closeUserModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('userProfileModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Open image in new tab
+    function openImageInNewTab(imageSrc) {
+      const newWindow = window.open();
+      newWindow.document.write(`<img src="${imageSrc}" style="max-width: 100%; height: auto;">`);
     }
 
     // Delete user

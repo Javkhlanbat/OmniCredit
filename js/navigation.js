@@ -6,11 +6,12 @@ class Navigation {
 
   init() {
     this.updateNavLinks();
-    this.setupMobileMenu();
     this.setupActiveLinks();
     this.setupStickyNav();
     this.updateAuthButtons();
     this.setupScrollEffect();
+    // Mobile menu should be set up LAST after all links are updated
+    this.setupMobileMenu();
   }
 
   // Update navigation links based on login status
@@ -31,9 +32,21 @@ class Navigation {
 
     if (isAuthenticated) {
       // Add "Миний зээл" for authenticated users
-      navLinks.innerHTML = baseLinks + `<a href="my-loans.html">Миний зээл</a>`;
+      const user = typeof UserManager !== 'undefined' ? UserManager.getUser() : null;
+      navLinks.innerHTML = baseLinks + `
+        <a href="my-loans.html">Миний зээл</a>
+        <div class="auth-mobile">
+          <a href="dashboard.html" class="btn btn-secondary btn-sm">Dashboard</a>
+          <button id="mobileLogoutBtn" class="btn btn-primary btn-sm">Гарах</button>
+        </div>
+      `;
     } else {
-      navLinks.innerHTML = baseLinks;
+      navLinks.innerHTML = baseLinks + `
+        <div class="auth-mobile">
+          <a href="login.html" class="btn btn-secondary btn-sm">Нэвтрэх</a>
+          <a href="register.html" class="btn btn-primary btn-sm">Бүртгүүлэх</a>
+        </div>
+      `;
     }
   }
 
@@ -41,29 +54,65 @@ class Navigation {
   setupMobileMenu() {
     const toggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
+    const nav = document.querySelector('.nav');
 
-    if (toggle && navLinks) {
-      toggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        toggle.innerHTML = navLinks.classList.contains('active') ? '✕' : '☰';
-      });
-
-      // Close menu when clicking a link
-      navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          navLinks.classList.remove('active');
-          toggle.innerHTML = '☰';
-        });
-      });
-
-      // Close menu when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('.nav')) {
-          navLinks.classList.remove('active');
-          toggle.innerHTML = '☰';
-        }
-      });
+    if (!toggle || !navLinks) {
+      console.error('Mobile menu elements not found!');
+      return;
     }
+
+    // Toggle button click
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation(); // Important - prevent document click from immediately closing
+
+      const isActive = navLinks.classList.toggle('active');
+      toggle.innerHTML = isActive ? '✕' : '☰';
+      toggle.setAttribute('aria-expanded', isActive);
+
+      // Body scroll lock when menu open
+      if (isActive) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+
+      console.log('Menu toggled:', isActive); // Debug
+    });
+
+    // Close when clicking nav link (use event delegation for dynamically added links)
+    navLinks.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+        // Handle mobile logout button
+        if (e.target.id === 'mobileLogoutBtn') {
+          e.preventDefault();
+          if (confirm('Гарахдаа итгэлтэй байна уу?')) {
+            if (typeof UserManager !== 'undefined') {
+              UserManager.logout();
+            } else {
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('userData');
+              window.location.href = 'login.html';
+            }
+          }
+          return;
+        }
+
+        navLinks.classList.remove('active');
+        toggle.innerHTML = '☰';
+        toggle.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      if (nav && !nav.contains(e.target)) {
+        navLinks.classList.remove('active');
+        toggle.innerHTML = '☰';
+        toggle.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    });
   }
 
   // Set active link based on current page

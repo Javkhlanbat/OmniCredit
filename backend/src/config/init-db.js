@@ -15,11 +15,40 @@ const initDatabase = async () => {
         last_name VARCHAR(100) NOT NULL,
         phone VARCHAR(20),
         register_number VARCHAR(20) UNIQUE,
+        id_front TEXT,
+        id_back TEXT,
+        profile_image TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
     console.log('Users table үүсгэсэн');
+
+    // Add id_front, id_back, profile_image columns if they don't exist
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'id_front'
+        ) THEN
+          ALTER TABLE users ADD COLUMN id_front TEXT;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'id_back'
+        ) THEN
+          ALTER TABLE users ADD COLUMN id_back TEXT;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'profile_image'
+        ) THEN
+          ALTER TABLE users ADD COLUMN profile_image TEXT;
+        END IF;
+      END $$;
+    `);
+    console.log('Users table-д id_front, id_back, profile_image columns нэмэгдлээ');
 
     // Loans table
     await pool.query(`

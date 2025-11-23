@@ -18,9 +18,6 @@
   <link rel="stylesheet" href="css/footer.css">
 
   <style>
-    /* ================================================
-       FEATURES SECTION
-       ================================================ */
     .features-hero {
       padding: 80px 0;
       background: linear-gradient(180deg, #f0fdf4 0%, white 100%);
@@ -232,11 +229,24 @@
       .features-hero {
         padding: 40px 0;
       }
+
+      .feature-content {
+        padding: 20px;
+      }
+
+      .feature-content h3 {
+        font-size: 1.25rem;
+      }
+
+      .feature-content p {
+        font-size: 0.9rem;
+      }
+
+      .feature-image {
+        height: 180px;
+      }
     }
 
-    /* ================================================
-       OTHER SECTIONS
-       ================================================ */
     h2.section-title {
       text-align: center;
       font-size: 32px;
@@ -320,15 +330,69 @@
 
     @media(max-width:640px) {
       .testimonial { flex: 0 0 260px; }
+
+      /* Why-us section mobile */
+      .why-us {
+        padding: 30px 16px;
+      }
+
+      .why-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .why-card {
+        padding: 16px;
+      }
+
+      .why-card h3 {
+        font-size: 1.1rem;
+      }
+
+      .why-card p {
+        font-size: 0.9rem;
+      }
+
+      /* Section title mobile */
+      h2.section-title {
+        font-size: 1.5rem;
+        margin: 24px 0 16px;
+      }
+
+      /* Partners section mobile */
+      .partners {
+        margin-top: 20px;
+      }
+
+      .partner-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .partner-card {
+        padding: 16px;
+        font-size: 0.9rem;
+      }
+
+      .cta {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Even smaller screens */
+    @media(max-width:400px) {
+      .partner-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!-- Navigation -->
   <div class="container">
     <nav class="nav">
-      <div class="brand">OmniCredit</div>
+      <a href="index.html" class="brand">OmniCredit</a>
       <div class="nav-links">
         <a href="index.html" class="active">Нүүр</a>
         <a href="zeelhuudas.html">Зээлийн тооцоолуур</a>
@@ -342,12 +406,9 @@
       <button class="mobile-menu-toggle">☰</button>
     </nav>
   </div>
-
-  <!-- Hero Section - Full Width -->
   <section class="hero">
     <div class="hero-content">
       <div class="hero-text">
-        <div class="hero-badge">ТАНИЛЦУУЛГА</div>
         <h1>Бид ногоон ирээдүйг
           <span class="highlight">Санхүүжүүлдэг!</span>
         </h1>
@@ -368,12 +429,10 @@
     </div>
   </section>
 
-  <!-- Features Section -->
   <section class="features-hero" id="products">
     <div class="container">
       <div class="features-grid">
 
-        <!-- Card 1: Хэрэглээний зээл -->
         <div class="feature-card">
           <div class="feature-image">
             <img src="images/consumer-loan.svg" alt="Хэрэглээний зээл">
@@ -397,7 +456,6 @@
           </div>
         </div>
 
-        <!-- Card 2: Худалдан авалтын зээл -->
         <div class="feature-card featured">
           <div class="feature-badge">Хит</div>
           <div class="feature-image">
@@ -424,7 +482,6 @@
     </div>
   </section>
 
-  <!-- Main Content -->
   <div class="container">
 
     <section class="why-us" id="why">
@@ -452,7 +509,6 @@
         </div>
       </div>
     </section>
-    <!-- Admin Only: Registered Users Section -->
     <section id="registeredUsersSection" style="display: none; margin-top: 60px;">
       <h2 class="section-title">Бүртгэлтэй хэрэглэгчид</h2>
       <div style="background: var(--card); padding: 32px; border-radius: var(--radius-lg); box-shadow: var(--shadow);">
@@ -501,7 +557,7 @@
         <div class="partner-card">Дэлгүүр 3</div>
         <div class="partner-card">Дэлгүүр 4</div>
       </div>
-      <a href="mailto:info@omnicredit.mn" class="cta">Бидэнтэй холбогдох →</a>
+      <a href="mailto:info@omnicredit.mn" class="cta">Бидэнтэй холбогдох</a>
     </section>
   </div>
 
@@ -539,17 +595,6 @@
   <script src="js/api.js"></script>
   <script src="js/navigation.js"></script>
   <script>
-    // Mobile menu toggle
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (mobileMenuToggle) {
-      mobileMenuToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-      });
-    }
-
-    // Admin: Show registered users section if admin
     let allRegisteredUsers = [];
 
     async function checkAdminAndLoadUsers() {

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, findUserByPhone, verifyPassword, findUserById, getAllUsers, deleteUser } = require('../models/userModel');
+const { createUser, findUserByEmail, findUserByPhone, verifyPassword, findUserById, findUserByIdWithIdImages, getAllUsers, deleteUser, updateProfileImage } = require('../models/userModel');
 
 // JWT token үүсгэх
 const generateToken = (user) => {
@@ -16,7 +16,7 @@ const generateToken = (user) => {
 // Бүртгэл
 const register = async (req, res) => {
   try {
-    const { email, password, first_name, last_name, phone, register_number } = req.body;
+    const { email, password, first_name, last_name, phone, register_number, id_front, id_back } = req.body;
 
     // И-мэйл бүртгэлтэй эсэх шалгах
     const existingUser = await findUserByEmail(email);
@@ -34,7 +34,9 @@ const register = async (req, res) => {
       first_name,
       last_name,
       phone,
-      register_number
+      register_number,
+      id_front,
+      id_back
     });
 
     // Token үүсгэх
@@ -138,12 +140,79 @@ const getProfile = async (req, res) => {
         phone: user.phone,
         register_number: user.register_number,
         is_admin: user.is_admin || false,
+        profile_image: user.profile_image || null,
         created_at: user.created_at
       }
     });
 
   } catch (error) {
     console.error('Get profile алдаа:', error);
+    res.status(500).json({
+      error: 'Серверт алдаа гарлаа',
+      message: error.message
+    });
+  }
+};
+
+// Профайл зураг шинэчлэх
+const uploadProfileImage = async (req, res) => {
+  try {
+    const { profile_image } = req.body;
+
+    if (!profile_image) {
+      return res.status(400).json({
+        error: 'Зураг байхгүй',
+        message: 'Профайл зураг оруулна уу'
+      });
+    }
+
+    const updated = await updateProfileImage(req.user.id, profile_image);
+
+    res.json({
+      message: 'Профайл зураг амжилттай шинэчлэгдлээ',
+      user: updated
+    });
+
+  } catch (error) {
+    console.error('Upload profile image алдаа:', error);
+    res.status(500).json({
+      error: 'Серверт алдаа гарлаа',
+      message: error.message
+    });
+  }
+};
+
+// Нэг хэрэглэгчийн дэлгэрэнгүй мэдээлэл (Admin - ID зургуудтай)
+const adminGetUserDetails = async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const user = await findUserByIdWithIdImages(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'Хэрэглэгч олдсонгүй',
+        message: 'Хэрэглэгчийн мэдээлэл олдсонгүй'
+      });
+    }
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        phone: user.phone,
+        register_number: user.register_number,
+        is_admin: user.is_admin || false,
+        id_front: user.id_front || null,
+        id_back: user.id_back || null,
+        profile_image: user.profile_image || null,
+        created_at: user.created_at
+      }
+    });
+
+  } catch (error) {
+    console.error('Admin get user details алдаа:', error);
     res.status(500).json({
       error: 'Серверт алдаа гарлаа',
       message: error.message
@@ -249,7 +318,9 @@ module.exports = {
   register,
   login,
   getProfile,
+  uploadProfileImage,
   verifyToken,
   adminGetAllUsers,
+  adminGetUserDetails,
   adminDeleteUser
 };

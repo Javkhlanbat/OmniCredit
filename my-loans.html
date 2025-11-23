@@ -275,8 +275,11 @@
         document.getElementById('noLoansMessage').style.display = 'none';
         document.getElementById('loanList').innerHTML = '';
 
-        const loans = await LoansAPI.getMyLoans();
-        allLoans = loans || [];
+        const response = await LoansAPI.getMyLoans();
+        console.log('Loans response:', response);
+
+        // API хариулт loans property доторх массив эсвэл шууд массив байж болно
+        allLoans = Array.isArray(response) ? response : (response.loans || []);
 
         if (allLoans.length === 0) {
           document.getElementById('loadingMessage').style.display = 'none';
@@ -288,8 +291,10 @@
         displayLoans(allLoans);
       } catch (error) {
         console.error('Load loans error:', error);
-        document.getElementById('loadingMessage').style.display = 'none';
-        document.getElementById('noLoansMessage').style.display = 'block';
+        document.getElementById('loadingMessage').innerHTML = `
+          <p style="color: #EF4444;">Алдаа: ${error.message}</p>
+          <button onclick="loadLoans()" class="btn btn-primary" style="margin-top: 16px;">Дахин оролдох</button>
+        `;
       }
     }
 

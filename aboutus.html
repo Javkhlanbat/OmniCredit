@@ -348,5 +348,20 @@
 
   <script src="js/utils.js"></script>
   <script src="js/navigation.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // Нэвтэрсэн бол товчнуудыг өөрчлөх
+    if (typeof TokenManager !== 'undefined' && TokenManager.isAuthenticated()) {
+      const user = UserManager.getUser();
+      const authButtonsContainer = document.querySelector('.auth-buttons');
+      if (authButtonsContainer && user) {
+        const firstName = user.first_name || user.firstName || user.email?.split('@')[0] || 'Хэрэглэгч';
+        authButtonsContainer.innerHTML = `
+          <a href="profile.html" class="btn btn-ghost btn-sm" style="margin-right: 8px;">👤 ${firstName}</a>
+          <button class="btn btn-primary btn-sm" onclick="UserManager.logout()">Гарах</button>
+        `;
+      }
+    }
+  </script>
 </body>
 </html>

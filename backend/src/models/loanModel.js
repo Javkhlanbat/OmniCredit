@@ -62,10 +62,10 @@ const updateLoanStatus = async (id, status) => {
   const result = await query(
     `UPDATE loans
      SET status = $1,
-         approved_at = CASE WHEN $1 = 'approved' THEN CURRENT_TIMESTAMP ELSE approved_at END
-     WHERE id = $2
+         approved_at = CASE WHEN $2 = 'approved' THEN CURRENT_TIMESTAMP ELSE approved_at END
+     WHERE id = $3
      RETURNING *`,
-    [status, id]
+    [status, status, id]
   );
   return result.rows[0];
 };

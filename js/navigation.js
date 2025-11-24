@@ -171,7 +171,7 @@ class Navigation {
       const initials = userName.charAt(0).toUpperCase();
 
       authButtons.innerHTML = `
-        <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
+        <a href="dashboard.html" class="btn btn-dashboard">Dashboard</a>
         <div class="profile-dropdown" id="profileDropdown">
           <button class="profile-trigger" id="profileTrigger">
             <span class="profile-avatar">${initials}</span>
@@ -184,27 +184,12 @@ class Navigation {
               <div class="user-email">${userEmail}</div>
             </div>
             <div class="profile-menu-items">
-              <a href="profile.html" class="profile-menu-item">
-                <span class="menu-icon">👤</span>
-                <span>Профайл</span>
-              </a>
-              <a href="profile.html#wallet" class="profile-menu-item">
-                <span class="menu-icon">💳</span>
-                <span>Wallet</span>
-              </a>
-              <a href="profile.html#security" class="profile-menu-item">
-                <span class="menu-icon">🔒</span>
-                <span>Нууцлал</span>
-              </a>
-              <a href="profile.html#preferences" class="profile-menu-item">
-                <span class="menu-icon">⚙️</span>
-                <span>Тохиргоо</span>
-              </a>
+              <a href="profile.html" class="profile-menu-item">Профайл</a>
+              <a href="profile.html#wallet" class="profile-menu-item">Wallet</a>
+              <a href="profile.html#security" class="profile-menu-item">Нууцлал</a>
+              <a href="profile.html#preferences" class="profile-menu-item">Тохиргоо</a>
               <div class="profile-menu-divider"></div>
-              <button class="profile-menu-item logout" id="logoutBtn">
-                <span class="menu-icon">🚪</span>
-                <span>Гарах</span>
-              </button>
+              <button class="profile-menu-item logout" id="logoutBtn">Гарах</button>
             </div>
           </div>
         </div>

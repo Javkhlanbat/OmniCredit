@@ -106,6 +106,26 @@
       </div>
     </div>
 
+    <!-- Wallet Section -->
+    <div class="card" style="margin-bottom: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="card-body" style="padding: 32px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
+          <div>
+            <p style="color: rgba(255,255,255,0.8); margin-bottom: 8px; font-size: 14px;">Миний Wallet</p>
+            <h2 id="walletBalance" style="color: white; font-size: 2.5rem; margin: 0;">₮0</h2>
+          </div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" style="background: rgba(255,255,255,0.2); border: none; color: white;" onclick="openWithdrawModal()">
+              Банк руу шилжүүлэх
+            </button>
+            <a href="wallet-history.html" class="btn btn-secondary" style="background: white; color: #667eea;">
+              Түүх харах
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="quick-actions">
       <a href="Payment.html" class="action-card">
         <div class="action-icon"></div>
@@ -124,6 +144,48 @@
         <h4>Түүх</h4>
         <p style="font-size: 13px; color: var(--text-muted);">Төлбөрийн түүх харах</p>
       </a>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+      <div class="card" style="max-width: 500px; width: 90%; margin: 20px;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3>Банк руу шилжүүлэх</h3>
+          <button onclick="closeWithdrawModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <div class="card-body">
+          <form id="withdrawForm">
+            <div class="form-group">
+              <label class="form-label">Шилжүүлэх дүн</label>
+              <input type="number" id="withdrawAmount" class="form-control" placeholder="0" min="1000" required>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                Боломжит үлдэгдэл: <span id="availableBalance">₮0</span>
+              </p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Банк сонгох</label>
+              <select id="bankName" class="form-control" required>
+                <option value="">Банк сонгоно уу</option>
+                <option value="Хаан банк">Хаан банк</option>
+                <option value="Голомт банк">Голомт банк</option>
+                <option value="Худалдаа хөгжлийн банк">Худалдаа хөгжлийн банк</option>
+                <option value="Төрийн банк">Төрийн банк</option>
+                <option value="Хас банк">Хас банк</option>
+                <option value="Капитрон банк">Капитрон банк</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Дансны дугаар</label>
+              <input type="text" id="accountNumber" class="form-control" placeholder="1234567890" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Данс эзэмшигчийн нэр</label>
+              <input type="text" id="accountHolder" class="form-control" placeholder="БАТБОЛД ДОРЖ" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Шилжүүлэх</button>
+          </form>
+        </div>
+      </div>
     </div>
 
     <div class="recent-section" id="activeLoansSection" style="display: none;">
@@ -212,12 +274,13 @@
         }
 
         // Load user's loans
-        const loans = await LoansAPI.getMyLoans();
+        const response = await LoansAPI.getMyLoans();
+        const loans = Array.isArray(response) ? response : (response.loans || []);
 
         if (loans && loans.length > 0) {
-          // Filter active loans
+          // Filter active loans (disbursed, active, approved)
           const activeLoans = loans.filter(loan =>
-            loan.status === 'active' || loan.status === 'approved'
+            loan.status === 'disbursed' || loan.status === 'active' || loan.status === 'approved'
           );
 
           // Update statistics
@@ -232,8 +295,8 @@
             const remaining = loan.amount - (loan.paid_amount || 0);
             totalBalance += remaining;
 
-            // Calculate monthly payment (simple calculation)
-            const monthlyPayment = loan.amount / loan.term;
+            // Calculate monthly payment (use stored value or calculate)
+            const monthlyPayment = loan.monthly_payment || (loan.amount / (loan.term_months || loan.term || 12));
             if (monthlyPayment > nextPayment) {
               nextPayment = monthlyPayment;
             }
@@ -256,6 +319,15 @@
               const remaining = loan.amount - paidAmount;
               const progress = (paidAmount / loan.amount * 100).toFixed(0);
               const createdDate = new Date(loan.created_at).toLocaleDateString('mn-MN');
+              const termMonths = loan.term_months || loan.term || 12;
+              const monthlyPayment = loan.monthly_payment || Math.round(loan.amount / termMonths);
+
+              // Status badge
+              const statusInfo = {
+                'disbursed': { label: 'ОЛГОГДСОН', bg: '#D1FAE5', color: '#059669' },
+                'active': { label: 'ИДЭВХТЭЙ', bg: '#DFFFD8', color: '#10b981' },
+                'approved': { label: 'ЗӨВШӨӨРӨГДСӨН', bg: '#DFFFD8', color: '#10b981' }
+              }[loan.status] || { label: loan.status.toUpperCase(), bg: '#E5E7EB', color: '#6B7280' };
 
               return `
                 <div class="card" style="margin-bottom: 16px;">
@@ -265,7 +337,7 @@
                         <h3>Зээл #${loan.id}</h3>
                         <p style="color: var(--text-muted); margin: 4px 0;">Үүсгэсэн: ${createdDate}</p>
                       </div>
-                      <span style="padding: 6px 12px; background: #DFFFD8; color: #10b981; border-radius: 999px; font-size: 12px; font-weight: 700;">ИДЭВХТЭЙ</span>
+                      <span style="padding: 6px 12px; background: ${statusInfo.bg}; color: ${statusInfo.color}; border-radius: 999px; font-size: 12px; font-weight: 700;">${statusInfo.label}</span>
                     </div>
 
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 24px 0;">
@@ -274,8 +346,8 @@
                         <div style="font-weight: 700; font-size: 1.125rem;">₮${loan.amount.toLocaleString()}</div>
                       </div>
                       <div>
-                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Төлөгдсөн</div>
-                        <div style="font-weight: 700; font-size: 1.125rem;">₮${paidAmount.toLocaleString()}</div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Сарын төлбөр</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">₮${Math.round(monthlyPayment).toLocaleString()}</div>
                       </div>
                       <div>
                         <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Үлдэгдэл</div>
@@ -283,7 +355,7 @@
                       </div>
                       <div>
                         <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Хугацаа</div>
-                        <div style="font-weight: 700; font-size: 1.125rem;">${loan.term} сар</div>
+                        <div style="font-weight: 700; font-size: 1.125rem;">${termMonths} сар</div>
                       </div>
                     </div>
 
@@ -381,11 +453,92 @@
       }
     }
 
+    // Wallet functions
+    let currentWalletBalance = 0;
+
+    async function loadWallet() {
+      try {
+        const response = await WalletAPI.getMyWallet();
+        const wallet = response.wallet;
+        currentWalletBalance = parseFloat(wallet.balance) || 0;
+        document.getElementById('walletBalance').textContent = `₮${currentWalletBalance.toLocaleString()}`;
+        document.getElementById('availableBalance').textContent = `₮${currentWalletBalance.toLocaleString()}`;
+      } catch (error) {
+        console.error('Load wallet error:', error);
+        document.getElementById('walletBalance').textContent = '₮0';
+      }
+    }
+
+    function openWithdrawModal() {
+      document.getElementById('withdrawModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeWithdrawModal() {
+      document.getElementById('withdrawModal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    // Close modal on outside click
+    document.getElementById('withdrawModal').addEventListener('click', (e) => {
+      if (e.target.id === 'withdrawModal') {
+        closeWithdrawModal();
+      }
+    });
+
+    // Withdraw form submission
+    document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const amount = parseFloat(document.getElementById('withdrawAmount').value);
+      const bankName = document.getElementById('bankName').value;
+      const accountNumber = document.getElementById('accountNumber').value;
+      const accountHolder = document.getElementById('accountHolder').value;
+
+      if (amount > currentWalletBalance) {
+        Utils.showToast('Үлдэгдэл хүрэлцэхгүй байна', 'error');
+        return;
+      }
+
+      if (amount < 1000) {
+        Utils.showToast('Хамгийн багадаа ₮1,000 шилжүүлэх боломжтой', 'error');
+        return;
+      }
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Шилжүүлж байна...';
+
+      try {
+        await WalletAPI.withdrawToBank({
+          amount,
+          bank_name: bankName,
+          account_number: accountNumber,
+          account_holder: accountHolder
+        });
+
+        Utils.showToast('Шилжүүлэг амжилттай!', 'success');
+        closeWithdrawModal();
+        e.target.reset();
+        await loadWallet();
+      } catch (error) {
+        console.error('Withdraw error:', error);
+        Utils.showToast(error.message || 'Шилжүүлэхэд алдаа гарлаа', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Шилжүүлэх';
+      }
+    });
+
     // Load dashboard when page loads
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadDashboard);
+      document.addEventListener('DOMContentLoaded', () => {
+        loadDashboard();
+        loadWallet();
+      });
     } else {
       loadDashboard();
+      loadWallet();
     }
   </script>
 </body>

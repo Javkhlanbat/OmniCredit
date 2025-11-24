@@ -18,6 +18,7 @@ initDatabase().catch(console.error);
 const authRoutes = require('./src/routes/authRoutes');
 const loanRoutes = require('./src/routes/loanRoutes');
 const paymentRoutes = require('./src/routes/paymentRoutes');
+const walletRoutes = require('./src/routes/walletRoutes');
 
 // Test route
 app.get('/', (req, res) => {
@@ -49,6 +50,7 @@ app.get('/db-test', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/wallet', walletRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

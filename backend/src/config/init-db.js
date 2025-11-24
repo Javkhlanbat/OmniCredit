@@ -112,6 +112,35 @@ const initDatabase = async () => {
     `);
     console.log('Purchase loans table үүсгэсэн');
 
+    // Wallets table - Хэрэглэгч бүрт нэг wallet
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS wallets (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        balance DECIMAL(12, 2) DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('Wallets table үүсгэсэн');
+
+    // Wallet transactions table - Wallet гүйлгээний түүх
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS wallet_transactions (
+        id SERIAL PRIMARY KEY,
+        wallet_id INTEGER REFERENCES wallets(id) ON DELETE CASCADE,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(50) NOT NULL,
+        amount DECIMAL(12, 2) NOT NULL,
+        description TEXT,
+        reference_id INTEGER,
+        reference_type VARCHAR(50),
+        balance_after DECIMAL(12, 2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('Wallet transactions table үүсгэсэн');
+
     console.log('Бүх tables амжилттай үүсгэгдлээ!');
     
   } catch (error) {

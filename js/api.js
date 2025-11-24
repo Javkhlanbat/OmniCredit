@@ -322,6 +322,28 @@ const PaymentsAPI = {
     }
 };
 
+// Wallet API
+const WalletAPI = {
+    // Wallet мэдээлэл авах
+    async getMyWallet() {
+        return await api.get('/wallet');
+    },
+
+    // Гүйлгээний түүх авах
+    async getTransactions(limit = 20) {
+        return await api.get('/wallet/transactions', { limit });
+    },
+
+    // Банк руу шилжүүлэх
+    async withdrawToBank(withdrawData) {
+        return await api.post('/wallet/withdraw', withdrawData);
+    },
+
+    // Wallet-ээс зээл төлөх
+    async payLoanFromWallet(paymentData) {
+        return await api.post('/wallet/pay-loan', paymentData);
+    }
+};
 
 if (typeof window !== 'undefined') {
     window.API_CONFIG = API_CONFIG;
@@ -331,4 +353,5 @@ if (typeof window !== 'undefined') {
     window.AuthAPI = AuthAPI;
     window.LoansAPI = LoansAPI;
     window.PaymentsAPI = PaymentsAPI;
+    window.WalletAPI = WalletAPI;
 }

@@ -1,4 +1,5 @@
 const { query } = require('../config/database');
+const { addToWallet } = require('./walletModel');
 
 // Зээл үүсгэх
 const createLoan = async (loanData) => {
@@ -70,7 +71,7 @@ const updateLoanStatus = async (id, status) => {
   return result.rows[0];
 };
 
-// Зээл олгох (disburse) - approved зээлийг disbursed болгох
+// Зээл олгох (disburse) - approved зээлийг disbursed болгох, wallet-д мөнгө нэмэх
 const disburseLoan = async (id) => {
   const result = await query(
     `UPDATE loans
@@ -80,7 +81,16 @@ const disburseLoan = async (id) => {
      RETURNING *`,
     [id]
   );
-  return result.rows[0];
+
+  const loan = result.rows[0];
+
+  if (loan) {
+    // Wallet-д зээлийн дүн нэмэх
+    const description = `Зээл #${loan.id} олгогдсон`;
+    await addToWallet(loan.user_id, loan.amount, description, loan.id, 'loan_disbursement');
+  }
+
+  return loan;
 };
 
 // Зээл устгах

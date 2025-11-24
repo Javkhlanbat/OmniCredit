@@ -101,22 +101,33 @@
               <h3>Төлбөрийн арга сонгох</h3>
             </div>
             <div class="card-body">
+              <!-- Wallet Balance Info -->
+              <div id="walletInfo" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px 20px; border-radius: var(--radius); margin-bottom: 16px; color: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <p style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">Wallet үлдэгдэл</p>
+                    <p id="walletBalanceDisplay" style="font-size: 1.5rem; font-weight: 800; margin: 0;">₮0</p>
+                  </div>
+                  <div style="font-size: 32px;"></div>
+                </div>
+              </div>
+
               <div class="payment-method">
-                <div class="method-card active" data-method="card">
+                <div class="method-card active" data-method="wallet">
+                  <div class="method-icon"></div>
+                  <div class="method-name">Wallet</div>
+                </div>
+                <div class="method-card" data-method="card">
                   <div class="method-icon"></div>
                   <div class="method-name">Карт</div>
-                </div>
-                <div class="method-card" data-method="bank">
-                  <div class="method-icon"></div>
-                  <div class="method-name">Шилжүүлэг</div>
                 </div>
                 <div class="method-card" data-method="qpay">
                   <div class="method-icon"></div>
                   <div class="method-name">QPay</div>
                 </div>
-                <div class="method-card" data-method="social">
+                <div class="method-card" data-method="bank">
                   <div class="method-icon"></div>
-                  <div class="method-name">SocialPay</div>
+                  <div class="method-name">Шилжүүлэг</div>
                 </div>
               </div>
 
@@ -163,7 +174,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block btn-lg">
-                  Төлбөр төлөх
+                  Wallet-ээс төлөх
                 </button>
               </form>
             </div>
@@ -232,8 +243,9 @@
   <script src="js/auth-guard.js"></script>
   <script>
     let selectedLoanId = null;
-    let selectedMethod = 'card';
+    let selectedMethod = 'wallet';
     let allLoans = [];
+    let walletBalance = 0;
 
     // Get loan ID from URL parameter if present
     const urlParams = new URLSearchParams(window.location.search);
@@ -242,9 +254,10 @@
     // Load user's active loans
     async function loadActiveLoans() {
       try {
-        const loans = await LoansAPI.getMyLoans();
+        const response = await LoansAPI.getMyLoans();
+        const loans = Array.isArray(response) ? response : (response.loans || []);
         const activeLoans = loans.filter(loan =>
-          loan.status === 'active' || loan.status === 'approved'
+          loan.status === 'disbursed' || loan.status === 'active' || loan.status === 'approved'
         );
 
         allLoans = activeLoans;
@@ -252,7 +265,8 @@
         const loanSelect = document.getElementById('loanSelect');
         if (loanSelect && activeLoans.length > 0) {
           loanSelect.innerHTML = '<option value="">Зээл сонгох...</option>' + activeLoans.map(loan => {
-            const remaining = loan.total_amount - (loan.paid_amount || 0);
+            const totalAmount = loan.total_amount || loan.amount;
+            const remaining = totalAmount - (loan.paid_amount || 0);
             return `<option value="${loan.id}">Зээл #${loan.id} - Үлдэгдэл: ₮${remaining.toLocaleString()}</option>`;
           }).join('');
 
@@ -289,15 +303,25 @@
 
       selectedLoanId = loanId;
 
+      const totalAmount = loan.total_amount || loan.amount;
       const paidAmount = loan.paid_amount || 0;
-      const remaining = loan.total_amount - paidAmount;
-      const interest = loan.total_amount - loan.amount;
+      const remaining = totalAmount - paidAmount;
+      const interest = totalAmount - loan.amount;
+      const termMonths = loan.term_months || loan.term || 12;
+      const monthlyPayment = loan.monthly_payment || Math.round(loan.amount / termMonths);
+
+      // Status badge info
+      const statusInfo = {
+        'disbursed': { label: 'Олгогдсон', color: '#059669' },
+        'active': { label: 'Идэвхтэй', color: '#10b981' },
+        'approved': { label: 'Зөвшөөрөгдсөн', color: '#10b981' }
+      }[loan.status] || { label: loan.status, color: '#6B7280' };
 
       const invoiceDetails = document.getElementById('invoiceDetails');
       invoiceDetails.innerHTML = `
         <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
           <span style="color: var(--text-muted);">Зээл #${loan.id}</span>
-          <span style="font-weight: 700; color: var(--success);">Идэвхтэй</span>
+          <span style="font-weight: 700; color: ${statusInfo.color};">${statusInfo.label}</span>
         </div>
 
         <div style="padding: 16px; background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 16px;">
@@ -306,33 +330,33 @@
             <span style="font-weight: 700;">₮${loan.amount.toLocaleString()}</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-muted);">Хүү (${loan.interest_rate}%):</span>
+            <span style="color: var(--text-muted);">Хүү (${loan.interest_rate || 0}%):</span>
             <span style="font-weight: 700;">₮${interest.toLocaleString()}</span>
           </div>
           <div style="height: 1px; background: var(--line); margin: 16px 0;"></div>
           <div style="display: flex; justify-content: space-between;">
             <span style="font-weight: 700;">Нийт дүн:</span>
-            <span style="font-weight: 800; font-size: 1.25rem; color: var(--primary);">₮${loan.total_amount.toLocaleString()}</span>
+            <span style="font-weight: 800; font-size: 1.25rem; color: var(--primary);">₮${totalAmount.toLocaleString()}</span>
           </div>
         </div>
 
         <div style="padding: 12px; background: ${remaining > 0 ? '#DFFFD8' : '#E0E7FF'}; border-radius: var(--radius-sm); margin-bottom: 16px;">
           <p style="margin: 0; font-size: 13px; color: ${remaining > 0 ? '#10b981' : '#4f46e5'};">
-            ${remaining > 0 ? 'Сарын төлбөр: ₮' + loan.monthly_payment.toLocaleString() : 'Зээл бүрэн төлөгдсөн'}
+            ${remaining > 0 ? 'Сарын төлбөр: ₮' + monthlyPayment.toLocaleString() : 'Зээл бүрэн төлөгдсөн'}
           </p>
         </div>
 
         <div style="font-size: 13px; color: var(--text-muted);">
           <p><strong>Үлдэгдэл:</strong> ₮${remaining.toLocaleString()}</p>
           <p><strong>Төлөгдсөн:</strong> ₮${paidAmount.toLocaleString()}</p>
-          <p><strong>Хугацаа:</strong> ${loan.term_months} сар</p>
+          <p><strong>Хугацаа:</strong> ${termMonths} сар</p>
         </div>
       `;
 
       // Update amount input with monthly payment
       const amountInput = document.getElementById('amount');
       if (amountInput && remaining > 0) {
-        amountInput.value = Math.min(loan.monthly_payment, remaining);
+        amountInput.value = Math.min(monthlyPayment, remaining);
         amountInput.max = remaining;
       }
     }
@@ -348,8 +372,23 @@
       selectedLoanId = null;
     }
 
+    // Load wallet balance
+    async function loadWalletBalance() {
+      try {
+        const response = await WalletAPI.getMyWallet();
+        walletBalance = parseFloat(response.wallet.balance) || 0;
+        document.getElementById('walletBalanceDisplay').textContent = `₮${walletBalance.toLocaleString()}`;
+      } catch (error) {
+        console.error('Load wallet error:', error);
+        walletBalance = 0;
+        document.getElementById('walletBalanceDisplay').textContent = '₮0';
+      }
+    }
+
     // Payment method selection
     const cardForm = document.getElementById('cardForm');
+    cardForm.style.display = 'none'; // Hide by default since wallet is default
+
     document.querySelectorAll('.method-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
@@ -365,12 +404,14 @@
 
         // Update submit button text
         const submitBtn = document.querySelector('#paymentForm button[type="submit"]');
-        if (selectedMethod === 'qpay') {
+        if (selectedMethod === 'wallet') {
+          submitBtn.textContent = 'Wallet-ээс төлөх';
+        } else if (selectedMethod === 'qpay') {
           submitBtn.textContent = 'QPay-ээр төлөх';
-        } else if (selectedMethod === 'social') {
-          submitBtn.textContent = 'SocialPay-ээр төлөх';
         } else if (selectedMethod === 'bank') {
           submitBtn.textContent = 'Шилжүүлгээр төлөх';
+        } else if (selectedMethod === 'card') {
+          submitBtn.textContent = 'Картаар төлөх';
         } else {
           submitBtn.textContent = 'Төлбөр төлөх';
         }
@@ -412,18 +453,43 @@
       try {
         Utils.showToast('Төлбөр боловсруулж байна...', 'info');
 
-        // Call backend API
-        const response = await PaymentsAPI.makePayment({
-          loan_id: loanId,
-          amount: amount,
-          payment_method: selectedMethod
-        });
+        let response;
+
+        if (selectedMethod === 'wallet') {
+          // Check wallet balance
+          if (amount > walletBalance) {
+            Utils.showToast('Wallet үлдэгдэл хүрэлцэхгүй байна', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+          }
+
+          // Pay from wallet
+          response = await WalletAPI.payLoanFromWallet({
+            loan_id: loanId,
+            amount: amount
+          });
+
+          // Also record in payments table
+          await PaymentsAPI.makePayment({
+            loan_id: loanId,
+            amount: amount,
+            payment_method: 'wallet'
+          });
+        } else {
+          // Call regular payment API
+          response = await PaymentsAPI.makePayment({
+            loan_id: loanId,
+            amount: amount,
+            payment_method: selectedMethod
+          });
+        }
 
         Utils.showToast('Амжилттай төлөгдлөө!', 'success');
 
-        // Redirect to payment history
+        // Redirect to dashboard
         setTimeout(() => {
-          window.location.href = 'paymenthistory.html';
+          window.location.href = 'dashboard.html';
         }, 1500);
 
       } catch (error) {
@@ -437,10 +503,17 @@
     });
 
     // Load loans when page loads
+    async function initPage() {
+      await Promise.all([
+        loadActiveLoans(),
+        loadWalletBalance()
+      ]);
+    }
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadActiveLoans);
+      document.addEventListener('DOMContentLoaded', initPage);
     } else {
-      loadActiveLoans();
+      initPage();
     }
   </script>
 </body>

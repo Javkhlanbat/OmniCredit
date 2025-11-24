@@ -36,6 +36,7 @@ class Navigation {
       navLinks.innerHTML = baseLinks + `
         <a href="my-loans.html">Миний зээл</a>
         <div class="auth-mobile">
+          <a href="profile.html" class="btn btn-ghost btn-sm">Профайл</a>
           <a href="dashboard.html" class="btn btn-secondary btn-sm">Dashboard</a>
           <button id="mobileLogoutBtn" class="btn btn-primary btn-sm">Гарах</button>
         </div>
@@ -168,6 +169,7 @@ class Navigation {
       const userName = user ? (user.first_name || user.firstName || 'Хэрэглэгч') : 'Хэрэглэгч';
 
       authButtons.innerHTML = `
+        <a href="profile.html" class="btn btn-ghost btn-sm">Профайл</a>
         <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
         <button id="logoutBtn" class="btn btn-primary btn-sm">Гарах</button>
       `;

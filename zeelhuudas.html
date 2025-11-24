@@ -788,10 +788,10 @@
           if (typeof LoansAPI !== 'undefined') {
             await LoansAPI.applyForLoan({
               amount: amount,
-              term: term,
-              purpose: 'Зээлийн тооцоолуураас',
-              monthly_income: 0,
-              occupation: 'Тодорхойгүй'
+              duration_months: term,
+              purpose: 'Хэрэглээний зээл - тооцоолуураас',
+              monthly_income: 500000,
+              occupation: 'Хэрэглэгч'
             });
 
             if (typeof Utils !== 'undefined') {

@@ -13,17 +13,18 @@ const createLoan = async (loanData) => {
     total_amount,
     purpose,
     monthly_income,
-    occupation
+    occupation,
+    promo_code_id = null
   } = loanData;
 
   const result = await query(
     `INSERT INTO loans (
       user_id, loan_type, amount, interest_rate, term_months,
-      monthly_payment, total_amount, purpose, monthly_income, occupation, status
+      monthly_payment, total_amount, purpose, monthly_income, occupation, status, promo_code_id
     )
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending')
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending', $11)
      RETURNING *`,
-    [user_id, loan_type, amount, interest_rate, term_months, monthly_payment, total_amount, purpose, monthly_income, occupation]
+    [user_id, loan_type, amount, interest_rate, term_months, monthly_payment, total_amount, purpose, monthly_income, occupation, promo_code_id]
   );
 
   return result.rows[0];

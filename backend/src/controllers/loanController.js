@@ -11,6 +11,12 @@ const {
   getPurchaseLoanByInvoice
 } = require('../models/loanModel');
 
+const {
+  validatePromoCode,
+  getPromoCodeByCode,
+  incrementPromoCodeUsage
+} = require('../models/promoCodeModel');
+
 // Хүүгийн хувь тооцоолох (зээлийн төрлөөс хамаарна)
 const calculateInterestRate = (loanType, amount, duration) => {
   const rates = {
@@ -44,7 +50,8 @@ const applyForLoan = async (req, res) => {
       duration_months,
       purpose,
       monthly_income,
-      occupation
+      occupation,
+      promo_code
     } = req.body;
     const userId = req.user.id;
 
@@ -86,8 +93,35 @@ const applyForLoan = async (req, res) => {
       });
     }
 
-    // Хүү тооцоолох
-    const interestRate = calculateInterestRate(loan_type, amount, duration_months);
+    // Нэмэгдлийн код шалгах
+    let promoCodeId = null;
+    let appliedInterestRate = null;
+
+    if (promo_code && promo_code.trim() !== '') {
+      const promoValidation = await validatePromoCode(promo_code.trim());
+
+      if (!promoValidation.valid) {
+        return res.status(400).json({
+          error: 'Буруу нэмэгдлийн код',
+          message: promoValidation.error
+        });
+      }
+
+      promoCodeId = promoValidation.promo.id;
+
+      // Хүү override байвал ашиглах
+      if (promoValidation.promo.interest_rate_override !== null) {
+        appliedInterestRate = parseFloat(promoValidation.promo.interest_rate_override);
+      }
+
+      // Код ашигласан тоог нэмэх
+      await incrementPromoCodeUsage(promoCodeId);
+    }
+
+    // Хүү тооцоолох (promo code-ийн хүү байвал түүнийг ашиглах)
+    const interestRate = appliedInterestRate !== null
+      ? appliedInterestRate
+      : calculateInterestRate(loan_type, amount, duration_months);
 
     // Сарын төлбөр тооцоолох
     const monthlyPayment = calculateMonthlyPayment(amount, interestRate, duration_months);
@@ -106,7 +140,8 @@ const applyForLoan = async (req, res) => {
       total_amount: totalAmount,
       purpose,
       monthly_income,
-      occupation
+      occupation,
+      promo_code_id: promoCodeId
     });
 
     res.status(201).json({
@@ -120,7 +155,8 @@ const applyForLoan = async (req, res) => {
         monthly_payment: loan.monthly_payment,
         total_amount: loan.total_amount,
         status: loan.status,
-        created_at: loan.created_at
+        created_at: loan.created_at,
+        promo_code_id: loan.promo_code_id
       }
     });
 

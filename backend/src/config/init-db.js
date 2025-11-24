@@ -141,6 +141,55 @@ const initDatabase = async () => {
     `);
     console.log('Wallet transactions table үүсгэсэн');
 
+    // Companies table - Компаниуд
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS companies (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        contact_email VARCHAR(255),
+        contact_phone VARCHAR(50),
+        address TEXT,
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('Companies table үүсгэсэн');
+
+    // Promo codes table - Нэмэгдлийн кодууд
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS promo_codes (
+        id SERIAL PRIMARY KEY,
+        company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+        code VARCHAR(50) UNIQUE NOT NULL,
+        discount_percent DECIMAL(5, 2) DEFAULT 0,
+        interest_rate_override DECIMAL(5, 2),
+        max_loan_amount DECIMAL(12, 2),
+        max_uses INTEGER,
+        used_count INTEGER DEFAULT 0,
+        is_active BOOLEAN DEFAULT true,
+        expires_at TIMESTAMP,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('Promo codes table үүсгэсэн');
+
+    // Add promo_code_id to loans table
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'promo_code_id'
+        ) THEN
+          ALTER TABLE loans ADD COLUMN promo_code_id INTEGER REFERENCES promo_codes(id);
+        END IF;
+      END $$;
+    `);
+    console.log('Loans table-д promo_code_id column нэмэгдлээ');
+
     console.log('Бүх tables амжилттай үүсгэгдлээ!');
     
   } catch (error) {

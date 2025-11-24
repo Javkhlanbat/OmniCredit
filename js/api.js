@@ -52,7 +52,7 @@ const UserManager = {
     logout() {
         TokenManager.removeToken();
         this.removeUser();
-        window.location.href = '../pages/login.html';
+        window.location.href = 'login.html';
     }
 };
 
@@ -350,6 +350,72 @@ const WalletAPI = {
     }
 };
 
+// Promo Code API (Нэмэгдлийн код)
+const PromoCodeAPI = {
+    // Код шалгах (хэрэглэгч)
+    async verifyCode(code) {
+        return await api.post('/promo/verify', { code });
+    },
+
+    // ==========================================
+    // ADMIN - КОМПАНИ
+    // ==========================================
+
+    // Компани үүсгэх
+    async createCompany(companyData) {
+        return await api.post('/promo/admin/companies', companyData);
+    },
+
+    // Бүх компаниуд
+    async getAllCompanies() {
+        return await api.get('/promo/admin/companies');
+    },
+
+    // Компани дэлгэрэнгүй (нэмэгдлийн кодуудтай хамт)
+    async getCompanyDetails(companyId) {
+        return await api.get(`/promo/admin/companies/${companyId}`);
+    },
+
+    // Компани шинэчлэх
+    async updateCompany(companyId, companyData) {
+        return await api.put(`/promo/admin/companies/${companyId}`, companyData);
+    },
+
+    // Компани устгах
+    async deleteCompany(companyId) {
+        return await api.delete(`/promo/admin/companies/${companyId}`);
+    },
+
+    // ==========================================
+    // ADMIN - НЭМЭГДЛИЙН КОД
+    // ==========================================
+
+    // Код үүсгэх
+    async createPromoCode(promoData) {
+        return await api.post('/promo/admin/codes', promoData);
+    },
+
+    // Бүх кодууд
+    async getAllPromoCodes() {
+        return await api.get('/promo/admin/codes');
+    },
+
+    // Код дэлгэрэнгүй
+    async getPromoCodeDetails(codeId) {
+        return await api.get(`/promo/admin/codes/${codeId}`);
+    },
+
+    // Код шинэчлэх
+    async updatePromoCode(codeId, promoData) {
+        return await api.put(`/promo/admin/codes/${codeId}`, promoData);
+    },
+
+    // Код устгах
+    async deletePromoCode(codeId) {
+        return await api.delete(`/promo/admin/codes/${codeId}`);
+    }
+};
+
 if (typeof window !== 'undefined') {
     window.API_CONFIG = API_CONFIG;
     window.TokenManager = TokenManager;
@@ -359,4 +425,5 @@ if (typeof window !== 'undefined') {
     window.LoansAPI = LoansAPI;
     window.PaymentsAPI = PaymentsAPI;
     window.WalletAPI = WalletAPI;
+    window.PromoCodeAPI = PromoCodeAPI;
 }

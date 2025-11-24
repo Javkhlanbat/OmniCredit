@@ -19,6 +19,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const loanRoutes = require('./src/routes/loanRoutes');
 const paymentRoutes = require('./src/routes/paymentRoutes');
 const walletRoutes = require('./src/routes/walletRoutes');
+const promoCodeRoutes = require('./src/routes/promoCodeRoutes');
 
 // Test route
 app.get('/', (req, res) => {
@@ -51,6 +52,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/wallet', walletRoutes);
+app.use('/api/promo', promoCodeRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

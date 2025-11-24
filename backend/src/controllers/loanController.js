@@ -284,6 +284,7 @@ const adminGetAllLoans = async (req, res) => {
 };
 
 // Зээлийн статус өөрчлөх (Админ)
+// approved хийхэд шууд wallet-д мөнгө орно, disbursed статус руу шилжинэ
 const adminUpdateLoanStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -297,6 +298,53 @@ const adminUpdateLoanStatus = async (req, res) => {
       });
     }
 
+    // Хэрэв approved бол шууд disbursed болгож, wallet-д мөнгө нэмнэ
+    if (status === 'approved') {
+      // Эхлээд зээл байгаа эсэхийг шалгах
+      const existingLoan = await getLoanById(parseInt(id));
+
+      if (!existingLoan) {
+        return res.status(404).json({
+          error: 'Зээл олдсонгүй'
+        });
+      }
+
+      if (existingLoan.status !== 'pending') {
+        return res.status(400).json({
+          error: 'Зөвхөн хүлээгдэж буй зээлийг зөвшөөрөх боломжтой'
+        });
+      }
+
+      // Шууд disbursed болгож, wallet-д мөнгө нэмнэ
+      const loan = await disburseLoan(parseInt(id));
+
+      // Хэрэв disburseLoan ажиллахгүй бол (status approved биш байсан гэх мэт)
+      // Эхлээд approved болгоод, дараа нь disburse хийнэ
+      if (!loan) {
+        await updateLoanStatus(parseInt(id), 'approved');
+        const disbursedLoan = await disburseLoan(parseInt(id));
+
+        return res.json({
+          message: 'Зээл зөвшөөрөгдөж, хэрэглэгчийн wallet-д шилжүүлэгдлээ',
+          loan: disbursedLoan,
+          disbursement: {
+            amount: disbursedLoan.amount,
+            recipient_user_id: disbursedLoan.user_id
+          }
+        });
+      }
+
+      return res.json({
+        message: 'Зээл зөвшөөрөгдөж, хэрэглэгчийн wallet-д шилжүүлэгдлээ',
+        loan,
+        disbursement: {
+          amount: loan.amount,
+          recipient_user_id: loan.user_id
+        }
+      });
+    }
+
+    // Бусад статус (rejected, completed гэх мэт)
     const loan = await updateLoanStatus(parseInt(id), status);
 
     if (!loan) {

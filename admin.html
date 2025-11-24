@@ -376,6 +376,7 @@
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="switchTab('loans')">Зээлийн хүсэлт</button>
       <button class="admin-tab" onclick="switchTab('users')">Хэрэглэгчид</button>
+      <button class="admin-tab" onclick="switchTab('promo')">Компани & Код</button>
       <button class="admin-tab" onclick="switchTab('payments')">Төлбөр</button>
       <button class="admin-tab" onclick="switchTab('settings')">Тохиргоо</button>
     </div>
@@ -445,6 +446,66 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Promo Tab (Компани & Код) -->
+    <div id="promo-tab" class="tab-content">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- Компаниуд -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="margin: 0;">Компаниуд</h3>
+            <button class="btn btn-primary btn-sm" onclick="showCreateCompanyModal()">+ Компани нэмэх</button>
+          </div>
+          <div class="data-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Нэр</th>
+                  <th>Төлөв</th>
+                  <th>Үйлдэл</th>
+                </tr>
+              </thead>
+              <tbody id="companiesTableBody">
+                <tr>
+                  <td colspan="4" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    Ачааллаж байна...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Нэмэгдлийн кодууд -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="margin: 0;">Нэмэгдлийн кодууд</h3>
+            <button class="btn btn-primary btn-sm" onclick="showCreatePromoCodeModal()">+ Код үүсгэх</button>
+          </div>
+          <div class="data-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Код</th>
+                  <th>Компани</th>
+                  <th>Хүү</th>
+                  <th>Ашигласан</th>
+                  <th>Үйлдэл</th>
+                </tr>
+              </thead>
+              <tbody id="promoCodesTableBody">
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    Ачааллаж байна...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -519,6 +580,82 @@
     </div>
   </div>
 
+  <!-- Create Company Modal -->
+  <div id="createCompanyModal" class="modal-overlay" onclick="closeCompanyModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2>Шинэ компани нэмэх</h2>
+        <button class="modal-close" onclick="closeCompanyModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="createCompanyForm" onsubmit="createCompany(event)">
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Компанийн нэр *</label>
+            <input type="text" id="companyName" required style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Тайлбар</label>
+            <textarea id="companyDescription" rows="3" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);"></textarea>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">И-мэйл</label>
+            <input type="email" id="companyEmail" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Утас</label>
+            <input type="text" id="companyPhone" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Компани үүсгэх</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Promo Code Modal -->
+  <div id="createPromoCodeModal" class="modal-overlay" onclick="closePromoCodeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2>Шинэ нэмэгдлийн код үүсгэх</h2>
+        <button class="modal-close" onclick="closePromoCodeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="createPromoCodeForm" onsubmit="createPromoCode(event)">
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Компани *</label>
+            <select id="promoCompanyId" required style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+              <option value="">-- Компани сонгох --</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Код (хоосон үлдээвэл автоматаар үүснэ)</label>
+            <input type="text" id="promoCode" placeholder="жнь: OMNI-ABC123" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius); text-transform: uppercase;">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Хүү (%) - энэ хүү ашиглагдана</label>
+            <input type="number" id="promoInterestRate" step="0.1" min="0" max="10" value="2" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Дээд зээлийн дүн (₮)</label>
+            <input type="number" id="promoMaxAmount" min="0" placeholder="Хязгааргүй" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Ашиглах дээд тоо</label>
+            <input type="number" id="promoMaxUses" min="0" placeholder="Хязгааргүй" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Хүчинтэй огноо</label>
+            <input type="date" id="promoExpiresAt" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600;">Тайлбар</label>
+            <textarea id="promoDescription" rows="2" style="width: 100%; padding: 12px; border: 2px solid var(--line); border-radius: var(--radius);"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Код үүсгэх</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -572,6 +709,7 @@
       // Load data based on tab
       if (tabName === 'loans') loadLoans();
       else if (tabName === 'users') loadUsers();
+      else if (tabName === 'promo') loadPromoData();
       else if (tabName === 'payments') loadPayments();
     }
 
@@ -648,21 +786,17 @@
         const date = new Date(loan.created_at).toLocaleDateString('mn-MN');
         const amount = parseFloat(loan.amount) || 0;
 
-        // Товчны логик: pending -> Approve/Reject, approved -> Disburse, бусад -> View
+        // Товчны логик: pending -> Зөвшөөрөх/Татгалзах, бусад -> Харах
+        // Зөвшөөрөхөд шууд wallet-д мөнгө орно
         let actionButtons = '';
         if (loan.status === 'pending') {
           actionButtons = `
-            <button class="btn btn-primary btn-icon" onclick="approveLoan(${loan.id})">Approve</button>
-            <button class="btn btn-secondary btn-icon" onclick="rejectLoan(${loan.id})">Reject</button>
-          `;
-        } else if (loan.status === 'approved') {
-          actionButtons = `
-            <button class="btn btn-accent btn-icon" onclick="disburseLoan(${loan.id})">Disburse</button>
-            <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">View</button>
+            <button class="btn btn-primary btn-icon" onclick="approveLoan(${loan.id})">Зөвшөөрөх</button>
+            <button class="btn btn-secondary btn-icon" onclick="rejectLoan(${loan.id})">Татгалзах</button>
           `;
         } else {
           actionButtons = `
-            <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">View</button>
+            <button class="btn btn-secondary btn-icon" onclick="viewLoanDetails(${loan.id})">Харах</button>
           `;
         }
 
@@ -708,13 +842,13 @@
       displayLoans(filtered);
     }
 
-    // Approve loan
+    // Approve loan - зөвшөөрөхөд шууд wallet-д мөнгө орно
     async function approveLoan(loanId) {
-      if (!confirm('Энэ зээлийг зөвшөөрөх үү?')) return;
+      if (!confirm('Энэ зээлийг зөвшөөрөх үү?\n\nЗөвшөөрсний дараа хэрэглэгчийн wallet-д шууд мөнгө орно.')) return;
 
       try {
-        await LoansAPI.updateLoanStatus(loanId, 'approved');
-        alert('Зээл амжилттай зөвшөөрөгдлөө');
+        const result = await LoansAPI.updateLoanStatus(loanId, 'approved');
+        alert(`Зээл зөвшөөрөгдөж, хэрэглэгчийн wallet-д шилжүүлэгдлээ!\n\nДүн: ₮${result.disbursement?.amount?.toLocaleString() || ''}`);
         loadLoans();
         loadStatistics();
       } catch (error) {
@@ -968,6 +1102,262 @@
     // Save settings
     function saveSettings() {
       alert('Тохиргоо хадгалагдлаа!\n\nЭнэ функц удахгүй бүрэн ажиллах болно.');
+    }
+
+    // ==========================================
+    // КОМПАНИ & НЭМЭГДЛИЙН КОД ФУНКЦУУД
+    // ==========================================
+
+    let allCompanies = [];
+    let allPromoCodes = [];
+
+    // Load companies
+    async function loadCompanies() {
+      try {
+        const data = await PromoCodeAPI.getAllCompanies();
+        allCompanies = data.companies || [];
+        displayCompanies(allCompanies);
+        // Promo код үүсгэх modal-д компаниуд нэмэх
+        updateCompanySelect();
+      } catch (error) {
+        console.error('Error loading companies:', error);
+        document.getElementById('companiesTableBody').innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 32px; color: #EF4444;">
+              Алдаа: ${error.message}
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // Display companies
+    function displayCompanies(companies) {
+      const tbody = document.getElementById('companiesTableBody');
+
+      if (!companies || companies.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 32px; color: var(--text-muted);">
+              Компани байхгүй байна
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = companies.map(company => `
+        <tr>
+          <td>#${company.id}</td>
+          <td style="font-weight: 600;">${company.name}</td>
+          <td>
+            <span class="status-badge ${company.is_active ? 'status-approved' : 'status-rejected'}">
+              ${company.is_active ? 'Идэвхтэй' : 'Идэвхгүй'}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-secondary btn-icon" onclick="toggleCompanyStatus(${company.id}, ${!company.is_active})">
+                ${company.is_active ? 'Идэвхгүй' : 'Идэвхжүүлэх'}
+              </button>
+              <button class="btn btn-secondary btn-icon" style="background: #EF4444; border-color: #EF4444;" onclick="deleteCompany(${company.id})">Устгах</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Update company select dropdown
+    function updateCompanySelect() {
+      const select = document.getElementById('promoCompanyId');
+      select.innerHTML = '<option value="">-- Компани сонгох --</option>' +
+        allCompanies.filter(c => c.is_active).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    // Load promo codes
+    async function loadPromoCodes() {
+      try {
+        const data = await PromoCodeAPI.getAllPromoCodes();
+        allPromoCodes = data.promoCodes || [];
+        displayPromoCodes(allPromoCodes);
+      } catch (error) {
+        console.error('Error loading promo codes:', error);
+        document.getElementById('promoCodesTableBody').innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 32px; color: #EF4444;">
+              Алдаа: ${error.message}
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // Display promo codes
+    function displayPromoCodes(codes) {
+      const tbody = document.getElementById('promoCodesTableBody');
+
+      if (!codes || codes.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 32px; color: var(--text-muted);">
+              Нэмэгдлийн код байхгүй байна
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = codes.map(code => `
+        <tr>
+          <td style="font-weight: 700; font-family: monospace; color: #0ea5e9;">${code.code}</td>
+          <td>${code.company_name || '-'}</td>
+          <td>${code.interest_rate_override !== null ? code.interest_rate_override + '%' : '-'}</td>
+          <td>${code.used_count || 0}${code.max_uses ? '/' + code.max_uses : ''}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-secondary btn-icon" onclick="copyCode('${code.code}')">Copy</button>
+              <button class="btn btn-secondary btn-icon" style="background: #EF4444; border-color: #EF4444;" onclick="deletePromoCode(${code.id})">Устгах</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Show create company modal
+    function showCreateCompanyModal() {
+      document.getElementById('createCompanyModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close company modal
+    function closeCompanyModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('createCompanyModal').classList.remove('active');
+      document.body.style.overflow = '';
+      document.getElementById('createCompanyForm').reset();
+    }
+
+    // Create company
+    async function createCompany(event) {
+      event.preventDefault();
+
+      const companyData = {
+        name: document.getElementById('companyName').value,
+        description: document.getElementById('companyDescription').value,
+        contact_email: document.getElementById('companyEmail').value,
+        contact_phone: document.getElementById('companyPhone').value
+      };
+
+      try {
+        await PromoCodeAPI.createCompany(companyData);
+        Utils.showToast('Компани амжилттай үүсгэгдлээ', 'success');
+        closeCompanyModal();
+        loadCompanies();
+      } catch (error) {
+        console.error('Error creating company:', error);
+        Utils.showToast('Алдаа: ' + error.message, 'error');
+      }
+    }
+
+    // Toggle company status
+    async function toggleCompanyStatus(companyId, newStatus) {
+      try {
+        await PromoCodeAPI.updateCompany(companyId, { is_active: newStatus });
+        Utils.showToast('Компанийн төлөв шинэчлэгдлээ', 'success');
+        loadCompanies();
+      } catch (error) {
+        console.error('Error updating company:', error);
+        Utils.showToast('Алдаа: ' + error.message, 'error');
+      }
+    }
+
+    // Delete company
+    async function deleteCompany(companyId) {
+      if (!confirm('Компанийг устгах уу? Түүнтэй холбоотой бүх код устана!')) return;
+
+      try {
+        await PromoCodeAPI.deleteCompany(companyId);
+        Utils.showToast('Компани устгагдлаа', 'success');
+        loadCompanies();
+        loadPromoCodes();
+      } catch (error) {
+        console.error('Error deleting company:', error);
+        Utils.showToast('Алдаа: ' + error.message, 'error');
+      }
+    }
+
+    // Show create promo code modal
+    function showCreatePromoCodeModal() {
+      if (allCompanies.filter(c => c.is_active).length === 0) {
+        alert('Эхлээд нэг компани үүсгэнэ үү!');
+        return;
+      }
+      document.getElementById('createPromoCodeModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close promo code modal
+    function closePromoCodeModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('createPromoCodeModal').classList.remove('active');
+      document.body.style.overflow = '';
+      document.getElementById('createPromoCodeForm').reset();
+    }
+
+    // Create promo code
+    async function createPromoCode(event) {
+      event.preventDefault();
+
+      const expiresAt = document.getElementById('promoExpiresAt').value;
+
+      const promoData = {
+        company_id: document.getElementById('promoCompanyId').value,
+        code: document.getElementById('promoCode').value || undefined,
+        interest_rate_override: parseFloat(document.getElementById('promoInterestRate').value) || null,
+        max_loan_amount: parseInt(document.getElementById('promoMaxAmount').value) || null,
+        max_uses: parseInt(document.getElementById('promoMaxUses').value) || null,
+        expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
+        description: document.getElementById('promoDescription').value
+      };
+
+      try {
+        const result = await PromoCodeAPI.createPromoCode(promoData);
+        Utils.showToast(`Код үүсгэгдлээ: ${result.promoCode.code}`, 'success');
+        closePromoCodeModal();
+        loadPromoCodes();
+      } catch (error) {
+        console.error('Error creating promo code:', error);
+        Utils.showToast('Алдаа: ' + error.message, 'error');
+      }
+    }
+
+    // Delete promo code
+    async function deletePromoCode(codeId) {
+      if (!confirm('Энэ кодыг устгах уу?')) return;
+
+      try {
+        await PromoCodeAPI.deletePromoCode(codeId);
+        Utils.showToast('Код устгагдлаа', 'success');
+        loadPromoCodes();
+      } catch (error) {
+        console.error('Error deleting promo code:', error);
+        Utils.showToast('Алдаа: ' + error.message, 'error');
+      }
+    }
+
+    // Copy code to clipboard
+    function copyCode(code) {
+      navigator.clipboard.writeText(code).then(() => {
+        Utils.showToast(`"${code}" хуулагдлаа`, 'success');
+      }).catch(() => {
+        Utils.showToast('Хуулахад алдаа гарлаа', 'error');
+      });
+    }
+
+    // Load promo tab data
+    function loadPromoData() {
+      loadCompanies();
+      loadPromoCodes();
     }
 
     // Initialize on page load

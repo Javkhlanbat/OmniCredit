@@ -594,6 +594,16 @@
           </div>
         </div>
 
+        <div class="control">
+          <label>Нэмэгдлийн код (байгаа бол)</label>
+          <div style="display: flex; gap: 8px;">
+            <input id="promoCodeInput" type="text" placeholder="жнь: OMNI-ABC123"
+              style="flex: 1; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 16px; font-size: 14px; text-transform: uppercase;" />
+            <button type="button" id="verifyPromoBtn" class="btn btn-secondary" style="white-space: nowrap;">Шалгах</button>
+          </div>
+          <div id="promoCodeStatus" style="margin-top: 8px; font-size: 13px;"></div>
+        </div>
+
         <div class="cta">
           <button class="btn btn-primary" id="applyBtn">Хүсэлт илгээх</button>
           <button class="btn btn-ghost" id="pdfBtn">PDF хадгалах</button>
@@ -746,6 +756,64 @@
     balanceCanvas.addEventListener('mouseleave', () => { hideTip(); drawBalance(schedule, Math.max(+amountNum.value || 1, 1), -1); });
 
     document.getElementById('pdfBtn').addEventListener('click', () => window.print());
+
+    // Нэмэгдлийн код хадгалах хувьсагч
+    let verifiedPromoCode = null;
+
+    // Нэмэгдлийн код шалгах
+    document.getElementById('verifyPromoBtn').addEventListener('click', async () => {
+      const promoInput = document.getElementById('promoCodeInput');
+      const statusDiv = document.getElementById('promoCodeStatus');
+      const code = promoInput.value.trim();
+
+      if (!code) {
+        statusDiv.innerHTML = '<span style="color: #f59e0b;">Код оруулна уу</span>';
+        return;
+      }
+
+      if (!TokenManager.isAuthenticated()) {
+        statusDiv.innerHTML = '<span style="color: #ef4444;">Код шалгахын тулд эхлээд нэвтэрнэ үү</span>';
+        return;
+      }
+
+      statusDiv.innerHTML = '<span style="color: #64748b;">Шалгаж байна...</span>';
+
+      try {
+        const result = await PromoCodeAPI.verifyCode(code);
+
+        if (result.valid) {
+          verifiedPromoCode = result.promoCode;
+
+          // Хүү автоматаар шинэчлэх
+          if (result.promoCode.interest_rate_override !== null) {
+            rateNum.value = result.promoCode.interest_rate_override;
+            rateRange.value = result.promoCode.interest_rate_override;
+            recalc();
+          }
+
+          statusDiv.innerHTML = `
+            <div style="background: #d1fae5; border-radius: 8px; padding: 10px; color: #065f46;">
+              <strong>✓ Код хүчинтэй!</strong><br>
+              <span style="font-size: 12px;">Компани: ${result.promoCode.company_name}</span><br>
+              ${result.promoCode.interest_rate_override !== null ? `<span style="font-size: 12px;">Хүү: ${result.promoCode.interest_rate_override}%</span>` : ''}
+            </div>
+          `;
+        } else {
+          verifiedPromoCode = null;
+          statusDiv.innerHTML = `<span style="color: #ef4444;">✗ ${result.error || 'Код хүчингүй'}</span>`;
+        }
+      } catch (error) {
+        verifiedPromoCode = null;
+        statusDiv.innerHTML = `<span style="color: #ef4444;">✗ ${error.message || 'Код шалгахад алдаа гарлаа'}</span>`;
+      }
+    });
+
+    // Код оруулах үед автоматаар шалгах
+    document.getElementById('promoCodeInput').addEventListener('input', () => {
+      verifiedPromoCode = null;
+      document.getElementById('promoCodeStatus').innerHTML = '';
+    });
+
     document.getElementById('applyBtn').addEventListener('click', async () => {
 
       if (typeof TokenManager !== 'undefined' && !TokenManager.isAuthenticated()) {
@@ -758,6 +826,7 @@
       const amount = parseFloat(amountNum.value);
       const term = parseInt(termNum.value);
       const rate = parseFloat(rateNum.value);
+      const promoCodeValue = document.getElementById('promoCodeInput').value.trim();
 
       if (isNaN(amount) || isNaN(term) || isNaN(rate)) {
         alert('Зээлийн төрөл, дүн, хугацаа оруулна уу');
@@ -774,12 +843,17 @@
         return;
       }
 
-      if (rate < 2 || rate > 5) {
-        alert('Хүү 2%-5% хооронд байх ёстой');
+      // Нэмэгдлийн код оруулсан бол шалгасан эсэхийг шалгах
+      if (promoCodeValue && !verifiedPromoCode) {
+        alert('Нэмэгдлийн кодыг эхлээд "Шалгах" товч дарж баталгаажуулна уу');
         return;
       }
 
-      if (confirm(`₮${fmt.format(amount)} зээлийн хүсэлт илгээх үү?\nХугацаа: ${term} сар\nХүү: ${rate}%`)) {
+      const confirmMsg = verifiedPromoCode
+        ? `₮${fmt.format(amount)} зээлийн хүсэлт илгээх үү?\nХугацаа: ${term} сар\nХүү: ${rate}%\nНэмэгдлийн код: ${verifiedPromoCode.code} (${verifiedPromoCode.company_name})`
+        : `₮${fmt.format(amount)} зээлийн хүсэлт илгээх үү?\nХугацаа: ${term} сар\nХүү: ${rate}%`;
+
+      if (confirm(confirmMsg)) {
         try {
           const applyBtn = document.getElementById('applyBtn');
           applyBtn.disabled = true;
@@ -789,9 +863,12 @@
             await LoansAPI.applyForLoan({
               amount: amount,
               duration_months: term,
-              purpose: 'Хэрэглээний зээл - тооцоолуураас',
+              purpose: verifiedPromoCode
+                ? `Хэрэглээний зээл - ${verifiedPromoCode.company_name} (${verifiedPromoCode.code})`
+                : 'Хэрэглээний зээл - тооцоолуураас',
               monthly_income: 500000,
-              occupation: 'Хэрэглэгч'
+              occupation: 'Хэрэглэгч',
+              promo_code: verifiedPromoCode ? verifiedPromoCode.code : null
             });
 
             if (typeof Utils !== 'undefined') {

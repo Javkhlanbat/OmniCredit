@@ -318,7 +318,8 @@
         const paidAmount = loan.paid_amount || 0;
         const remaining = loan.amount - paidAmount;
         const progress = loan.amount > 0 ? ((paidAmount / loan.amount) * 100).toFixed(0) : 0;
-        const monthlyPayment = Math.round(loan.amount / loan.term);
+        const termMonths = loan.term_months || loan.term || 12;
+        const monthlyPayment = loan.monthly_payment || Math.round(loan.amount / termMonths);
         const createdDate = new Date(loan.created_at).toLocaleDateString('mn-MN');
 
         if (loan.status === 'pending') {
@@ -337,7 +338,7 @@
                   </div>
                   <div class="loan-meta-item">
                     <span class="loan-meta-label">Хугацаа</span>
-                    <span class="loan-meta-value">${loan.term} сар</span>
+                    <span class="loan-meta-value">${termMonths} сар</span>
                   </div>
                   <div class="loan-meta-item">
                     <span class="loan-meta-label">Хүсэлтийн огноо</span>
@@ -384,7 +385,7 @@
                   </div>
                   <div class="loan-meta-item">
                     <span class="loan-meta-label">Хугацаа</span>
-                    <span class="loan-meta-value">${loan.term} сар</span>
+                    <span class="loan-meta-value">${termMonths} сар</span>
                   </div>
                 </div>
 
@@ -430,7 +431,7 @@
                   </div>
                   <div class="loan-meta-item">
                     <span class="loan-meta-label">Хугацаа</span>
-                    <span class="loan-meta-value">${loan.term} сар</span>
+                    <span class="loan-meta-value">${termMonths} сар</span>
                   </div>
                 </div>
 
@@ -472,7 +473,7 @@
                   </div>
                   <div class="loan-meta-item">
                     <span class="loan-meta-label">Хугацаа</span>
-                    <span class="loan-meta-value">${loan.term} сар</span>
+                    <span class="loan-meta-value">${termMonths} сар</span>
                   </div>
                 </div>
 

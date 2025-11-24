@@ -334,7 +334,12 @@ const WalletAPI = {
         return await api.get('/wallet/transactions', { limit });
     },
 
-    // Банк руу шилжүүлэх
+    // Wallet руу мөнгө нэмэх (QPay)
+    async depositToWallet(depositData) {
+        return await api.post('/wallet/deposit', depositData);
+    },
+
+    // Банк руу шилжүүлэх (QPay)
     async withdrawToBank(withdrawData) {
         return await api.post('/wallet/withdraw', withdrawData);
     },

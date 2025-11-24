@@ -115,8 +115,11 @@
             <h2 id="walletBalance" style="color: white; font-size: 2.5rem; margin: 0;">₮0</h2>
           </div>
           <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" style="background: rgba(255,255,255,0.2); border: none; color: white;" onclick="openDepositModal()">
+              Мөнгө нэмэх
+            </button>
             <button class="btn btn-secondary" style="background: rgba(255,255,255,0.2); border: none; color: white;" onclick="openWithdrawModal()">
-              Банк руу шилжүүлэх
+              QPay шилжүүлэг
             </button>
             <a href="wallet-history.html" class="btn btn-secondary" style="background: white; color: #667eea;">
               Түүх харах
@@ -146,43 +149,59 @@
       </a>
     </div>
 
-    <!-- Withdraw Modal -->
+    <!-- Deposit Modal - QPay-ээр мөнгө нэмэх -->
+    <div id="depositModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+      <div class="card" style="max-width: 500px; width: 90%; margin: 20px;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3>Wallet руу мөнгө нэмэх</h3>
+          <button onclick="closeDepositModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <div class="card-body">
+          <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius); margin-bottom: 20px;">
+            <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 8px;">Одоогийн үлдэгдэл</p>
+            <h2 id="depositCurrentBalance" style="color: white; margin: 0; font-size: 2rem;">₮0</h2>
+          </div>
+          <form id="depositForm">
+            <div class="form-group">
+              <label class="form-label">Нэмэх дүн</label>
+              <input type="number" id="depositAmount" class="form-control" placeholder="10000" min="1000" required>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Доод дүн: ₮1,000</p>
+            </div>
+            <div style="background: #f0fdf4; padding: 16px; border-radius: var(--radius); margin-bottom: 20px;">
+              <p style="font-size: 13px; color: #059669; margin: 0;">
+                <strong>QPay-ээр төлөх:</strong> Төлбөр баталгаажсаны дараа wallet-д автоматаар орно.
+              </p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">QPay-ээр төлөх</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Withdraw Modal - QPay шилжүүлэг -->
     <div id="withdrawModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
       <div class="card" style="max-width: 500px; width: 90%; margin: 20px;">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <h3>Банк руу шилжүүлэх</h3>
+          <h3>QPay шилжүүлэг</h3>
           <button onclick="closeWithdrawModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
         </div>
         <div class="card-body">
+          <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius); margin-bottom: 20px;">
+            <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 8px;">Боломжит үлдэгдэл</p>
+            <h2 id="availableBalance" style="color: white; margin: 0; font-size: 2rem;">₮0</h2>
+          </div>
           <form id="withdrawForm">
             <div class="form-group">
               <label class="form-label">Шилжүүлэх дүн</label>
-              <input type="number" id="withdrawAmount" class="form-control" placeholder="0" min="1000" required>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
-                Боломжит үлдэгдэл: <span id="availableBalance">₮0</span>
+              <input type="number" id="withdrawAmount" class="form-control" placeholder="10000" min="1000" required>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Доод дүн: ₮1,000</p>
+            </div>
+            <div style="background: #fef3c7; padding: 16px; border-radius: var(--radius); margin-bottom: 20px;">
+              <p style="font-size: 13px; color: #92400e; margin: 0;">
+                <strong>QPay шилжүүлэг:</strong> Та өөрийн QPay бүртгэлтэй дансруу шилжүүлэг хийнэ.
               </p>
             </div>
-            <div class="form-group">
-              <label class="form-label">Банк сонгох</label>
-              <select id="bankName" class="form-control" required>
-                <option value="">Банк сонгоно уу</option>
-                <option value="Хаан банк">Хаан банк</option>
-                <option value="Голомт банк">Голомт банк</option>
-                <option value="Худалдаа хөгжлийн банк">Худалдаа хөгжлийн банк</option>
-                <option value="Төрийн банк">Төрийн банк</option>
-                <option value="Хас банк">Хас банк</option>
-                <option value="Капитрон банк">Капитрон банк</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Дансны дугаар</label>
-              <input type="text" id="accountNumber" class="form-control" placeholder="1234567890" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Данс эзэмшигчийн нэр</label>
-              <input type="text" id="accountHolder" class="form-control" placeholder="БАТБОЛД ДОРЖ" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block btn-lg">Шилжүүлэх</button>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">QPay-ээр шилжүүлэх</button>
           </form>
         </div>
       </div>
@@ -463,12 +482,25 @@
         currentWalletBalance = parseFloat(wallet.balance) || 0;
         document.getElementById('walletBalance').textContent = `₮${currentWalletBalance.toLocaleString()}`;
         document.getElementById('availableBalance').textContent = `₮${currentWalletBalance.toLocaleString()}`;
+        document.getElementById('depositCurrentBalance').textContent = `₮${currentWalletBalance.toLocaleString()}`;
       } catch (error) {
         console.error('Load wallet error:', error);
         document.getElementById('walletBalance').textContent = '₮0';
       }
     }
 
+    // Deposit Modal functions
+    function openDepositModal() {
+      document.getElementById('depositModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDepositModal() {
+      document.getElementById('depositModal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    // Withdraw Modal functions
     function openWithdrawModal() {
       document.getElementById('withdrawModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
@@ -479,21 +511,56 @@
       document.body.style.overflow = '';
     }
 
-    // Close modal on outside click
+    // Close modals on outside click
+    document.getElementById('depositModal').addEventListener('click', (e) => {
+      if (e.target.id === 'depositModal') {
+        closeDepositModal();
+      }
+    });
+
     document.getElementById('withdrawModal').addEventListener('click', (e) => {
       if (e.target.id === 'withdrawModal') {
         closeWithdrawModal();
       }
     });
 
-    // Withdraw form submission
+    // Deposit form submission - QPay-ээр мөнгө нэмэх
+    document.getElementById('depositForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const amount = parseFloat(document.getElementById('depositAmount').value);
+
+      if (amount < 1000) {
+        Utils.showToast('Хамгийн багадаа ₮1,000 нэмэх боломжтой', 'error');
+        return;
+      }
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'QPay боловсруулж байна...';
+
+      try {
+        // QPay-ээр төлбөр хийх (demo - бодит QPay интеграцигүй)
+        await WalletAPI.depositToWallet({ amount, payment_method: 'qpay' });
+
+        Utils.showToast('Wallet руу амжилттай нэмэгдлээ!', 'success');
+        closeDepositModal();
+        e.target.reset();
+        await loadWallet();
+      } catch (error) {
+        console.error('Deposit error:', error);
+        Utils.showToast(error.message || 'Мөнгө нэмэхэд алдаа гарлаа', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'QPay-ээр төлөх';
+      }
+    });
+
+    // Withdraw form submission - QPay шилжүүлэг
     document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const amount = parseFloat(document.getElementById('withdrawAmount').value);
-      const bankName = document.getElementById('bankName').value;
-      const accountNumber = document.getElementById('accountNumber').value;
-      const accountHolder = document.getElementById('accountHolder').value;
 
       if (amount > currentWalletBalance) {
         Utils.showToast('Үлдэгдэл хүрэлцэхгүй байна', 'error');
@@ -507,17 +574,15 @@
 
       const submitBtn = e.target.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Шилжүүлж байна...';
+      submitBtn.textContent = 'QPay боловсруулж байна...';
 
       try {
         await WalletAPI.withdrawToBank({
           amount,
-          bank_name: bankName,
-          account_number: accountNumber,
-          account_holder: accountHolder
+          payment_method: 'qpay'
         });
 
-        Utils.showToast('Шилжүүлэг амжилттай!', 'success');
+        Utils.showToast('QPay шилжүүлэг амжилттай!', 'success');
         closeWithdrawModal();
         e.target.reset();
         await loadWallet();
@@ -526,7 +591,7 @@
         Utils.showToast(error.message || 'Шилжүүлэхэд алдаа гарлаа', 'error');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Шилжүүлэх';
+        submitBtn.textContent = 'QPay-ээр шилжүүлэх';
       }
     });
 

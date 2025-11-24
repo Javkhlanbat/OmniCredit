@@ -3,7 +3,8 @@ const {
   getWalletByUserId,
   getWalletTransactions,
   withdrawToBank,
-  deductFromWallet
+  deductFromWallet,
+  addToWallet
 } = require('../models/walletModel');
 
 // Өөрийн wallet авах
@@ -141,9 +142,52 @@ const payLoanFromWallet = async (req, res) => {
   }
 };
 
+// Wallet руу мөнгө нэмэх (QPay)
+const depositToWallet = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { amount, payment_method = 'qpay' } = req.body;
+
+    // Validation
+    if (!amount || amount <= 0) {
+      return res.status(400).json({
+        error: 'Буруу дүн',
+        message: 'Нэмэх дүн 0-ээс их байх ёстой'
+      });
+    }
+
+    if (amount < 1000) {
+      return res.status(400).json({
+        error: 'Буруу дүн',
+        message: 'Хамгийн багадаа ₮1,000 нэмэх боломжтой'
+      });
+    }
+
+    // Demo: QPay төлбөр баталгаажсан гэж үзнэ
+    const description = `QPay мөнгө нэмэлт`;
+    const wallet = await addToWallet(userId, amount, description, null, 'qpay_deposit');
+
+    res.json({
+      message: 'Wallet руу амжилттай нэмэгдлээ',
+      deposit: {
+        amount: parseFloat(amount),
+        payment_method,
+        new_balance: parseFloat(wallet.balance)
+      }
+    });
+  } catch (error) {
+    console.error('Deposit алдаа:', error);
+    res.status(500).json({
+      error: 'Серверт алдаа гарлаа',
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   getMyWallet,
   getMyTransactions,
+  depositToWallet,
   withdrawToBankAccount,
   payLoanFromWallet
 };

@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getMyWallet,
   getMyTransactions,
+  depositToWallet,
   withdrawToBankAccount,
   payLoanFromWallet
 } = require('../controllers/walletController');
@@ -14,7 +15,10 @@ router.get('/', authenticateToken, getMyWallet);
 // GET /api/wallet/transactions - Гүйлгээний түүх
 router.get('/transactions', authenticateToken, getMyTransactions);
 
-// POST /api/wallet/withdraw - Банк руу шилжүүлэх
+// POST /api/wallet/deposit - Wallet руу мөнгө нэмэх (QPay)
+router.post('/deposit', authenticateToken, depositToWallet);
+
+// POST /api/wallet/withdraw - QPay шилжүүлэг
 router.post('/withdraw', authenticateToken, withdrawToBankAccount);
 
 // POST /api/wallet/pay-loan - Wallet-ээс зээл төлөх

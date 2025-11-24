@@ -164,15 +164,69 @@ class Navigation {
     const isAuthenticated = typeof TokenManager !== 'undefined' && TokenManager.isAuthenticated();
 
     if (isAuthenticated) {
-      // Show dashboard link and logout button for authenticated users
+      // Show profile dropdown for authenticated users
       const user = typeof UserManager !== 'undefined' ? UserManager.getUser() : null;
       const userName = user ? (user.first_name || user.firstName || 'Хэрэглэгч') : 'Хэрэглэгч';
+      const userEmail = user ? (user.email || '') : '';
+      const initials = userName.charAt(0).toUpperCase();
 
       authButtons.innerHTML = `
-        <a href="profile.html" class="btn btn-ghost btn-sm">Профайл</a>
         <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
-        <button id="logoutBtn" class="btn btn-primary btn-sm">Гарах</button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-trigger" id="profileTrigger">
+            <span class="profile-avatar">${initials}</span>
+            <span class="profile-name">${userName}</span>
+            <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="profile-menu">
+            <div class="profile-menu-header">
+              <div class="user-name">${userName}</div>
+              <div class="user-email">${userEmail}</div>
+            </div>
+            <div class="profile-menu-items">
+              <a href="profile.html" class="profile-menu-item">
+                <span class="menu-icon">👤</span>
+                <span>Профайл</span>
+              </a>
+              <a href="profile.html#wallet" class="profile-menu-item">
+                <span class="menu-icon">💳</span>
+                <span>Wallet</span>
+              </a>
+              <a href="profile.html#security" class="profile-menu-item">
+                <span class="menu-icon">🔒</span>
+                <span>Нууцлал</span>
+              </a>
+              <a href="profile.html#preferences" class="profile-menu-item">
+                <span class="menu-icon">⚙️</span>
+                <span>Тохиргоо</span>
+              </a>
+              <div class="profile-menu-divider"></div>
+              <button class="profile-menu-item logout" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span>Гарах</span>
+              </button>
+            </div>
+          </div>
+        </div>
       `;
+
+      // Setup profile dropdown toggle
+      const profileDropdown = document.getElementById('profileDropdown');
+      const profileTrigger = document.getElementById('profileTrigger');
+
+      if (profileTrigger && profileDropdown) {
+        profileTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!profileDropdown.contains(e.target)) {
+            profileDropdown.classList.remove('active');
+          }
+        });
+      }
 
       // Setup logout handler
       const logoutBtn = document.getElementById('logoutBtn');

@@ -507,17 +507,38 @@
     const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    function switchTab(tabId) {
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+
+      const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+      const targetContent = document.getElementById(tabId);
+
+      if (targetTab && targetContent) {
+        targetTab.classList.add('active');
+        targetContent.classList.add('active');
+      }
+    }
+
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const tabId = tab.dataset.tab;
-
-        tabs.forEach(t => t.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-
-        tab.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
+        switchTab(tabId);
+        // Update URL hash
+        window.location.hash = tabId;
       });
     });
+
+    // Check URL hash on page load
+    function checkUrlHash() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && ['personal', 'wallet', 'security', 'preferences'].includes(hash)) {
+        switchTab(hash);
+      }
+    }
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', checkUrlHash);
 
     // Load wallet and loans stats
     async function loadStats() {
@@ -574,10 +595,12 @@
       document.addEventListener('DOMContentLoaded', () => {
         loadProfile();
         loadStats();
+        checkUrlHash();
       });
     } else {
       loadProfile();
       loadStats();
+      checkUrlHash();
     }
   </script>
 </body>

@@ -36,7 +36,6 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// Optional authentication - token байхгүй ч endpoint ашиглаж болно
 const optionalAuth = (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'];

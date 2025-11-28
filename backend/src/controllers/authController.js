@@ -220,7 +220,7 @@ const adminGetUserDetails = async (req, res) => {
   }
 };
 
-// Token шалгах (frontend-д зориулсан)
+// Token шалгах 
 const verifyToken = async (req, res) => {
   try {
     const user = await findUserById(req.user.id);
@@ -251,7 +251,7 @@ const verifyToken = async (req, res) => {
   }
 };
 
-// Бүх хэрэглэгчид авах (Admin)
+// Бүх хэрэглэгчид авах 
 const adminGetAllUsers = async (req, res) => {
   try {
     const users = await getAllUsers();
@@ -270,7 +270,7 @@ const adminGetAllUsers = async (req, res) => {
   }
 };
 
-// Хэрэглэгч устгах (Admin)
+// Хэрэглэгч устгах 
 const adminDeleteUser = async (req, res) => {
   try {
     const userId = parseInt(req.params.id);

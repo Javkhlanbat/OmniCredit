@@ -58,8 +58,12 @@ const initDatabase = async () => {
         loan_type VARCHAR(50) NOT NULL,
         amount DECIMAL(12, 2) NOT NULL,
         interest_rate DECIMAL(5, 2) NOT NULL,
-        duration_months INTEGER NOT NULL,
+        term_months INTEGER NOT NULL,
         monthly_payment DECIMAL(12, 2) NOT NULL,
+        total_amount DECIMAL(12, 2),
+        purpose TEXT,
+        monthly_income DECIMAL(12, 2),
+        occupation VARCHAR(255),
         status VARCHAR(50) DEFAULT 'pending',
         applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         approved_at TIMESTAMP,
@@ -69,7 +73,7 @@ const initDatabase = async () => {
     `);
     console.log('Loans table үүсгэсэн');
 
-    // Add disbursed_at column if it doesn't exist
+    // Add missing columns if they don't exist
     await pool.query(`
       DO $$
       BEGIN
@@ -79,9 +83,48 @@ const initDatabase = async () => {
         ) THEN
           ALTER TABLE loans ADD COLUMN disbursed_at TIMESTAMP;
         END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'total_amount'
+        ) THEN
+          ALTER TABLE loans ADD COLUMN total_amount DECIMAL(12, 2);
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'purpose'
+        ) THEN
+          ALTER TABLE loans ADD COLUMN purpose TEXT;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'monthly_income'
+        ) THEN
+          ALTER TABLE loans ADD COLUMN monthly_income DECIMAL(12, 2);
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'occupation'
+        ) THEN
+          ALTER TABLE loans ADD COLUMN occupation VARCHAR(255);
+        END IF;
+        -- Rename duration_months to term_months if needed
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'duration_months'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'term_months'
+        ) THEN
+          ALTER TABLE loans RENAME COLUMN duration_months TO term_months;
+        ELSIF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'loans' AND column_name = 'term_months'
+        ) THEN
+          ALTER TABLE loans ADD COLUMN term_months INTEGER NOT NULL DEFAULT 12;
+        END IF;
       END $$;
     `);
-    console.log('Loans table-д disbursed_at column нэмэгдлээ');
+    console.log('Loans table-д дутуу column-ууд нэмэгдлээ');
 
     // Payments table
     await pool.query(`

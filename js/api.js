@@ -357,9 +357,6 @@ const PromoCodeAPI = {
         return await api.post('/promo/verify', { code });
     },
 
-    // ==========================================
-    // ADMIN - КОМПАНИ
-    // ==========================================
 
     // Компани үүсгэх
     async createCompany(companyData) {
@@ -386,9 +383,6 @@ const PromoCodeAPI = {
         return await api.delete(`/promo/admin/companies/${companyId}`);
     },
 
-    // ==========================================
-    // ADMIN - НЭМЭГДЛИЙН КОД
-    // ==========================================
 
     // Код үүсгэх
     async createPromoCode(promoData) {

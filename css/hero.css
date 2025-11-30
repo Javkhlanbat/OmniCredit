@@ -214,11 +214,7 @@
     transform: scale(1.02);
   }
 }
-
-/* ================================================
-   RESPONSIVE DESIGN
-   ================================================ */
-
+/* Responsive Styles */
 @media (max-width: 1024px) {
   .hero-content {
     grid-template-columns: 1fr 1fr;
@@ -336,9 +332,7 @@
   }
 }
 
-/* ================================================
-   LEGACY SUPPORT - Keep old styles for other pages
-   ================================================ */
+
 
 .hero-dark {
   background:

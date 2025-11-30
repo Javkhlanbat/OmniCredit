@@ -1,32 +1,69 @@
+// ============================================
+// UTILS.JS - Туслах функцуудын цуглуулга
+// ============================================
+// Энэ файл нь вэбсайт даяар ашиглагдах ерөнхий туслах
+// функцуудыг агуулна. Мөнгөн дүн форматлах, зээлийн
+// тооцоолол хийх, огноо форматлах гэх мэт.
+// ============================================
 
 const Utils = {
+  // --------------------------------------------
+  // МӨНГӨН ДҮН ФОРМАТЛАХ
+  // --------------------------------------------
   // Тоог мөнгөн дүн болгон форматлах (жишээ: 1000000 -> ₮1,000,000)
+  // @param {number} amount - Форматлах дүн
+  // @return {string} - ₮ тэмдэгтэй, таслалтай мөнгөн дүн
   formatMoney(amount) {
     const formatter = new Intl.NumberFormat('mn-MN', {
       style: 'currency',
       currency: 'MNT',
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 0,  // Бутархай оронгүй
       maximumFractionDigits: 0,
     });
     return formatter.format(amount).replace('MNT', '₮');
   },
 
+  // --------------------------------------------
+  // ТОО ФОРМАТЛАХ
+  // --------------------------------------------
   // Тоог мянгатын тэмдэглэгээтэй форматлах (жишээ: 1000000 -> 1,000,000)
+  // @param {number} num - Форматлах тоо
+  // @return {string} - Таслалтай тоо
   formatNumber(num) {
     return new Intl.NumberFormat('mn-MN').format(num);
   },
 
+  // --------------------------------------------
+  // ТОО ХЯЗГААРЛАХ
+  // --------------------------------------------
   // Тоог мин, макс хооронд хязгаарлах
+  // @param {number} value - Хязгаарлах утга
+  // @param {number} min - Доод хязгаар
+  // @param {number} max - Дээд хязгаар
+  // @return {number} - Хязгаарласан утга
   clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
   },
 
+  // --------------------------------------------
+  // МӨНГӨН ДҮН ХӨРВҮҮЛЭХ
+  // --------------------------------------------
   // Мөнгөн string-ийг тоо болгон хөрвүүлэх (жишээ: "₮1,000" -> 1000)
+  // @param {string} str - Хөрвүүлэх string
+  // @return {number} - Цэвэр тоо
   parseMoney(str) {
+    // ₮, таслал, хоосон зайг арилгаж тоо болгоно
     return parseFloat(str.replace(/[₮,\s]/g, '')) || 0;
   },
 
+  // --------------------------------------------
+  // ЗЭЭЛИЙН САРЫН ТӨЛБӨР ТООЦООЛОХ
+  // --------------------------------------------
   // Зээлийн сарын төлбөр тооцоолох
+  // @param {number} principal - Зээлийн үндсэн дүн
+  // @param {number} annualRate - Жилийн хүү (%)
+  // @param {number} months - Хугацаа (сар)
+  // @return {number} - Сарын төлбөр
   calculateLoanPayment(principal, annualRate, months) {
     // Хүү 0% бол энгийн хуваах
     if (annualRate === 0) {
@@ -34,12 +71,20 @@ const Utils = {
     }
     // Сарын хүү тооцоолох
     const monthlyRate = annualRate / 100 / 12;
+    // PMT томъёогоор тооцоолох
     return (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
   },
 
-  // Зээлийн төлбөрийн хуваарь үүсгэх
+  // --------------------------------------------
+  // ЗЭЭЛИЙН ТӨЛБӨРИЙН ХУВААРЬ ҮҮСГЭХ
+  // --------------------------------------------
+  // Зээлийн төлбөрийн хуваарь үүсгэх (амортизацийн хүснэгт)
+  // @param {number} principal - Зээлийн үндсэн дүн
+  // @param {number} monthlyRatePercent - Сарын хүү (%)
+  // @param {number} months - Хугацаа (сар)
+  // @return {object} - {payment, totalInterest, totalPayment, schedule[]}
   generateLoanSchedule(principal, monthlyRatePercent, months) {
-    // Үндсэн дүн хамгийн багадаа 10,000
+    // Үндсэн дүн хамгийн багадаа 10,000₮
     principal = Math.max(10000, +principal || 0);
     months = Math.max(1, Math.floor(+months || 0));
 
@@ -51,7 +96,7 @@ const Utils = {
     if (monthlyRate === 0) {
       payment = principal / months;
       for (let i = 1; i <= months; i++) {
-        const interest = 0;
+        const interest = 0;  // Хүү байхгүй
         const principalPaid = payment;
         balance = Math.max(0, balance - principalPaid);
         schedule.push({
@@ -63,13 +108,13 @@ const Utils = {
         });
       }
     } else {
-      // Хүүтэй зээлийн тооцоолол
+      // Хүүтэй зээлийн тооцоолол (PMT томъёо)
       payment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
 
       for (let i = 1; i <= months; i++) {
-        const interest = balance * monthlyRate;
-        const principalPaid = Math.min(payment - interest, balance);
-        balance = Math.max(0, balance - principalPaid);
+        const interest = balance * monthlyRate;  // Тухайн сарын хүү
+        const principalPaid = Math.min(payment - interest, balance);  // Үндсэн төлбөр
+        balance = Math.max(0, balance - principalPaid);  // Үлдэгдэл
         schedule.push({
           month: i,
           interest,
@@ -92,11 +137,17 @@ const Utils = {
     };
   },
 
+  // --------------------------------------------
+  // ОГНОО ФОРМАТЛАХ
+  // --------------------------------------------
   // Огноо форматлах (жишээ: 2025-01-15)
+  // @param {Date|string} date - Форматлах огноо
+  // @param {string} format - Формат ('YYYY-MM-DD')
+  // @return {string} - Форматлагдсан огноо
   formatDate(date, format = 'YYYY-MM-DD') {
     const d = new Date(date);
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');  // 0-11 тул +1
     const day = String(d.getDate()).padStart(2, '0');
 
     return format
@@ -105,7 +156,14 @@ const Utils = {
       .replace('DD', day);
   },
 
+  // --------------------------------------------
+  // DEBOUNCE ФУНКЦ
+  // --------------------------------------------
   // Debounce функц (хэт олон удаа дуудагдахаас сэргийлэх)
+  // Жишээ: Хайлтын талбарт бичих үед бүр хайхгүй, 500ms хүлээнэ
+  // @param {function} func - Дуудах функц
+  // @param {number} wait - Хүлээх хугацаа (миллисекунд)
+  // @return {function} - Debounce хийсэн функц
   debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -118,7 +176,13 @@ const Utils = {
     };
   },
 
-  // Toast мэдэгдэл харуулах
+  // --------------------------------------------
+  // TOAST МЭДЭГДЭЛ ХАРУУЛАХ
+  // --------------------------------------------
+  // Toast мэдэгдэл харуулах (дэлгэцийн баруун доод булангаас гарч ирэх)
+  // @param {string} message - Мэдэгдлийн текст
+  // @param {string} type - Төрөл ('info', 'success', 'error', 'warning')
+  // @param {number} duration - Харагдах хугацаа (миллисекунд)
   showToast(message, type = 'info', duration = 3000) {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;

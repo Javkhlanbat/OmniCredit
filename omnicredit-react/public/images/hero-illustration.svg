@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <defs>
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDBCB4"/>
+      <stop offset="100%" style="stop-color:#E8A598"/>
+    </linearGradient>
+    <linearGradient id="shirtGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#14b8a6"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+    <linearGradient id="pantsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a5f"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f0fdf4"/>
+    </linearGradient>
+    <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.1)"/>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="250" cy="260" r="180" fill="#d1fae5" opacity="0.5"/>
+
+  <!-- Floating coins -->
+  <g filter="url(#shadow)">
+    <circle cx="100" cy="120" r="25" fill="url(#coinGrad)"/>
+    <text x="100" y="127" font-size="20" fill="#92400e" text-anchor="middle" font-weight="bold">₮</text>
+  </g>
+  <g filter="url(#shadow)">
+    <circle cx="420" cy="100" r="20" fill="url(#coinGrad)"/>
+    <text x="420" y="106" font-size="16" fill="#92400e" text-anchor="middle" font-weight="bold">₮</text>
+  </g>
+  <g filter="url(#shadow)">
+    <circle cx="80" cy="320" r="18" fill="url(#coinGrad)"/>
+    <text x="80" y="326" font-size="14" fill="#92400e" text-anchor="middle" font-weight="bold">₮</text>
+  </g>
+  <g filter="url(#shadow)">
+    <circle cx="440" cy="280" r="22" fill="url(#coinGrad)"/>
+    <text x="440" y="287" font-size="17" fill="#92400e" text-anchor="middle" font-weight="bold">₮</text>
+  </g>
+
+  <!-- Credit card floating -->
+  <g filter="url(#shadow)" transform="rotate(-15, 380, 180)">
+    <rect x="320" y="140" width="120" height="75" rx="8" fill="url(#cardGrad)" stroke="#14b8a6" stroke-width="2"/>
+    <rect x="330" y="155" width="40" height="25" rx="3" fill="#fbbf24"/>
+    <line x1="330" y1="190" x2="430" y2="190" stroke="#e5e7eb" stroke-width="2"/>
+    <text x="330" y="205" font-size="8" fill="#6b7280">**** **** **** 1234</text>
+  </g>
+
+  <!-- Phone with app -->
+  <g filter="url(#shadow)" transform="rotate(10, 120, 200)">
+    <rect x="70" y="160" width="70" height="130" rx="10" fill="#1f2937"/>
+    <rect x="75" y="170" width="60" height="110" rx="5" fill="#ffffff"/>
+    <circle cx="105" cy="225" r="20" fill="#d1fae5"/>
+    <text x="105" y="232" font-size="20" fill="#14b8a6" text-anchor="middle" font-weight="bold">✓</text>
+    <rect x="85" y="255" width="40" height="6" rx="3" fill="#14b8a6"/>
+    <rect x="90" y="265" width="30" height="4" rx="2" fill="#d1fae5"/>
+  </g>
+
+  <!-- Person body -->
+  <g filter="url(#shadow)">
+    <!-- Legs -->
+    <path d="M220 420 L210 480 L230 480 L235 420 Z" fill="url(#pantsGrad)"/>
+    <path d="M280 420 L270 480 L290 480 L285 420 Z" fill="url(#pantsGrad)"/>
+
+    <!-- Shoes -->
+    <ellipse cx="220" cy="485" rx="25" ry="10" fill="#374151"/>
+    <ellipse cx="280" cy="485" rx="25" ry="10" fill="#374151"/>
+
+    <!-- Body/Shirt -->
+    <path d="M200 280 Q180 320 185 380 L195 420 L305 420 L315 380 Q320 320 300 280 Z" fill="url(#shirtGrad)"/>
+
+    <!-- Arms -->
+    <path d="M185 290 Q140 320 130 380 L150 385 Q165 335 200 310 Z" fill="url(#shirtGrad)"/>
+    <path d="M315 290 Q360 320 370 380 L350 385 Q335 335 300 310 Z" fill="url(#shirtGrad)"/>
+
+    <!-- Hands -->
+    <circle cx="130" cy="385" r="18" fill="url(#skinGrad)"/>
+    <circle cx="370" cy="385" r="18" fill="url(#skinGrad)"/>
+
+    <!-- Neck -->
+    <rect x="235" y="250" width="30" height="35" fill="url(#skinGrad)"/>
+
+    <!-- Head -->
+    <ellipse cx="250" cy="210" rx="55" ry="60" fill="url(#skinGrad)"/>
+
+    <!-- Hair -->
+    <path d="M195 200 Q195 140 250 140 Q305 140 305 200 Q300 165 250 165 Q200 165 195 200 Z" fill="#1f2937"/>
+
+    <!-- Eyes -->
+    <ellipse cx="230" cy="210" rx="8" ry="10" fill="#ffffff"/>
+    <ellipse cx="270" cy="210" rx="8" ry="10" fill="#ffffff"/>
+    <circle cx="232" cy="212" r="5" fill="#1f2937"/>
+    <circle cx="272" cy="212" r="5" fill="#1f2937"/>
+    <circle cx="234" cy="210" r="2" fill="#ffffff"/>
+    <circle cx="274" cy="210" r="2" fill="#ffffff"/>
+
+    <!-- Eyebrows -->
+    <path d="M218 195 Q230 190 242 195" stroke="#1f2937" stroke-width="3" fill="none"/>
+    <path d="M258 195 Q270 190 282 195" stroke="#1f2937" stroke-width="3" fill="none"/>
+
+    <!-- Nose -->
+    <path d="M250 215 Q245 230 250 235 Q255 230 250 215" stroke="#E8A598" stroke-width="2" fill="none"/>
+
+    <!-- Smile -->
+    <path d="M235 250 Q250 265 265 250" stroke="#c27b6e" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+    <!-- Ears -->
+    <ellipse cx="195" cy="210" rx="10" ry="15" fill="url(#skinGrad)"/>
+    <ellipse cx="305" cy="210" rx="10" ry="15" fill="url(#skinGrad)"/>
+  </g>
+
+  <!-- Floating checkmarks -->
+  <g filter="url(#shadow)">
+    <circle cx="400" cy="380" r="25" fill="#d1fae5"/>
+    <text x="400" y="390" font-size="28" fill="#14b8a6" text-anchor="middle" font-weight="bold">✓</text>
+  </g>
+
+  <!-- Growth chart icon -->
+  <g filter="url(#shadow)" transform="translate(60, 380)">
+    <rect x="0" y="0" width="60" height="50" rx="5" fill="#ffffff"/>
+    <rect x="10" y="30" width="8" height="15" fill="#10b981"/>
+    <rect x="22" y="20" width="8" height="25" fill="#14b8a6"/>
+    <rect x="34" y="10" width="8" height="35" fill="#0d9488"/>
+    <path d="M10 15 L22 10 L34 5 L46 8" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="46" cy="8" r="3" fill="#f59e0b"/>
+  </g>
+</svg>

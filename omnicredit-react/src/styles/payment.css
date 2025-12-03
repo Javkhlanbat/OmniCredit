@@ -1,0 +1,52 @@
+.payment-container {
+  max-width: 900px;
+  margin: 48px auto 80px;
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+}
+
+.payment-method {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.method-card {
+  padding: 20px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.method-card:hover {
+  border-color: var(--primary);
+  background: var(--card-hover);
+}
+
+.method-card.active {
+  border-color: var(--primary);
+  background: var(--gradient-soft);
+}
+
+.method-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.method-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+@media (max-width: 968px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+}

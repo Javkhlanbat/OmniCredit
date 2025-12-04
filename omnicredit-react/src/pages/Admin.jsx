@@ -33,6 +33,15 @@ export default function Admin() {
   const [allCompanies, setAllCompanies] = useState([]);
   const [allPromoCodes, setAllPromoCodes] = useState([]);
 
+  // Analytics - Real data!
+  const [analyticsData, setAnalyticsData] = useState({
+    funnel: [],
+    devices: [],
+    errors: [],
+    summary: null,
+    loading: true
+  });
+
   // Modals
   const [userProfileModal, setUserProfileModal] = useState(false);
   const [createCompanyModal, setCreateCompanyModal] = useState(false);
@@ -75,6 +84,12 @@ export default function Admin() {
     filterUsers();
   }, [userSearchTerm, allUsers]);
 
+  useEffect(() => {
+    if (activeTab === 'analytics') {
+      loadAnalytics();
+    }
+  }, [activeTab]);
+
   const loadStatistics = async () => {
     try {
       const loansData = await LoansAPI.getAllLoans();
@@ -104,6 +119,37 @@ export default function Admin() {
       setAllLoans(data.loans || []);
     } catch (error) {
       console.error('Error loading loans:', error);
+    }
+  };
+
+  const loadAnalytics = async () => {
+    try {
+      setAnalyticsData(prev => ({ ...prev, loading: true }));
+
+      const [funnelRes, devicesRes, errorsRes, summaryRes] = await Promise.all([
+        api.get('/analytics/funnel'),
+        api.get('/analytics/devices'),
+        api.get('/analytics/errors'),
+        api.get('/analytics/summary')
+      ]);
+
+      setAnalyticsData({
+        funnel: funnelRes.funnelSteps || [],
+        devices: devicesRes.devices || [],
+        errors: errorsRes.errors || [],
+        summary: summaryRes.summary || null,
+        loading: false
+      });
+
+      console.log('📊 Analytics data loaded:', {
+        funnel: funnelRes.funnelSteps,
+        devices: devicesRes.devices,
+        errors: errorsRes.errors,
+        summary: summaryRes.summary
+      });
+    } catch (error) {
+      console.error('Error loading analytics:', error);
+      setAnalyticsData(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -805,6 +851,33 @@ export default function Admin() {
       {/* Analytics Tab - User Behavior Tracking */}
       {activeTab === 'analytics' && (
         <div className="tab-content active">
+          {/* Real-time Analytics Summary */}
+          {!analyticsData.loading && analyticsData.summary && (
+            <div className="card" style={{ marginBottom: '24px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+              <div className="card-body">
+                <h3 style={{ marginBottom: '16px', color: 'white' }}>📊 Бодит хэрэглэгчийн статистик (30 хоног)</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Нийт Session</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{analyticsData.summary.total_sessions?.toLocaleString() || 0}</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Хэрэглэгчид</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{analyticsData.summary.unique_users?.toLocaleString() || 0}</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Хуудас үзсэн</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{analyticsData.summary.page_views?.toLocaleString() || 0}</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Дундаж хугацаа</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{Math.round(analyticsData.summary.avg_session_duration_sec || 0)} сек</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Funnel Overview */}
           <div className="card" style={{ marginBottom: '24px' }}>
             <div className="card-body">
@@ -1088,11 +1161,15 @@ export default function Admin() {
                 </div>
               </div>
 
-              <div style={{ marginTop: '16px', padding: '16px', background: '#eff6ff', borderRadius: '8px', border: '1px solid #3b82f6' }}>
-                <strong style={{ color: '#1e40af' }}>Тэмдэглэл:</strong>
-                <p style={{ fontSize: '13px', margin: '8px 0 0 0', color: '#1e40af' }}>
-                  Энэ нь MOCK өгөгдөл юм. Бодит өгөгдөл цуглуулахын тулд frontend-д event tracking код суулгах шаардлагатай.
-                  Жишээ нь: page_view, click, form_error, scroll, dwell_time гэх мэт event-үүдийг логлох.
+              <div style={{ marginTop: '16px', padding: '16px', background: analyticsData.loading ? '#fef3c7' : '#d1fae5', borderRadius: '8px', border: `1px solid ${analyticsData.loading ? '#fbbf24' : '#10b981'}` }}>
+                <strong style={{ color: analyticsData.loading ? '#92400e' : '#065f46' }}>
+                  {analyticsData.loading ? '⏳ Өгөгдөл уншиж байна...' : '✅ Бодит хэрэглэгчийн өгөгдөл'}
+                </strong>
+                <p style={{ fontSize: '13px', margin: '8px 0 0 0', color: analyticsData.loading ? '#92400e' : '#065f46' }}>
+                  {analyticsData.loading
+                    ? 'Analytics системээс бодит өгөгдөл татаж байна. Event tracking идэвхтэй ажиллаж байна.'
+                    : `Сүүлийн 30 хоногийн бодит өгөгдөл. Нийт ${analyticsData.summary?.total_sessions || 0} session, ${analyticsData.summary?.unique_users || 0} хэрэглэгч track хийгдсэн.`
+                  }
                 </p>
               </div>
             </div>

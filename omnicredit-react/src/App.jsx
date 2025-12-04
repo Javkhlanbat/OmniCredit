@@ -26,6 +26,9 @@ import './styles/cards.css';
 import './styles/forms.css';
 import './styles/footer.css';
 
+// Import Analytics (automatically initializes tracking)
+import './services/analytics';
+
 function App() {
   return (
     <Router>

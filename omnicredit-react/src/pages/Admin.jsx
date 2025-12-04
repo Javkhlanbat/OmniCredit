@@ -881,10 +881,31 @@ export default function Admin() {
           {/* Funnel Overview */}
           <div className="card" style={{ marginBottom: '24px' }}>
             <div className="card-body">
-              <h3 style={{ marginBottom: '24px' }}>Хэрэглэгчийн урсгал (Funnel Analysis)</h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+                <h3 style={{ margin: 0 }}>Хэрэглэгчийн урсгал (Funnel Analysis)</h3>
+                {!analyticsData.loading && analyticsData.summary && analyticsData.summary.total_sessions === 0 && (
+                  <span style={{ background: '#fef3c7', color: '#92400e', padding: '6px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: '700', border: '2px solid #f59e0b' }}>
+                    ⚠️ DEMO DATA - Бодит өгөгдөл байхгүй
+                  </span>
+                )}
+              </div>
+
+              {!analyticsData.loading && analyticsData.summary && analyticsData.summary.total_sessions === 0 && (
+                <div style={{ padding: '24px', background: '#eff6ff', borderRadius: '12px', border: '2px solid #3b82f6', marginBottom: '24px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
+                  <h4 style={{ color: '#1e40af', marginBottom: '12px' }}>Одоогоор өгөгдөл цуглаагүй байна</h4>
+                  <p style={{ color: '#1e40af', fontSize: '14px', marginBottom: '16px' }}>
+                    Хэрэглэгчид сайт ашиглаж эхлэхэд analytics автоматаар бодит өгөгдөл цуглуулна.
+                    Доорх мэдээлэл нь зөвхөн DEMO жишээ.
+                  </p>
+                  <div style={{ fontSize: '13px', color: '#64748b' }}>
+                    Бодит өгөгдөл харахын тулд: Хэрэглэгчид нэвтрэх, бүртгүүлэх, зээл авах үйлдэл хийх хэрэгтэй.
+                  </div>
+                </div>
+              )}
 
               {/* Funnel Visualization */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', overflowX: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', overflowX: 'auto', opacity: (!analyticsData.loading && analyticsData.summary?.total_sessions === 0) ? 0.5 : 1 }}>
                 <div style={{ flex: 1, textAlign: 'center' }}>
                   <div style={{ background: 'var(--primary)', color: 'white', padding: '24px', borderRadius: '8px' }}>
                     <div style={{ fontSize: '32px', fontWeight: '800' }}>1,000</div>

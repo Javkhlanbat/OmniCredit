@@ -115,6 +115,17 @@ input[type=range]::-webkit-slider-thumb {
   cursor: pointer;
 }
 
+.cta {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .kpis-wide {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

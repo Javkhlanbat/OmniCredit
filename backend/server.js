@@ -6,8 +6,26 @@ const { initDatabase } = require('./src/config/init-db');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware - CORS бүх domain-д нээлттэй
-app.use(cors());
+// Middleware - CORS тохиргоо
+const allowedOrigins = [
+  'http://localhost:5173',                        // Local development
+  'http://localhost:5174',                        // Local development (alt port)
+  'https://omnicredit-frontend.onrender.com'      // Production frontend
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'CORS policy: Origin not allowed';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

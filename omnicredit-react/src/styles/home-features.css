@@ -21,13 +21,12 @@
   box-shadow: 0 4px 20px rgba(20, 184, 166, 0.08);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  border: 2px solid rgba(167, 243, 208, 0.3);
+  border: none;
 }
 
 .feature-card:hover {
   transform: translateY(-12px);
   box-shadow: 0 20px 40px rgba(20, 184, 166, 0.2);
-  border-color: #14b8a6;
 }
 
 .feature-card.featured {

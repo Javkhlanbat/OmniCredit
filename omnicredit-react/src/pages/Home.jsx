@@ -116,9 +116,6 @@ const Home = () => {
             <div className="feature-card">
               <div className="feature-image">
                 <img src="/images/consumer-loan.svg" alt="Хэрэглээний зээл" />
-                <div className="feature-overlay">
-                  <span className="feature-tag">Түгээмэл</span>
-                </div>
               </div>
               <div className="feature-content">
                 <h3>Хэрэглээний зээл</h3>
@@ -132,16 +129,14 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="feature-card featured">
-              <div className="feature-badge">Хит</div>
+            <div className="feature-card">
               <div className="feature-image">
                 <img src="/images/purchase-loan.svg" alt="Худалдан авалтын зээл" />
-                <div className="feature-glow"></div>
               </div>
               <div className="feature-content">
                 <h3>Худалдан авалтын зээл</h3>
                 <p>Бараа авахдаа урьдчилгаа төлөхгүйгээр хэсэгчлэн төлөх боломж.</p>
-                <Link to="/purchase-loan" className="btn btn-white">
+                <Link to="/purchase-loan" className="btn btn-primary">
                   Дэлгэрэнгүй
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

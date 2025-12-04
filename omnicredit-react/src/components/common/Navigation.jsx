@@ -84,6 +84,8 @@ const Navigation = () => {
   const userName = user ? (user.first_name || user.firstName || 'Хэрэглэгч') : 'Хэрэглэгч';
   const userEmail = user ? (user.email || '') : '';
   const initials = userName.charAt(0).toUpperCase();
+  const isAdmin = user?.is_admin || false;
+  const dashboardLink = isAdmin ? '/admin' : '/dashboard';
 
   return (
     <nav className={`nav ${isScrolled ? 'scrolled' : ''}`}>
@@ -102,7 +104,9 @@ const Navigation = () => {
           {isAuthenticated ? (
             <>
               <Link to="/profile" className="btn btn-ghost btn-sm">Профайл</Link>
-              <Link to="/dashboard" className="btn btn-secondary btn-sm">Dashboard</Link>
+              <Link to={dashboardLink} className="btn btn-secondary btn-sm">
+                {isAdmin ? 'Admin Panel' : 'Dashboard'}
+              </Link>
               <button id="mobileLogoutBtn" className="btn btn-primary btn-sm" onClick={handleMobileLogout}>
                 Гарах
               </button>
@@ -119,7 +123,9 @@ const Navigation = () => {
       <div className="auth-buttons">
         {isAuthenticated ? (
           <>
-            <Link to="/dashboard" className="btn btn-dashboard">Dashboard</Link>
+            <Link to={dashboardLink} className="btn btn-dashboard">
+              {isAdmin ? 'Admin Panel' : 'Dashboard'}
+            </Link>
             <div
               className={`profile-dropdown ${isProfileDropdownActive ? 'active' : ''}`}
               id="profileDropdown"

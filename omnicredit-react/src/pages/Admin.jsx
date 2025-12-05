@@ -42,6 +42,10 @@ export default function Admin() {
     loading: true
   });
 
+  // Real tracking data
+  const [realFunnelData, setRealFunnelData] = useState([]);
+  const [realBounceData, setRealBounceData] = useState(null);
+
   // Modals
   const [userProfileModal, setUserProfileModal] = useState(false);
   const [createCompanyModal, setCreateCompanyModal] = useState(false);
@@ -126,26 +130,40 @@ export default function Admin() {
     try {
       setAnalyticsData(prev => ({ ...prev, loading: true }));
 
-      const [funnelRes, devicesRes, errorsRes, summaryRes] = await Promise.all([
-        api.get('/analytics/funnel'),
-        api.get('/analytics/devices'),
-        api.get('/analytics/errors'),
-        api.get('/analytics/summary')
+      const token = localStorage.getItem('token');
+
+      // Load real tracking data
+      const [funnelRes, bounceRes, summaryRes] = await Promise.all([
+        fetch('http://localhost:5000/api/tracking/funnel', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch('http://localhost:5000/api/tracking/bounce-rate', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch('http://localhost:5000/api/tracking/summary', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
       ]);
 
+      const funnelData = await funnelRes.json();
+      const bounceData = await bounceRes.json();
+      const summaryData = await summaryRes.json();
+
+      setRealFunnelData(funnelData.stages || []);
+      setRealBounceData(bounceData);
+
       setAnalyticsData({
-        funnel: funnelRes.funnelSteps || [],
-        devices: devicesRes.devices || [],
-        errors: errorsRes.errors || [],
-        summary: summaryRes.summary || null,
+        funnel: funnelData.stages || [],
+        devices: [],
+        errors: [],
+        summary: summaryData.summary || null,
         loading: false
       });
 
-      console.log('📊 Analytics data loaded:', {
-        funnel: funnelRes.funnelSteps,
-        devices: devicesRes.devices,
-        errors: errorsRes.errors,
-        summary: summaryRes.summary
+      console.log('📊 Real tracking data loaded:', {
+        funnel: funnelData.stages,
+        bounce: bounceData,
+        summary: summaryData.summary
       });
     } catch (error) {
       console.error('Error loading analytics:', error);
@@ -904,98 +922,125 @@ export default function Admin() {
                 </div>
               )}
 
-              {/* Funnel Visualization */}
+              {/* Funnel Visualization - REAL DATA */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', overflowX: 'auto', opacity: (!analyticsData.loading && analyticsData.summary?.total_sessions === 0) ? 0.5 : 1 }}>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <div style={{ background: 'var(--primary)', color: 'white', padding: '24px', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '800' }}>1,000</div>
-                    <div style={{ fontSize: '14px', marginTop: '8px' }}>Нүүр хуудас</div>
-                    <div style={{ fontSize: '12px', opacity: 0.9 }}>100.0%</div>
-                  </div>
-                </div>
-                <div style={{ fontSize: '24px', color: 'var(--text-muted)' }}>→</div>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <div style={{ background: '#10b981', color: 'white', padding: '24px', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '800' }}>800</div>
-                    <div style={{ fontSize: '14px', marginTop: '8px' }}>Бүртгэл</div>
-                    <div style={{ fontSize: '12px', opacity: 0.9 }}>80.0%</div>
-                  </div>
-                  <div style={{ marginTop: '8px', fontSize: '13px', color: '#dc2626' }}>
-                    200 хэрэглэгч унасан
-                  </div>
-                </div>
-                <div style={{ fontSize: '24px', color: 'var(--text-muted)' }}>→</div>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <div style={{ background: '#f59e0b', color: 'white', padding: '24px', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '800' }}>600</div>
-                    <div style={{ fontSize: '14px', marginTop: '8px' }}>Email баталгаажуулалт</div>
-                    <div style={{ fontSize: '12px', opacity: 0.9 }}>75.0%</div>
-                  </div>
-                  <div style={{ marginTop: '8px', fontSize: '13px', color: '#dc2626' }}>
-                    200 хэрэглэгч унасан
-                  </div>
-                </div>
-                <div style={{ fontSize: '24px', color: 'var(--text-muted)' }}>→</div>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <div style={{ background: '#8b5cf6', color: 'white', padding: '24px', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '800' }}>500</div>
-                    <div style={{ fontSize: '14px', marginTop: '8px' }}>Бүртгэл дууссан</div>
-                    <div style={{ fontSize: '12px', opacity: 0.9 }}>83.3%</div>
-                  </div>
-                  <div style={{ marginTop: '8px', fontSize: '13px', color: '#dc2626' }}>
-                    100 хэрэглэгч унасан
-                  </div>
-                </div>
+                {realFunnelData.length > 0 ? (
+                  realFunnelData.map((stage, index) => (
+                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ flex: 1, textAlign: 'center', minWidth: '150px' }}>
+                        <div style={{ background: stage.color || 'var(--primary)', color: 'white', padding: '24px', borderRadius: '8px' }}>
+                          <div style={{ fontSize: '32px', fontWeight: '800' }}>{stage.value.toLocaleString()}</div>
+                          <div style={{ fontSize: '14px', marginTop: '8px' }}>{stage.name}</div>
+                          <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                            {realFunnelData[0]?.value > 0 ? ((stage.value / realFunnelData[0].value) * 100).toFixed(1) : 0}%
+                          </div>
+                        </div>
+                        {index > 0 && realFunnelData[index - 1]?.value > stage.value && (
+                          <div style={{ marginTop: '8px', fontSize: '13px', color: '#dc2626' }}>
+                            {(realFunnelData[index - 1].value - stage.value).toLocaleString()} унасан
+                          </div>
+                        )}
+                      </div>
+                      {index < realFunnelData.length - 1 && (
+                        <div style={{ fontSize: '24px', color: 'var(--text-muted)' }}>→</div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div style={{ flex: 1, textAlign: 'center' }}>
+                      <div style={{ background: 'var(--primary)', color: 'white', padding: '24px', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '32px', fontWeight: '800' }}>0</div>
+                        <div style={{ fontSize: '14px', marginTop: '8px' }}>Нүүр хуудас</div>
+                        <div style={{ fontSize: '12px', opacity: 0.9 }}>-</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '24px', color: 'var(--text-muted)' }}>→</div>
+                    <div style={{ flex: 1, textAlign: 'center' }}>
+                      <div style={{ background: '#10b981', color: 'white', padding: '24px', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '32px', fontWeight: '800' }}>0</div>
+                        <div style={{ fontSize: '14px', marginTop: '8px' }}>Зээлийн хуудас</div>
+                        <div style={{ fontSize: '12px', opacity: 0.9 }}>-</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '24px', color: 'var(--text-muted)' }}>→</div>
+                    <div style={{ flex: 1, textAlign: 'center' }}>
+                      <div style={{ background: '#f59e0b', color: 'white', padding: '24px', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '32px', fontWeight: '800' }}>0</div>
+                        <div style={{ fontSize: '14px', marginTop: '8px' }}>Тооцоолуур</div>
+                        <div style={{ fontSize: '12px', opacity: 0.9 }}>-</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '24px', color: 'var(--text-muted)' }}>→</div>
+                    <div style={{ flex: 1, textAlign: 'center' }}>
+                      <div style={{ background: '#8b5cf6', color: 'white', padding: '24px', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '32px', fontWeight: '800' }}>0</div>
+                        <div style={{ fontSize: '14px', marginTop: '8px' }}>Зээл авсан</div>
+                        <div style={{ fontSize: '12px', opacity: 0.9 }}>-</div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div style={{ padding: '16px', background: '#fef3c7', borderRadius: '8px', border: '1px solid #fbbf24' }}>
-                <strong>Нийт хөрвөлт:</strong> 50.0% (1,000 → 500 хэрэглэгч)
+                <strong>Нийт хөрвөлт:</strong> {realFunnelData.length > 0 && realFunnelData[0]?.value > 0
+                  ? `${((realFunnelData[realFunnelData.length - 1]?.value / realFunnelData[0].value) * 100).toFixed(1)}% (${realFunnelData[0].value.toLocaleString()} → ${realFunnelData[realFunnelData.length - 1]?.value.toLocaleString()} хэрэглэгч)`
+                  : 'Өгөгдөл байхгүй'}
               </div>
             </div>
           </div>
 
-          {/* Critical Friction Points */}
-          <div className="card" style={{ marginBottom: '24px', border: '2px solid #dc2626' }}>
+          {/* Critical Friction Points - REAL DATA */}
+          <div className="card" style={{ marginBottom: '24px', border: realBounceData?.bounceRate > 20 ? '2px solid #dc2626' : '2px solid #10b981' }}>
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '24px' }}>⚠️</span>
-                <h3 style={{ margin: 0, color: '#dc2626' }}>Ноцтой асуудал: Бүртгэлийн хуудас</h3>
+                <span style={{ fontSize: '24px' }}>{realBounceData?.bounceRate > 20 ? '⚠️' : '✅'}</span>
+                <h3 style={{ margin: 0, color: realBounceData?.bounceRate > 20 ? '#dc2626' : '#10b981' }}>
+                  {realBounceData?.bounceRate > 20 ? 'Анхааруулга: Bounce Rate' : 'Сайн байна: Bounce Rate'}
+                </h3>
               </div>
 
-              <div style={{ background: '#fee2e2', padding: '16px', borderRadius: '8px', marginBottom: '16px' }}>
+              <div style={{ background: realBounceData?.bounceRate > 20 ? '#fee2e2' : '#d1fae5', padding: '16px', borderRadius: '8px', marginBottom: '16px' }}>
                 <div style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                  <strong>25.0%</strong> хэрэглэгч (200 хүн) энэ алхамд унасан байна.
-                  Дундаж Friction оноо: <strong style={{ color: '#dc2626' }}>18.5</strong> (CRITICAL)
+                  <strong>{realBounceData?.bounceRate?.toFixed(1) || 0}%</strong> bounce rate
+                  ({realBounceData?.bouncedSessions || 0} sessions / {realBounceData?.totalSessions || 0} нийт)
+                  {realBounceData?.bounceRate > 20 && (
+                    <div style={{ marginTop: '8px', color: '#dc2626' }}>
+                      Энэ нь хэт өндөр дүн. Хэрэглэгчид сайтад удаан үлдэхгүй байна.
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div style={{ marginBottom: '24px' }}>
-                <h4 style={{ marginBottom: '12px' }}>Гол асуудлууд:</h4>
+                <h4 style={{ marginBottom: '12px' }}>Төхөөрөмжөөр bounce rate:</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '4px', height: '32px', position: 'relative' }}>
-                      <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '45%', background: '#dc2626', borderRadius: '4px', display: 'flex', alignItems: 'center', paddingLeft: '8px', color: 'white', fontSize: '13px', fontWeight: '600' }}>
-                        45% - Form ээрөлт
+                  {realBounceData?.chromeBouncePercent > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '4px', height: '32px', position: 'relative' }}>
+                        <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${realBounceData.chromeBouncePercent}%`, background: '#dc2626', borderRadius: '4px', display: 'flex', alignItems: 'center', paddingLeft: '8px', color: 'white', fontSize: '13px', fontWeight: '600' }}>
+                          {realBounceData.chromeBouncePercent}% - Chrome
+                        </div>
                       </div>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '80px' }}>хэрэглэгч</span>
                     </div>
-                    <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '80px' }}>90 хэрэглэгч</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '4px', height: '32px', position: 'relative' }}>
-                      <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '30%', background: '#f59e0b', borderRadius: '4px', display: 'flex', alignItems: 'center', paddingLeft: '8px', color: 'white', fontSize: '13px', fontWeight: '600' }}>
-                        30% - Mobile UX
+                  )}
+                  {realBounceData?.mobileBouncePercent > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '4px', height: '32px', position: 'relative' }}>
+                        <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${realBounceData.mobileBouncePercent}%`, background: '#f59e0b', borderRadius: '4px', display: 'flex', alignItems: 'center', paddingLeft: '8px', color: 'white', fontSize: '13px', fontWeight: '600' }}>
+                          {realBounceData.mobileBouncePercent}% - Mobile
+                        </div>
                       </div>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '80px' }}>хэрэглэгч</span>
                     </div>
-                    <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '80px' }}>60 хэрэглэгч</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '4px', height: '32px', position: 'relative' }}>
-                      <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '15%', background: '#6366f1', borderRadius: '4px', display: 'flex', alignItems: 'center', paddingLeft: '8px', color: 'white', fontSize: '13px', fontWeight: '600' }}>
-                        15% - Network
-                      </div>
+                  )}
+                  {(!realBounceData || (realBounceData.chromeBouncePercent === 0 && realBounceData.mobileBouncePercent === 0)) && (
+                    <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                      Одоогоор өгөгдөл байхгүй байна
                     </div>
-                    <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '80px' }}>30 хэрэглэгч</span>
-                  </div>
+                  )}
                 </div>
               </div>
 

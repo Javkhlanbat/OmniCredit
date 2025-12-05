@@ -4,6 +4,7 @@ import '../styles/application.css';
 import { LoansAPI } from '../services/api';
 import TokenManager from '../services/auth';
 import analytics from '../services/analytics';
+import trackingService from '../services/trackingService';
 
 export default function LoanApplication() {
   const navigate = useNavigate();
@@ -141,13 +142,21 @@ export default function LoanApplication() {
 
       await LoansAPI.applyForLoan(loanData);
 
-      // Track successful submission
+      // Track successful submission with both services
       analytics.trackFormSubmit('loan_application', true);
       analytics.track('loan_application_completed', {
         amount: parseFloat(amount),
         term: parseInt(term),
         purpose: finalPurpose,
         monthly_income: parseFloat(monthlyIncome)
+      });
+
+      // Track with new tracking service
+      await trackingService.trackLoanApplication({
+        loan_type: 'personal',
+        amount: parseFloat(amount),
+        term: parseInt(term),
+        purpose: finalPurpose
       });
 
       alert('✓ Амжилттай илгээлээ! Admin батлах хүлээнэ');

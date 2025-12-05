@@ -78,17 +78,17 @@
 }
 
 .search-box {
-  max-width: 600px;
+  max-width: 500px;
   margin: 32px auto;
   position: relative;
 }
 
 .search-box input {
   width: 100%;
-  padding: 18px 56px 18px 24px;
+  padding: 14px 20px;
   border: 2px solid var(--line);
-  border-radius: 999px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 15px;
   transition: var(--transition);
 }
 

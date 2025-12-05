@@ -1044,190 +1044,23 @@ export default function Admin() {
                 </div>
               </div>
 
-              <div style={{ background: '#dbeafe', padding: '16px', borderRadius: '8px', border: '1px solid #3b82f6' }}>
-                <h4 style={{ marginBottom: '12px', color: '#1e40af' }}>Яагаад хэрэглэгчид энд зогсдог вэ?</h4>
-                <p style={{ fontSize: '14px', lineHeight: '1.6', margin: 0 }}>
-                  Хэрэглэгчид form validation-ий алдаануудтай тулгарч байна, ялангуяа mobile төхөөрөмж дээр.
-                  Дунджаар 2.5 validation алдаа гарч, хүлээгдэж байгаасаа 21% урт хугацаа (145 секунд vs 120 секунд)
-                  зарцуулж байгаа нь төөрөгдөл, ойлгомжгүй байгааг харуулж байна. Mobile хэрэглэгчид илүү их асуудалтай.
-                </p>
-              </div>
+              {realBounceData && realBounceData.totalSessions > 0 && (
+                <div style={{ background: '#dbeafe', padding: '16px', borderRadius: '8px', border: '1px solid #3b82f6' }}>
+                  <h4 style={{ marginBottom: '12px', color: '#1e40af' }}>Дэлгэрэнгүй шинжилгээ</h4>
+                  <p style={{ fontSize: '14px', lineHeight: '1.6', margin: 0 }}>
+                    Bounce rate: {realBounceData.bounceRate.toFixed(1)}% ({realBounceData.bouncedSessions} / {realBounceData.totalSessions} sessions)
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Step-by-Step Analysis Table */}
-          <div className="card" style={{ marginBottom: '24px' }}>
-            <div className="card-body">
-              <h3 style={{ marginBottom: '16px' }}>Алхам бүрийн дэлгэрэнгүй</h3>
-              <div style={{ overflowX: 'auto' }}>
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Алхам</th>
-                      <th>Нэр</th>
-                      <th>Орсон</th>
-                      <th>Дууссан</th>
-                      <th>Унасан</th>
-                      <th>Дундаж хугацаа</th>
-                      <th>Friction оноо</th>
-                      <th>Төлөв</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Нүүр хуудас</td>
-                      <td>1,000</td>
-                      <td>800</td>
-                      <td style={{ color: '#dc2626' }}>200 (20.0%)</td>
-                      <td>25 сек</td>
-                      <td>4.2</td>
-                      <td><span style={{ background: '#d1fae5', color: '#065f46', padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>LOW ✓</span></td>
-                    </tr>
-                    <tr style={{ background: '#fee2e2' }}>
-                      <td>2</td>
-                      <td>Бүртгэл</td>
-                      <td>800</td>
-                      <td>600</td>
-                      <td style={{ color: '#dc2626', fontWeight: '700' }}>200 (25.0%)</td>
-                      <td style={{ color: '#dc2626' }}>145 сек</td>
-                      <td style={{ color: '#dc2626', fontWeight: '700' }}>18.5</td>
-                      <td><span style={{ background: '#dc2626', color: 'white', padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>CRITICAL ⚠️</span></td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Email баталгаажуулалт</td>
-                      <td>600</td>
-                      <td>500</td>
-                      <td style={{ color: '#dc2626' }}>100 (16.7%)</td>
-                      <td>45 сек</td>
-                      <td>11.3</td>
-                      <td><span style={{ background: '#fef3c7', color: '#92400e', padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>MEDIUM ⚠</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
 
-          {/* Device Breakdown */}
-          <div className="card" style={{ marginBottom: '24px' }}>
-            <div className="card-body">
-              <h3 style={{ marginBottom: '16px' }}>Төхөөрөмжөөр задлан шинжилгээ (Бүртгэл алхам)</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-                <div style={{ padding: '16px', background: '#f3f4f6', borderRadius: '8px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '8px' }}>Desktop</div>
-                  <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '8px' }}>30%</div>
-                  <div style={{ fontSize: '13px', color: '#10b981' }}>Унах хувь ✓</div>
-                </div>
-                <div style={{ padding: '16px', background: '#fee2e2', borderRadius: '8px', textAlign: 'center', border: '2px solid #dc2626' }}>
-                  <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '8px' }}>Mobile</div>
-                  <div style={{ fontSize: '32px', fontWeight: '800', color: '#dc2626', marginBottom: '8px' }}>65%</div>
-                  <div style={{ fontSize: '13px', color: '#dc2626' }}>Өндөр унах хувь ⚠️</div>
-                </div>
-                <div style={{ padding: '16px', background: '#f3f4f6', borderRadius: '8px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '8px' }}>Tablet</div>
-                  <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '8px' }}>25%</div>
-                  <div style={{ fontSize: '13px', color: '#10b981' }}>Унах хувь ✓</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Common Errors */}
-          <div className="card" style={{ marginBottom: '24px' }}>
-            <div className="card-body">
-              <h3 style={{ marginBottom: '16px' }}>Түгээмэл алдаанууд (Бүртгэл форм)</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#fef3c7', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '14px' }}>"Invalid email format"</span>
-                  <span style={{ fontSize: '14px', fontWeight: '600', color: '#92400e' }}>35 удаа</span>
-                </div>
-                <div style={{ padding: '12px', background: '#fef3c7', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '14px' }}>"Password too weak"</span>
-                  <span style={{ fontSize: '14px', fontWeight: '600', color: '#92400e' }}>28 удаа</span>
-                </div>
-                <div style={{ padding: '12px', background: '#fef3c7', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '14px' }}>"Phone number required"</span>
-                  <span style={{ fontSize: '14px', fontWeight: '600', color: '#92400e' }}>22 удаа</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Recommendations */}
-          <div className="card" style={{ marginBottom: '24px', border: '2px solid #10b981' }}>
-            <div className="card-body">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '24px' }}>💡</span>
-                <h3 style={{ margin: 0, color: '#10b981' }}>Санал зөвлөмж</h3>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ padding: '16px', background: '#f0fdf4', borderRadius: '8px', borderLeft: '4px solid #10b981' }}>
-                  <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontWeight: '600', color: '#065f46' }}>1. Form validation дүрмийг хялбаршуулах</span>
-                    <span style={{ fontSize: '12px', background: '#dc2626', color: 'white', padding: '2px 8px', borderRadius: '4px', marginLeft: '8px' }}>CRITICAL</span>
-                  </div>
-                  <p style={{ fontSize: '13px', color: '#065f46', margin: 0 }}>90 хэрэглэгчид нөлөөлсөн. Password-ын шаардлагад тусламж текст нэмэх.</p>
-                </div>
-
-                <div style={{ padding: '16px', background: '#f0fdf4', borderRadius: '8px', borderLeft: '4px solid #10b981' }}>
-                  <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontWeight: '600', color: '#065f46' }}>2. Mobile input field-ийн хэмжээг сайжруулах</span>
-                    <span style={{ fontSize: '12px', background: '#f59e0b', color: 'white', padding: '2px 8px', borderRadius: '4px', marginLeft: '8px' }}>HIGH</span>
-                  </div>
-                  <p style={{ fontSize: '13px', color: '#065f46', margin: 0 }}>60 хэрэглэгчид нөлөөлсөн. Touch target-ууд болон keyboard асуудал.</p>
-                </div>
-
-                <div style={{ padding: '16px', background: '#f0fdf4', borderRadius: '8px', borderLeft: '4px solid #10b981' }}>
-                  <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontWeight: '600', color: '#065f46' }}>3. Backend тогтвортой байдлыг шалгах</span>
-                    <span style={{ fontSize: '12px', background: '#dc2626', color: 'white', padding: '2px 8px', borderRadius: '4px', marginLeft: '8px' }}>CRITICAL</span>
-                  </div>
-                  <p style={{ fontSize: '13px', color: '#065f46', margin: 0 }}>30 хэрэглэгчид нөлөөлсөн. Network алдааны шалтгааныг судлах.</p>
-                </div>
-
-                <div style={{ padding: '16px', background: '#f0fdf4', borderRadius: '8px', borderLeft: '4px solid #10b981' }}>
-                  <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: 'Spx' }}>
-                    <span style={{ fontWeight: '600', color: '#065f46' }}>4. Явцын үзүүлэлт (progress indicator) нэмэх</span>
-                    <span style={{ fontSize: '12px', background: '#6366f1', color: 'white', padding: '2px 8px', borderRadius: '4px', marginLeft: '8px' }}>MEDIUM</span>
-                  </div>
-                  <p style={{ fontSize: '13px', color: '#065f46', margin: 0 }}>Хэрэглэгчид хэдэн алхам үлдсэнийг харж чадна.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Friction Rules Info */}
+          {/* Tracking Status */}
           <div className="card">
             <div className="card-body">
-              <h3 style={{ marginBottom: '16px' }}>Friction шалгуур дүрмүүд</h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                Систем нь дараах дүрмүүдийг ашиглан хэрэглэгчийн үйлдлээс асуудлыг илрүүлнэ:
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px', fontSize: '13px' }}>
-                  <strong>UI Confusion:</strong> Хэт удаан хугацаа + бага scroll
-                </div>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px', fontSize: '13px' }}>
-                  <strong>Form Complexity:</strong> Олон validation алдаа
-                </div>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px', fontSize: '13px' }}>
-                  <strong>Mobile UX Issue:</strong> Mobile дээр өндөр унах хувь
-                </div>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px', fontSize: '13px' }}>
-                  <strong>Backend Failure:</strong> Network/API алдаа
-                </div>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px', fontSize: '13px' }}>
-                  <strong>Technical Error:</strong> JavaScript алдаа
-                </div>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px', fontSize: '13px' }}>
-                  <strong>No Clear Action:</strong> Дараагийн алхам тодорхойгүй
-                </div>
-              </div>
-
-              <div style={{ marginTop: '16px', padding: '16px', background: analyticsData.loading ? '#fef3c7' : '#d1fae5', borderRadius: '8px', border: `1px solid ${analyticsData.loading ? '#fbbf24' : '#10b981'}` }}>
+              <h3 style={{ marginBottom: '16px' }}>Tracking системийн статус</h3>
+              <div style={{ padding: '16px', background: analyticsData.loading ? '#fef3c7' : '#d1fae5', borderRadius: '8px', border: `1px solid ${analyticsData.loading ? '#fbbf24' : '#10b981'}` }}>
                 <strong style={{ color: analyticsData.loading ? '#92400e' : '#065f46' }}>
                   {analyticsData.loading ? '⏳ Өгөгдөл уншиж байна...' : '✅ Бодит хэрэглэгчийн өгөгдөл'}
                 </strong>

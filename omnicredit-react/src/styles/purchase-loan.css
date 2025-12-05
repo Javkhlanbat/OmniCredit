@@ -26,7 +26,6 @@
 
 .info-box {
   background: linear-gradient(135deg, #FFF5F0 0%, #FFE8DD 100%);
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius);
   padding: 20px;
   margin-bottom: 32px;

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/application.css';
 import { LoansAPI } from '../services/api';
 import TokenManager from '../services/auth';
+import analytics from '../services/analytics';
 
 export default function LoanApplication() {
   const navigate = useNavigate();
@@ -15,12 +16,30 @@ export default function LoanApplication() {
   const [occupation, setOccupation] = useState('');
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStarted, setFormStarted] = useState(false);
 
   useEffect(() => {
     if (!TokenManager.isAuthenticated()) {
+      analytics.track('loan_application_blocked', { reason: 'not_authenticated' });
       navigate('/login');
+    } else {
+      // Track that user viewed the loan application page
+      analytics.track('loan_application_view', {
+        referrer: document.referrer
+      });
     }
   }, [navigate]);
+
+  // Track when user starts filling the form
+  const handleFormStart = () => {
+    if (!formStarted) {
+      setFormStarted(true);
+      analytics.track('loan_application_started', {
+        initial_amount: amount,
+        initial_term: term
+      });
+    }
+  };
 
   const calculateMonthly = (loanAmount, rate, months) => {
     if (rate === 0) return loanAmount / months;
@@ -42,40 +61,65 @@ export default function LoanApplication() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Track submit attempt
+    analytics.track('loan_application_submit_attempt', {
+      amount,
+      term,
+      purpose,
+      monthly_income: monthlyIncome,
+      has_occupation: !!occupation
+    });
+
+    const validationErrors = [];
+
     if (!agreeTerms) {
+      validationErrors.push('terms_not_agreed');
       alert('Зээлийн нөхцөлийг зөвшөөрнө үү');
+      analytics.track('loan_application_validation_error', { field: 'agreeTerms', error: 'not_checked' });
       return;
     }
 
     if (!amount || amount === '') {
+      validationErrors.push('amount_missing');
       alert('Зээлийн дүн оруулна уу');
+      analytics.track('loan_application_validation_error', { field: 'amount', error: 'missing' });
       return;
     }
 
     if (!term || term === '') {
+      validationErrors.push('term_missing');
       alert('Зээлийн хугацаа сонгоно уу');
+      analytics.track('loan_application_validation_error', { field: 'term', error: 'missing' });
       return;
     }
 
     if (!monthlyIncome || monthlyIncome === '') {
+      validationErrors.push('monthly_income_missing');
       alert('Сарын орлого оруулна уу');
+      analytics.track('loan_application_validation_error', { field: 'monthlyIncome', error: 'missing' });
       return;
     }
 
     if (!occupation || occupation.trim() === '') {
+      validationErrors.push('occupation_missing');
       alert('Ажил мэргэжил оруулна уу');
+      analytics.track('loan_application_validation_error', { field: 'occupation', error: 'missing' });
       return;
     }
 
     if (!purpose || purpose === '') {
+      validationErrors.push('purpose_missing');
       alert('Зээлийн зориулалт сонгоно уу');
+      analytics.track('loan_application_validation_error', { field: 'purpose', error: 'missing' });
       return;
     }
 
     let finalPurpose = purpose;
     if (purpose === 'other') {
       if (!otherPurpose || otherPurpose.trim() === '') {
+        validationErrors.push('other_purpose_missing');
         alert('Зориулалтаа дэлгэрэнгүй тодорхойлно уу');
+        analytics.track('loan_application_validation_error', { field: 'otherPurpose', error: 'missing' });
         return;
       }
       finalPurpose = otherPurpose;
@@ -97,6 +141,15 @@ export default function LoanApplication() {
 
       await LoansAPI.applyForLoan(loanData);
 
+      // Track successful submission
+      analytics.trackFormSubmit('loan_application', true);
+      analytics.track('loan_application_completed', {
+        amount: parseFloat(amount),
+        term: parseInt(term),
+        purpose: finalPurpose,
+        monthly_income: parseFloat(monthlyIncome)
+      });
+
       alert('✓ Амжилттай илгээлээ! Admin батлах хүлээнэ');
 
       setTimeout(() => {
@@ -104,6 +157,15 @@ export default function LoanApplication() {
       }, 2000);
     } catch (error) {
       console.error('Loan application error:', error);
+
+      // Track failed submission
+      analytics.trackFormSubmit('loan_application', false, [error.message]);
+      analytics.track('loan_application_failed', {
+        error: error.message,
+        amount,
+        term
+      });
+
       alert(error.message || 'Хүсэлт илгээхэд алдаа гарлаа');
       setIsSubmitting(false);
     }
@@ -129,7 +191,10 @@ export default function LoanApplication() {
                   <input
                     type="number"
                     value={amount}
-                    onChange={(e) => setAmount(parseInt(e.target.value))}
+                    onChange={(e) => {
+                      handleFormStart();
+                      setAmount(parseInt(e.target.value));
+                    }}
                     min="100000"
                     max="10000000"
                     step="100000"

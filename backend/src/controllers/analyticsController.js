@@ -72,24 +72,30 @@ const getFunnelAnalysis = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    // Funnel steps тодорхойлох
+    // Funnel steps тодорхойлох - Loan Application Journey
     const funnelSteps = [
       { step: 'home', name: 'Нүүр хуудас', url: '/' },
-      { step: 'register_page', name: 'Бүртгэл', url: '/register' },
+      { step: 'register_page', name: 'Бүртгэл хуудас', url: '/register' },
       { step: 'register_complete', name: 'Бүртгэл дууссан', eventType: 'form_submit' },
       { step: 'loan_calculator', name: 'Зээлийн тооцоолуур', url: '/zeelhuudas' },
-      { step: 'loan_application', name: 'Зээлийн хүсэлт', url: '/application' }
+      { step: 'loan_application_page', name: 'Зээлийн хүсэлт хуудас', url: '/application' },
+      { step: 'loan_application_started', name: 'Хүсэлт эхэлсэн', eventType: 'loan_application_started' },
+      { step: 'loan_application_submit', name: 'Хүсэлт илгээсэн', eventType: 'loan_application_submit_attempt' },
+      { step: 'loan_application_completed', name: 'Хүсэлт амжилттай', eventType: 'loan_application_completed' }
     ];
 
     const result = await pool.query(`
       WITH step_counts AS (
         SELECT
           CASE
-            WHEN url = '/' THEN 'home'
-            WHEN url = '/register' THEN 'register_page'
-            WHEN url = '/zeelhuudas' THEN 'loan_calculator'
-            WHEN url = '/application' OR url = '/application-new' THEN 'loan_application'
+            WHEN url = '/' AND event_type = 'page_view' THEN 'home'
+            WHEN url = '/register' AND event_type = 'page_view' THEN 'register_page'
             WHEN event_type = 'form_submit' AND url = '/register' THEN 'register_complete'
+            WHEN url = '/zeelhuudas' AND event_type = 'page_view' THEN 'loan_calculator'
+            WHEN (url = '/application' OR url = '/application-new') AND event_type = 'loan_application_view' THEN 'loan_application_page'
+            WHEN event_type = 'loan_application_started' THEN 'loan_application_started'
+            WHEN event_type = 'loan_application_submit_attempt' THEN 'loan_application_submit'
+            WHEN event_type = 'loan_application_completed' THEN 'loan_application_completed'
           END as step,
           COUNT(DISTINCT session_id) as sessions
         FROM analytics_events
@@ -103,24 +109,34 @@ const getFunnelAnalysis = async (req, res) => {
           WHEN 'register_page' THEN 2
           WHEN 'register_complete' THEN 3
           WHEN 'loan_calculator' THEN 4
-          WHEN 'loan_application' THEN 5
+          WHEN 'loan_application_page' THEN 5
+          WHEN 'loan_application_started' THEN 6
+          WHEN 'loan_application_submit' THEN 7
+          WHEN 'loan_application_completed' THEN 8
         END
     `);
 
-    // Friction points олох
+    // Friction points олох - Where users are dropping off
     const frictionQuery = await pool.query(`
       SELECT
         url,
         device_type,
-        COUNT(*) as error_count,
+        event_type,
+        COUNT(*) as event_count,
+        COUNT(DISTINCT session_id) as unique_sessions,
         AVG(CASE WHEN event_type = 'scroll' THEN (event_data->>'scrollPercent')::int ELSE NULL END) as avg_scroll,
-        COUNT(CASE WHEN event_type = 'form_error' THEN 1 END) as form_errors,
+        COUNT(CASE WHEN event_type = 'form_error' OR event_type = 'loan_application_validation_error' THEN 1 END) as validation_errors,
+        COUNT(CASE WHEN event_type = 'loan_application_blocked' THEN 1 END) as blocked_count,
+        COUNT(CASE WHEN event_type = 'loan_application_failed' THEN 1 END) as failed_count,
         AVG(CASE WHEN event_type = 'page_exit' THEN (event_data->>'dwellTime')::int ELSE NULL END) as avg_dwell_time
       FROM analytics_events
       WHERE created_at >= NOW() - INTERVAL '30 days'
-        AND url IN ('/register', '/application', '/zeelhuudas')
-      GROUP BY url, device_type
-      ORDER BY form_errors DESC, avg_dwell_time DESC
+        AND (
+          url IN ('/register', '/application', '/application-new', '/zeelhuudas')
+          OR event_type IN ('loan_application_blocked', 'loan_application_validation_error', 'loan_application_failed')
+        )
+      GROUP BY url, device_type, event_type
+      ORDER BY validation_errors DESC, blocked_count DESC, failed_count DESC
     `);
 
     res.json({

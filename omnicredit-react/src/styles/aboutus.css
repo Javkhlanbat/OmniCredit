@@ -137,7 +137,6 @@
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
-  border-left: 4px solid var(--primary);
 }
 
 .value-icon {

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TokenManager, LoansAPI } from '../services/api';
 import { showToast } from '../services/utils';
+import analytics from '../services/analytics';
 import '../styles/loan-calculator.css';
 
 const LoanCalculator = () => {
@@ -301,7 +302,15 @@ const LoanCalculator = () => {
   };
 
   const handleApply = async () => {
+    // Track calculator apply button click
+    analytics.track('calculator_apply_clicked', {
+      amount,
+      term,
+      rate
+    });
+
     if (!TokenManager.isAuthenticated()) {
+      analytics.track('calculator_apply_blocked', { reason: 'not_authenticated' });
       if (window.confirm('Зээл авахын тулд нэвтрэх хэрэгтэй. Нэвтрэх хуудас руу шилжих үү?')) {
         navigate('/login');
       }
@@ -309,11 +318,13 @@ const LoanCalculator = () => {
     }
 
     if (amount < 10000 || amount > 3000000) {
+      analytics.track('calculator_validation_error', { field: 'amount', value: amount, error: 'out_of_range' });
       showToast('Зээлийн дүн ₮10,000 - ₮3,000,000 хооронд байх ёстой', 'error');
       return;
     }
 
     if (term < 1 || term > 24) {
+      analytics.track('calculator_validation_error', { field: 'term', value: term, error: 'out_of_range' });
       showToast('Хугацаа 1-24 сарын хооронд байх ёстой', 'error');
       return;
     }
@@ -330,6 +341,13 @@ const LoanCalculator = () => {
           occupation: 'Хэрэглэгч'
         });
 
+        // Track successful loan application from calculator
+        analytics.track('calculator_loan_completed', {
+          amount,
+          term,
+          rate
+        });
+
         showToast('Амжилттай илгээлээ!', 'success');
 
         setTimeout(() => {
@@ -337,8 +355,19 @@ const LoanCalculator = () => {
         }, 1500);
       } catch (error) {
         console.error('Loan application error:', error);
+
+        // Track failed loan application
+        analytics.track('calculator_loan_failed', {
+          error: error.message,
+          amount,
+          term
+        });
+
         showToast(error.message || 'Хүсэлт илгээхэд алдаа гарлаа', 'error');
       }
+    } else {
+      // User cancelled the confirmation
+      analytics.track('calculator_apply_cancelled', { amount, term, rate });
     }
   };
 
@@ -511,8 +540,24 @@ const LoanCalculator = () => {
           </div>
 
           <div className="cta">
-            <button className="btn btn-primary" onClick={() => navigate('/application-new')}>Хүсэлт илгээх</button>
-            <button className="btn btn-ghost" onClick={handlePDF}>PDF хадгалах</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                analytics.track('calculator_navigate_to_application', { amount, term, rate });
+                navigate('/application-new');
+              }}
+            >
+              Хүсэлт илгээх
+            </button>
+            <button
+              className="btn btn-ghost"
+              onClick={() => {
+                analytics.track('calculator_pdf_download', { amount, term, rate });
+                handlePDF();
+              }}
+            >
+              PDF хадгалах
+            </button>
           </div>
         </div>
 

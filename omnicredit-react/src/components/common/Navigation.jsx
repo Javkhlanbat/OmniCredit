@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { TokenManager, UserManager } from '../../services/api';
 
 const Navigation = () => {
@@ -9,6 +9,7 @@ const Navigation = () => {
   const [user, setUser] = useState(null);
   const [isProfileDropdownActive, setIsProfileDropdownActive] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check authentication status
@@ -67,6 +68,9 @@ const Navigation = () => {
   const handleLogout = () => {
     if (window.confirm('Гарахдаа итгэлтэй байна уу?')) {
       UserManager.logout();
+      setIsAuthenticated(false);
+      setUser(null);
+      navigate('/');
     }
   };
 

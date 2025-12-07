@@ -235,4 +235,64 @@ router.get('/summary', authenticateToken, async (req, res) => {
   }
 });
 
+// Get page analytics - which pages users spend most time on
+router.get('/page-analytics', authenticateToken, async (req, res) => {
+  try {
+    const pageData = await pool.query(`
+      WITH page_stats AS (
+        SELECT
+          page_url,
+          page_title,
+          COUNT(*) as total_visits,
+          COUNT(DISTINCT session_id) as unique_sessions,
+          COUNT(DISTINCT user_id) FILTER (WHERE user_id IS NOT NULL) as unique_users,
+          ROUND(AVG(time_spent)::numeric, 1) as avg_time_spent_seconds,
+          SUM(time_spent) as total_time_spent,
+          COUNT(*) FILTER (WHERE action_type = 'click') as total_clicks,
+          MIN(created_at) as first_visit,
+          MAX(created_at) as last_visit
+        FROM user_activities
+        WHERE created_at >= NOW() - INTERVAL '30 days'
+          AND page_url IS NOT NULL
+          AND page_url != ''
+        GROUP BY page_url, page_title
+      )
+      SELECT
+        page_url,
+        COALESCE(page_title, page_url) as page_title,
+        total_visits,
+        unique_sessions,
+        unique_users,
+        avg_time_spent_seconds,
+        total_time_spent,
+        total_clicks,
+        ROUND((avg_time_spent_seconds / 60.0)::numeric, 2) as avg_time_minutes,
+        first_visit,
+        last_visit
+      FROM page_stats
+      ORDER BY total_time_spent DESC, total_visits DESC
+      LIMIT 50
+    `);
+
+    res.json({
+      pages: pageData.rows.map(row => ({
+        url: row.page_url,
+        title: row.page_title,
+        visits: parseInt(row.total_visits),
+        uniqueSessions: parseInt(row.unique_sessions),
+        uniqueUsers: parseInt(row.unique_users),
+        avgTimeSeconds: parseFloat(row.avg_time_spent_seconds) || 0,
+        avgTimeMinutes: parseFloat(row.avg_time_minutes) || 0,
+        totalTimeSeconds: parseInt(row.total_time_spent) || 0,
+        totalClicks: parseInt(row.total_clicks) || 0,
+        firstVisit: row.first_visit,
+        lastVisit: row.last_visit
+      }))
+    });
+  } catch (error) {
+    console.error('Page analytics error:', error);
+    res.status(500).json({ error: 'Failed to get page analytics' });
+  }
+});
+
 module.exports = router;

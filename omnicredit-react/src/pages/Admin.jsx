@@ -45,6 +45,7 @@ export default function Admin() {
   // Real tracking data
   const [realFunnelData, setRealFunnelData] = useState([]);
   const [realBounceData, setRealBounceData] = useState(null);
+  const [pageAnalyticsData, setPageAnalyticsData] = useState([]);
 
   // Modals
   const [userProfileModal, setUserProfileModal] = useState(false);
@@ -133,7 +134,7 @@ export default function Admin() {
       const token = localStorage.getItem('token');
 
       // Load real tracking data
-      const [funnelRes, bounceRes, summaryRes] = await Promise.all([
+      const [funnelRes, bounceRes, summaryRes, pageAnalyticsRes] = await Promise.all([
         fetch('http://localhost:5000/api/tracking/funnel', {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
@@ -142,15 +143,20 @@ export default function Admin() {
         }),
         fetch('http://localhost:5000/api/tracking/summary', {
           headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch('http://localhost:5000/api/tracking/page-analytics', {
+          headers: { 'Authorization': `Bearer ${token}` }
         })
       ]);
 
       const funnelData = await funnelRes.json();
       const bounceData = await bounceRes.json();
       const summaryData = await summaryRes.json();
+      const pageAnalytics = await pageAnalyticsRes.json();
 
       setRealFunnelData(funnelData.stages || []);
       setRealBounceData(bounceData);
+      setPageAnalyticsData(pageAnalytics.pages || []);
 
       setAnalyticsData({
         funnel: funnelData.stages || [],
@@ -163,7 +169,8 @@ export default function Admin() {
       console.log('📊 Real tracking data loaded:', {
         funnel: funnelData.stages,
         bounce: bounceData,
-        summary: summaryData.summary
+        summary: summaryData.summary,
+        pageAnalytics: pageAnalytics.pages
       });
     } catch (error) {
       console.error('Error loading analytics:', error);
@@ -1070,6 +1077,65 @@ export default function Admin() {
                     : `Сүүлийн 30 хоногийн бодит өгөгдөл. Нийт ${analyticsData.summary?.total_sessions || 0} session, ${analyticsData.summary?.unique_users || 0} хэрэглэгч track хийгдсэн.`
                   }
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Page Analytics - Time spent per page */}
+          <div className="card" style={{ marginTop: '24px' }}>
+            <div className="card-body">
+              <h3 style={{ marginBottom: '16px' }}>📄 Хуудас шинжилгээ - Хэрэглэгчид хаана их цаг зарцуулж байна</h3>
+              {pageAnalyticsData.length === 0 ? (
+                <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)', background: '#f9fafb', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '48px', marginBottom: '12px' }}>📊</div>
+                  <p>Одоогоор хуудас шинжилгээний өгөгдөл байхгүй байна.</p>
+                  <p style={{ fontSize: '14px', marginTop: '8px' }}>Хэрэглэгчид сайт ашиглаж эхлэхэд өгөгдөл цуглуулна.</p>
+                </div>
+              ) : (
+                <div className="data-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Хуудас</th>
+                        <th>Үзсэн тоо</th>
+                        <th>Хэрэглэгч</th>
+                        <th>Дундаж хугацаа</th>
+                        <th>Нийт хугацаа</th>
+                        <th>Дарсан тоо</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pageAnalyticsData.map((page, index) => (
+                        <tr key={index}>
+                          <td>
+                            <div style={{ fontWeight: '600', marginBottom: '4px' }}>{page.title || page.url}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{page.url}</div>
+                          </td>
+                          <td style={{ fontWeight: '700' }}>{page.visits.toLocaleString()}</td>
+                          <td>{page.uniqueUsers.toLocaleString()}</td>
+                          <td>
+                            <span style={{
+                              background: page.avgTimeMinutes > 2 ? '#d1fae5' : page.avgTimeMinutes > 1 ? '#fef3c7' : '#fee2e2',
+                              color: page.avgTimeMinutes > 2 ? '#065f46' : page.avgTimeMinutes > 1 ? '#92400e' : '#991b1b',
+                              padding: '4px 12px',
+                              borderRadius: '12px',
+                              fontSize: '13px',
+                              fontWeight: '600'
+                            }}>
+                              {page.avgTimeMinutes.toFixed(1)} мин
+                            </span>
+                          </td>
+                          <td>{Math.round(page.totalTimeSeconds / 60).toLocaleString()} мин</td>
+                          <td>{page.totalClicks.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <div style={{ marginTop: '16px', padding: '12px', background: '#eff6ff', borderRadius: '8px', fontSize: '13px', color: '#1e40af' }}>
+                💡 <strong>Тайлбар:</strong> Энэ хүснэгт нь хэрэглэгчид ямар хуудсанд хамгийн их цаг зарцуулж байгааг харуулна.
+                Ногоон өнгө = их цаг зарцуулсан (сонирхолтой контент), Улаан = бага цаг (контент сайжруулах шаардлагатай).
               </div>
             </div>
           </div>

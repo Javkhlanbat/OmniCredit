@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { TokenManager, AuthAPI } from '../../services/api';
+import { TokenManager, UserManager, AuthAPI } from '../../services/api';
 import { showToast, isValidEmail } from '../../services/utils';
 import '../../styles/forms.css';
 import '../../styles/cards.css';
@@ -30,7 +30,12 @@ const Register = () => {
   useEffect(() => {
     // Check if already logged in
     if (TokenManager.isAuthenticated()) {
-      navigate('/dashboard');
+      const user = UserManager.getUser();
+      if (user && user.is_admin) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     }
   }, [navigate]);
 
@@ -165,7 +170,12 @@ const Register = () => {
       showToast('Амжилттай бүртгэгдлээ!', 'success');
 
       setTimeout(() => {
-        navigate('/dashboard');
+        const user = UserManager.getUser();
+        if (user && user.is_admin) {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       }, 1000);
 
     } catch (error) {

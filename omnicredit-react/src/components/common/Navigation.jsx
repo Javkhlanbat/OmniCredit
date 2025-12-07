@@ -21,6 +21,17 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
+    // Re-check authentication when location changes
+    const authenticated = TokenManager.isAuthenticated();
+    setIsAuthenticated(authenticated);
+    if (authenticated) {
+      setUser(UserManager.getUser());
+    } else {
+      setUser(null);
+    }
+  }, [location]);
+
+  useEffect(() => {
     // Handle scroll effect
     const handleScroll = () => {
       if (window.scrollY > 50) {

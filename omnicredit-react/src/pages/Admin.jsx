@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/admin.css';
-import { LoansAPI, AuthAPI, PromoCodeAPI, api } from '../services/api';
+import { LoansAPI, AuthAPI, PromoCodeAPI, TrackingAPI, api } from '../services/api';
 import TokenManager from '../services/auth';
 
 export default function Admin() {
@@ -131,28 +131,13 @@ export default function Admin() {
     try {
       setAnalyticsData(prev => ({ ...prev, loading: true }));
 
-      const token = localStorage.getItem('token');
-
-      // Load real tracking data
-      const [funnelRes, bounceRes, summaryRes, pageAnalyticsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/tracking/funnel', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch('http://localhost:5000/api/tracking/bounce-rate', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch('http://localhost:5000/api/tracking/summary', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch('http://localhost:5000/api/tracking/page-analytics', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        })
+      // Load real tracking data using TrackingAPI
+      const [funnelData, bounceData, summaryData, pageAnalytics] = await Promise.all([
+        TrackingAPI.getFunnelData(),
+        TrackingAPI.getBounceRate(),
+        TrackingAPI.getSummary(),
+        TrackingAPI.getPageAnalytics()
       ]);
-
-      const funnelData = await funnelRes.json();
-      const bounceData = await bounceRes.json();
-      const summaryData = await summaryRes.json();
-      const pageAnalytics = await pageAnalyticsRes.json();
 
       setRealFunnelData(funnelData.stages || []);
       setRealBounceData(bounceData);

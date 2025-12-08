@@ -295,4 +295,166 @@ router.get('/page-analytics', authenticateToken, async (req, res) => {
   }
 });
 
+// Get user behavior analysis report
+router.get('/behavior-analysis', authenticateToken, async (req, res) => {
+  try {
+    // 1. Most clicked buttons/elements
+    const clickAnalysis = await pool.query(`
+      WITH click_data AS (
+        SELECT
+          page_url,
+          device_info->>'element_text' as element_text,
+          device_info->>'element_class' as element_class,
+          COUNT(*) as click_count
+        FROM user_activities
+        WHERE action_type = 'click'
+          AND created_at >= NOW() - INTERVAL '30 days'
+          AND device_info->>'element_text' IS NOT NULL
+          AND device_info->>'element_text' != ''
+        GROUP BY page_url, device_info->>'element_text', device_info->>'element_class'
+      )
+      SELECT
+        element_text,
+        page_url,
+        click_count,
+        element_class
+      FROM click_data
+      ORDER BY click_count DESC
+      LIMIT 20
+    `);
+
+    // 2. Page navigation flow (which page users go to after each page)
+    const navigationFlow = await pool.query(`
+      WITH page_sequence AS (
+        SELECT
+          session_id,
+          page_url,
+          created_at,
+          LEAD(page_url) OVER (PARTITION BY session_id ORDER BY created_at) as next_page
+        FROM user_activities
+        WHERE action_type = 'page_view'
+          AND created_at >= NOW() - INTERVAL '30 days'
+      )
+      SELECT
+        page_url as from_page,
+        next_page as to_page,
+        COUNT(*) as transition_count
+      FROM page_sequence
+      WHERE next_page IS NOT NULL
+        AND page_url != next_page
+      GROUP BY page_url, next_page
+      ORDER BY transition_count DESC
+      LIMIT 30
+    `);
+
+    // 3. Drop-off points (pages where users leave)
+    const dropOffPoints = await pool.query(`
+      WITH exit_pages AS (
+        SELECT
+          s.exit_page,
+          COUNT(*) as exit_count,
+          AVG(s.total_duration) as avg_session_duration,
+          COUNT(CASE WHEN s.pages_visited = 1 THEN 1 END) as bounced_count
+        FROM user_sessions s
+        WHERE s.started_at >= NOW() - INTERVAL '30 days'
+          AND s.exit_page IS NOT NULL
+        GROUP BY s.exit_page
+      )
+      SELECT
+        exit_page,
+        exit_count,
+        ROUND(avg_session_duration::numeric, 1) as avg_session_duration_sec,
+        bounced_count,
+        ROUND((bounced_count::numeric / exit_count * 100), 1) as bounce_rate_percent
+      FROM exit_pages
+      ORDER BY exit_count DESC
+      LIMIT 15
+    `);
+
+    // 4. Time spent per page
+    const timePerPage = await pool.query(`
+      SELECT
+        page_url,
+        COUNT(*) as total_visits,
+        ROUND(AVG(time_spent)::numeric, 1) as avg_time_seconds,
+        ROUND(MAX(time_spent)::numeric, 1) as max_time_seconds,
+        ROUND(MIN(time_spent)::numeric, 1) as min_time_seconds
+      FROM user_activities
+      WHERE action_type = 'page_view'
+        AND created_at >= NOW() - INTERVAL '30 days'
+        AND time_spent > 0
+        AND time_spent < 3600
+      GROUP BY page_url
+      ORDER BY total_visits DESC
+      LIMIT 20
+    `);
+
+    // 5. Incomplete funnel steps
+    const funnelDropoff = await pool.query(`
+      WITH funnel_stages AS (
+        SELECT
+          session_id,
+          MAX(CASE WHEN page_url = '/' THEN 1 ELSE 0 END) as visited_home,
+          MAX(CASE WHEN page_url LIKE '%/loan%' OR page_url LIKE '%zeelhuudas%' THEN 1 ELSE 0 END) as visited_loan,
+          MAX(CASE WHEN page_url LIKE '%application%' THEN 1 ELSE 0 END) as visited_application,
+          MAX(CASE WHEN action_type = 'loan_application' THEN 1 ELSE 0 END) as completed_application
+        FROM user_activities
+        WHERE created_at >= NOW() - INTERVAL '30 days'
+        GROUP BY session_id
+      )
+      SELECT
+        SUM(visited_home) as home_visitors,
+        SUM(visited_loan) as loan_page_visitors,
+        SUM(visited_application) as application_visitors,
+        SUM(completed_application) as completed_applications,
+        SUM(CASE WHEN visited_home = 1 AND visited_loan = 0 THEN 1 ELSE 0 END) as dropped_after_home,
+        SUM(CASE WHEN visited_loan = 1 AND visited_application = 0 THEN 1 ELSE 0 END) as dropped_after_loan,
+        SUM(CASE WHEN visited_application = 1 AND completed_application = 0 THEN 1 ELSE 0 END) as dropped_after_application
+      FROM funnel_stages
+    `);
+
+    // 6. Pages where users get stuck (high time, low next action)
+    const stuckPages = await pool.query(`
+      WITH page_metrics AS (
+        SELECT
+          page_url,
+          AVG(time_spent) as avg_time,
+          COUNT(*) as visit_count,
+          COUNT(DISTINCT session_id) as unique_sessions
+        FROM user_activities
+        WHERE action_type = 'page_view'
+          AND created_at >= NOW() - INTERVAL '30 days'
+          AND time_spent BETWEEN 10 AND 300
+        GROUP BY page_url
+        HAVING COUNT(*) > 5
+      )
+      SELECT
+        page_url,
+        ROUND(avg_time::numeric, 1) as avg_time_seconds,
+        visit_count,
+        unique_sessions
+      FROM page_metrics
+      WHERE avg_time > 60
+      ORDER BY avg_time DESC
+      LIMIT 10
+    `);
+
+    res.json({
+      summary: {
+        period: 'Last 30 days',
+        analysis_date: new Date().toISOString()
+      },
+      most_clicked_buttons: clickAnalysis.rows,
+      navigation_flow: navigationFlow.rows,
+      drop_off_points: dropOffPoints.rows,
+      time_per_page: timePerPage.rows,
+      funnel_dropoff: funnelDropoff.rows[0],
+      stuck_pages: stuckPages.rows
+    });
+  } catch (error) {
+    console.error('Behavior analysis error:', error);
+    res.status(500).json({ error: 'Failed to analyze user behavior' });
+  }
+});
+
 module.exports = router;

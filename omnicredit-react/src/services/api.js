@@ -451,5 +451,33 @@ const PromoCodeAPI = {
     }
 };
 
+// Tracking API
+const TrackingAPI = {
+    // Funnel data
+    async getFunnelData() {
+        return await api.get('/tracking/funnel');
+    },
+
+    // Bounce rate
+    async getBounceRate() {
+        return await api.get('/tracking/bounce-rate');
+    },
+
+    // Summary stats
+    async getSummary() {
+        return await api.get('/tracking/summary');
+    },
+
+    // Page analytics
+    async getPageAnalytics() {
+        return await api.get('/tracking/page-analytics');
+    },
+
+    // User behavior analysis
+    async getBehaviorAnalysis() {
+        return await api.get('/tracking/behavior-analysis');
+    }
+};
+
 // Export for React
-export { API_CONFIG, TokenManager, UserManager, LastPageManager, api, AuthAPI, LoansAPI, PaymentsAPI, WalletAPI, PromoCodeAPI };
+export { API_CONFIG, TokenManager, UserManager, LastPageManager, api, AuthAPI, LoansAPI, PaymentsAPI, WalletAPI, PromoCodeAPI, TrackingAPI };

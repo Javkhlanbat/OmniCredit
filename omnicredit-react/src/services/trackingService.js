@@ -1,5 +1,8 @@
+import { API_CONFIG } from './api';
+
 class TrackingService {
   constructor() {
+    this.apiBaseUrl = API_CONFIG.BASE_URL.replace('/api', ''); // Remove /api suffix
     this.sessionId = this.getOrCreateSessionId();
     this.pageStartTime = Date.now();
     this.currentPage = window.location.pathname;
@@ -40,7 +43,7 @@ class TrackingService {
 
   async startSession() {
     try {
-      await fetch('http://localhost:5000/api/tracking/session/start', {
+      await fetch(`${this.apiBaseUrl}/api/tracking/session/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -75,10 +78,10 @@ class TrackingService {
   }
 
   async trackActivity(actionType, additionalData = {}) {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
 
     try {
-      await fetch('http://localhost:5000/api/tracking/activity', {
+      await fetch(`${this.apiBaseUrl}/api/tracking/activity`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +114,7 @@ class TrackingService {
       const timeSpent = Math.floor((Date.now() - this.pageStartTime) / 1000);
       if (timeSpent > 0) {
         navigator.sendBeacon(
-          'http://localhost:5000/api/tracking/activity',
+          `${this.apiBaseUrl}/api/tracking/activity`,
           JSON.stringify({
             sessionId: this.sessionId,
             actionType: 'page_view',

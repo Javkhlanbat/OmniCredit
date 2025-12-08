@@ -42,10 +42,12 @@ const makePayment = async (req, res) => {
 
     // Үлдэгдэл шалгах
     const balance = await getLoanBalance(loan_id);
+
+    // Нийт үлдэгдлээс их төлбөр хийж болохгүй
     if (amount > balance.balance) {
       return res.status(400).json({
         error: 'Төлбөрийн дүн хэтэрсэн',
-        message: `Үлдэгдэл: ${balance.balance}₮. Төлбөр ${amount}₮ хэтэрч байна.`
+        message: `Нийт үлдэгдэл: ${balance.balance.toFixed(2)}₮ (Үндсэн: ${balance.principal_balance.toFixed(2)}₮ + Хүү: ${balance.accrued_interest.toFixed(2)}₮)`
       });
     }
 
@@ -61,7 +63,14 @@ const makePayment = async (req, res) => {
 
     res.status(201).json({
       message: 'Төлбөр амжилттай хийгдлээ',
-      payment,
+      payment: {
+        ...payment,
+        breakdown: {
+          total: amount,
+          interest_paid: payment.interest_amount,
+          principal_paid: payment.principal_amount
+        }
+      },
       balance: newBalance
     });
 

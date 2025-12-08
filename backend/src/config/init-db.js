@@ -132,6 +132,8 @@ const initDatabase = async () => {
         id SERIAL PRIMARY KEY,
         loan_id INTEGER REFERENCES loans(id) ON DELETE CASCADE,
         amount DECIMAL(12, 2) NOT NULL,
+        principal_amount DECIMAL(12, 2) DEFAULT 0,
+        interest_amount DECIMAL(12, 2) DEFAULT 0,
         payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         payment_method VARCHAR(50),
         status VARCHAR(50) DEFAULT 'completed',
@@ -139,6 +141,26 @@ const initDatabase = async () => {
       );
     `);
     console.log('Payments table үүсгэсэн');
+
+    // Add missing columns to payments if they don't exist
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'payments' AND column_name = 'principal_amount'
+        ) THEN
+          ALTER TABLE payments ADD COLUMN principal_amount DECIMAL(12, 2) DEFAULT 0;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'payments' AND column_name = 'interest_amount'
+        ) THEN
+          ALTER TABLE payments ADD COLUMN interest_amount DECIMAL(12, 2) DEFAULT 0;
+        END IF;
+      END $$;
+    `);
+    console.log('Payments table-д principal_amount, interest_amount columns нэмэгдлээ');
 
     // Purchase loans table (0% хүүтэй)
     await pool.query(`

@@ -30,6 +30,7 @@ import './styles/footer.css';
 // Import Analytics (automatically initializes tracking)
 import './services/analytics';
 import trackingService from './services/trackingService';
+import { TokenManager, LastPageManager } from './services/api';
 
 function AppContent() {
   const location = useLocation();
@@ -37,6 +38,11 @@ function AppContent() {
   useEffect(() => {
     // Track page views on route change
     trackingService.trackPageView(location.pathname, document.title);
+
+    // Сүүлд зочилсон хуудсыг хадгалах (зөвхөн нэвтэрсэн хэрэглэгч)
+    if (TokenManager.isAuthenticated()) {
+      LastPageManager.setLastPage(location.pathname);
+    }
   }, [location]);
 
   return (

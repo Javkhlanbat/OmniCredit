@@ -52,7 +52,48 @@ const UserManager = {
     logout() {
         TokenManager.removeToken();
         this.removeUser();
+        LastPageManager.removeLastPage(); // Сүүлийн хуудасны мэдээллийг устгах
         window.location.href = 'login.html';
+    }
+};
+
+const LastPageManager = {
+    // Сүүлд зочилсон хуудсыг хадгалах
+    setLastPage(path) {
+        // Login болон register хуудсыг хадгалахгүй
+        const excludedPaths = ['/login', '/register', '/'];
+        if (!excludedPaths.includes(path)) {
+            localStorage.setItem('lastVisitedPage', path);
+        }
+    },
+
+    // Сүүлд зочилсон хуудсыг авах
+    getLastPage() {
+        return localStorage.getItem('lastVisitedPage');
+    },
+
+    // Сүүлд зочилсон хуудасны мэдээллийг устгах
+    removeLastPage() {
+        localStorage.removeItem('lastVisitedPage');
+    },
+
+    // Сүүлд зочилсон хуудас руу шилжих URL буцаах
+    getRedirectPath() {
+        const lastPage = this.getLastPage();
+        const user = UserManager.getUser();
+
+        // Хэрэв сүүлд зочилсон хуудас байвал тэр хуудас руу
+        if (lastPage) {
+            return lastPage;
+        }
+
+        // Хэрэв admin бол admin хуудас руу
+        if (user && user.is_admin) {
+            return '/admin';
+        }
+
+        // Үгүй бол dashboard руу
+        return '/dashboard';
     }
 };
 
@@ -411,4 +452,4 @@ const PromoCodeAPI = {
 };
 
 // Export for React
-export { API_CONFIG, TokenManager, UserManager, api, AuthAPI, LoansAPI, PaymentsAPI, WalletAPI, PromoCodeAPI };
+export { API_CONFIG, TokenManager, UserManager, LastPageManager, api, AuthAPI, LoansAPI, PaymentsAPI, WalletAPI, PromoCodeAPI };

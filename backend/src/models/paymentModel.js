@@ -85,7 +85,7 @@ const getTotalPaidByLoanId = async (loanId) => {
 // Зээлийн үлдэгдэл дүн тооцоолох
 const getLoanBalance = async (loanId) => {
   const loanResult = await query(
-    'SELECT amount FROM loans WHERE id = $1',
+    'SELECT amount, total_amount FROM loans WHERE id = $1',
     [loanId]
   );
 
@@ -93,7 +93,8 @@ const getLoanBalance = async (loanId) => {
     throw new Error('Зээл олдсонгүй');
   }
 
-  const loanAmount = parseFloat(loanResult.rows[0].amount);
+  // total_amount (хүүтэй нийт дүн) байвал түүнийг, үгүй бол amount (суурь дүн) ашиглана
+  const loanAmount = parseFloat(loanResult.rows[0].total_amount || loanResult.rows[0].amount);
   const totalPaid = await getTotalPaidByLoanId(loanId);
 
   return {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { TokenManager, UserManager, AuthAPI } from '../../services/api';
+import { TokenManager, UserManager, LastPageManager, AuthAPI } from '../../services/api';
 import { showToast, isValidEmail } from '../../services/utils';
 import '../../styles/forms.css';
 import '../../styles/cards.css';
@@ -30,12 +30,9 @@ const Register = () => {
   useEffect(() => {
     // Check if already logged in
     if (TokenManager.isAuthenticated()) {
-      const user = UserManager.getUser();
-      if (user && user.is_admin) {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
+      // Сүүлд зочилсон хуудас руу шилжих
+      const redirectPath = LastPageManager.getRedirectPath();
+      navigate(redirectPath);
     }
   }, [navigate]);
 
@@ -170,12 +167,9 @@ const Register = () => {
       showToast('Амжилттай бүртгэгдлээ!', 'success');
 
       setTimeout(() => {
-        const user = UserManager.getUser();
-        if (user && user.is_admin) {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
+        // Сүүлд зочилсон хуудас руу шилжих (шинээр бүртгүүлсэн бол dashboard)
+        const redirectPath = LastPageManager.getRedirectPath();
+        navigate(redirectPath);
       }, 1000);
 
     } catch (error) {

@@ -32,11 +32,11 @@ const makePayment = async (req, res) => {
       });
     }
 
-    // Зээл баталгаажсан эсэх шалгах
-    if (loan.status !== 'approved') {
+    // Зээл баталгаажсан эсвэл олгогдсон (disbursed) эсэхийг шалгах
+    if (loan.status !== 'approved' && loan.status !== 'disbursed') {
       return res.status(400).json({
         error: 'Зээл баталгаажаагүй',
-        message: 'Зөвхөн баталгаажсан зээлд төлбөр хийх боломжтой'
+        message: 'Зөвхөн баталгаажсан эсвэл олгогдсон зээлд төлбөр хийх боломжтой'
       });
     }
 

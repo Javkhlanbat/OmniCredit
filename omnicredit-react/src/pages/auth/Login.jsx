@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { TokenManager, UserManager, AuthAPI } from '../../services/api';
+import { TokenManager, UserManager, LastPageManager, AuthAPI } from '../../services/api';
 import { showToast } from '../../services/utils';
 import '../../styles/forms.css';
 import '../../styles/cards.css';
@@ -16,12 +16,9 @@ const Login = () => {
   useEffect(() => {
     // Check if already logged in
     if (TokenManager.isAuthenticated()) {
-      const user = UserManager.getUser();
-      if (user && user.is_admin) {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
+      // Сүүлд зочилсон хуудас руу шилжих
+      const redirectPath = LastPageManager.getRedirectPath();
+      navigate(redirectPath);
     }
   }, [navigate]);
 
@@ -56,12 +53,9 @@ const Login = () => {
       showToast('Амжилттай нэвтэрлээ!', 'success');
 
       setTimeout(() => {
-        const user = UserManager.getUser();
-        if (user && user.is_admin) {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
+        // Сүүлд зочилсон хуудас руу шилжих
+        const redirectPath = LastPageManager.getRedirectPath();
+        navigate(redirectPath);
       }, 500);
 
     } catch (error) {

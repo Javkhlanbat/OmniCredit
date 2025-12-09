@@ -865,7 +865,7 @@ export default function Admin() {
           {!analyticsData.loading && analyticsData.summary && (
             <div className="card" style={{ marginBottom: '24px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
               <div className="card-body">
-                <h3 style={{ marginBottom: '16px', color: 'white' }}>📊 Бодит хэрэглэгчийн статистик (30 хоног)</h3>
+                <h3 style={{ marginBottom: '16px', color: 'white' }}> хэрэглэгчийн статистик (30 хоног)</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                   <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
                     <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Нийт Session</div>
@@ -892,27 +892,8 @@ export default function Admin() {
           <div className="card" style={{ marginBottom: '24px' }}>
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-                <h3 style={{ margin: 0 }}>Хэрэглэгчийн урсгал (Funnel Analysis)</h3>
-                {!analyticsData.loading && analyticsData.summary && analyticsData.summary.total_sessions === 0 && (
-                  <span style={{ background: '#fef3c7', color: '#92400e', padding: '6px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: '700', border: '2px solid #f59e0b' }}>
-                    ⚠️ DEMO DATA - Бодит өгөгдөл байхгүй
-                  </span>
-                )}
+                <h3 style={{ margin: 0 }}>Хэрэглэгчийн урсгал </h3>
               </div>
-
-              {!analyticsData.loading && analyticsData.summary && analyticsData.summary.total_sessions === 0 && (
-                <div style={{ padding: '24px', background: '#eff6ff', borderRadius: '12px', border: '2px solid #3b82f6', marginBottom: '24px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
-                  <h4 style={{ color: '#1e40af', marginBottom: '12px' }}>Одоогоор өгөгдөл цуглаагүй байна</h4>
-                  <p style={{ color: '#1e40af', fontSize: '14px', marginBottom: '16px' }}>
-                    Хэрэглэгчид сайт ашиглаж эхлэхэд analytics автоматаар бодит өгөгдөл цуглуулна.
-                    Доорх мэдээлэл нь зөвхөн DEMO жишээ.
-                  </p>
-                  <div style={{ fontSize: '13px', color: '#64748b' }}>
-                    Бодит өгөгдөл харахын тулд: Хэрэглэгчид нэвтрэх, бүртгүүлэх, зээл авах үйлдэл хийх хэрэгтэй.
-                  </div>
-                </div>
-              )}
 
               {/* Funnel Visualization - REAL DATA */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', overflowX: 'auto', opacity: (!analyticsData.loading && analyticsData.summary?.total_sessions === 0) ? 0.5 : 1 }}>
@@ -983,96 +964,13 @@ export default function Admin() {
             </div>
           </div>
 
-          {/* Critical Friction Points - REAL DATA */}
-          <div className="card" style={{ marginBottom: '24px', border: realBounceData?.bounceRate > 20 ? '2px solid #dc2626' : '2px solid #10b981' }}>
-            <div className="card-body">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '24px' }}>{realBounceData?.bounceRate > 20 ? '⚠️' : '✅'}</span>
-                <h3 style={{ margin: 0, color: realBounceData?.bounceRate > 20 ? '#dc2626' : '#10b981' }}>
-                  {realBounceData?.bounceRate > 20 ? 'Анхааруулга: Bounce Rate' : 'Сайн байна: Bounce Rate'}
-                </h3>
-              </div>
-
-              <div style={{ background: realBounceData?.bounceRate > 20 ? '#fee2e2' : '#d1fae5', padding: '16px', borderRadius: '8px', marginBottom: '16px' }}>
-                <div style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                  <strong>{realBounceData?.bounceRate?.toFixed(1) || 0}%</strong> bounce rate
-                  ({realBounceData?.bouncedSessions || 0} sessions / {realBounceData?.totalSessions || 0} нийт)
-                  {realBounceData?.bounceRate > 20 && (
-                    <div style={{ marginTop: '8px', color: '#dc2626' }}>
-                      Энэ нь хэт өндөр дүн. Хэрэглэгчид сайтад удаан үлдэхгүй байна.
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '24px' }}>
-                <h4 style={{ marginBottom: '12px' }}>Төхөөрөмжөөр bounce rate:</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {realBounceData?.chromeBouncePercent > 0 && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '4px', height: '32px', position: 'relative' }}>
-                        <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${realBounceData.chromeBouncePercent}%`, background: '#dc2626', borderRadius: '4px', display: 'flex', alignItems: 'center', paddingLeft: '8px', color: 'white', fontSize: '13px', fontWeight: '600' }}>
-                          {realBounceData.chromeBouncePercent}% - Chrome
-                        </div>
-                      </div>
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '80px' }}>хэрэглэгч</span>
-                    </div>
-                  )}
-                  {realBounceData?.mobileBouncePercent > 0 && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '4px', height: '32px', position: 'relative' }}>
-                        <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${realBounceData.mobileBouncePercent}%`, background: '#f59e0b', borderRadius: '4px', display: 'flex', alignItems: 'center', paddingLeft: '8px', color: 'white', fontSize: '13px', fontWeight: '600' }}>
-                          {realBounceData.mobileBouncePercent}% - Mobile
-                        </div>
-                      </div>
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '80px' }}>хэрэглэгч</span>
-                    </div>
-                  )}
-                  {(!realBounceData || (realBounceData.chromeBouncePercent === 0 && realBounceData.mobileBouncePercent === 0)) && (
-                    <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                      Одоогоор өгөгдөл байхгүй байна
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {realBounceData && realBounceData.totalSessions > 0 && (
-                <div style={{ background: '#dbeafe', padding: '16px', borderRadius: '8px', border: '1px solid #3b82f6' }}>
-                  <h4 style={{ marginBottom: '12px', color: '#1e40af' }}>Дэлгэрэнгүй шинжилгээ</h4>
-                  <p style={{ fontSize: '14px', lineHeight: '1.6', margin: 0 }}>
-                    Bounce rate: {realBounceData.bounceRate.toFixed(1)}% ({realBounceData.bouncedSessions} / {realBounceData.totalSessions} sessions)
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-
-
-          {/* Tracking Status */}
-          <div className="card">
-            <div className="card-body">
-              <h3 style={{ marginBottom: '16px' }}>Tracking системийн статус</h3>
-              <div style={{ padding: '16px', background: analyticsData.loading ? '#fef3c7' : '#d1fae5', borderRadius: '8px', border: `1px solid ${analyticsData.loading ? '#fbbf24' : '#10b981'}` }}>
-                <strong style={{ color: analyticsData.loading ? '#92400e' : '#065f46' }}>
-                  {analyticsData.loading ? '⏳ Өгөгдөл уншиж байна...' : '✅ Бодит хэрэглэгчийн өгөгдөл'}
-                </strong>
-                <p style={{ fontSize: '13px', margin: '8px 0 0 0', color: analyticsData.loading ? '#92400e' : '#065f46' }}>
-                  {analyticsData.loading
-                    ? 'Analytics системээс бодит өгөгдөл татаж байна. Event tracking идэвхтэй ажиллаж байна.'
-                    : `Сүүлийн 30 хоногийн бодит өгөгдөл. Нийт ${analyticsData.summary?.total_sessions || 0} session, ${analyticsData.summary?.unique_users || 0} хэрэглэгч track хийгдсэн.`
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Page Analytics - Time spent per page */}
           <div className="card" style={{ marginTop: '24px' }}>
             <div className="card-body">
-              <h3 style={{ marginBottom: '16px' }}>📄 Хуудас шинжилгээ - Хэрэглэгчид хаана их цаг зарцуулж байна</h3>
+              <h3 style={{ marginBottom: '16px' }}>Хуудас шинжилгээ - Хэрэглэгчид хаана их цаг зарцуулж байна</h3>
               {pageAnalyticsData.length === 0 ? (
                 <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)', background: '#f9fafb', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '12px' }}>📊</div>
+                  <div style={{ fontSize: '48px', marginBottom: '12px' }}></div>
                   <p>Одоогоор хуудас шинжилгээний өгөгдөл байхгүй байна.</p>
                   <p style={{ fontSize: '14px', marginTop: '8px' }}>Хэрэглэгчид сайт ашиглаж эхлэхэд өгөгдөл цуглуулна.</p>
                 </div>
@@ -1118,10 +1016,10 @@ export default function Admin() {
                   </table>
                 </div>
               )}
-              <div style={{ marginTop: '16px', padding: '12px', background: '#eff6ff', borderRadius: '8px', fontSize: '13px', color: '#1e40af' }}>
+             /* <div style={{ marginTop: '16px', padding: '12px', background: '#eff6ff', borderRadius: '8px', fontSize: '13px', color: '#1e40af' }}>
                 💡 <strong>Тайлбар:</strong> Энэ хүснэгт нь хэрэглэгчид ямар хуудсанд хамгийн их цаг зарцуулж байгааг харуулна.
                 Ногоон өнгө = их цаг зарцуулсан (сонирхолтой контент), Улаан = бага цаг (контент сайжруулах шаардлагатай).
-              </div>
+              </div>*/
             </div>
           </div>
         </div>

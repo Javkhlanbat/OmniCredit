@@ -1101,7 +1101,6 @@ export default function Admin() {
               )}
               <div style={{ marginTop: '16px', padding: '12px', background: '#eff6ff', borderRadius: '8px', fontSize: '13px', color: '#1e40af' }}>  
                  <strong>Тайлбар:</strong> Энэ хүснэгт нь хэрэглэгчид ямар хуудсанд хамгийн их цаг зарцуулж байгааг харуулна.
-                Ногоон өнгө = их цаг зарцуулсан (сонирхолтой контент), Улаан = бага цаг (контент сайжруулах шаардлагатай).
               </div>*/
             </div>
           </div>

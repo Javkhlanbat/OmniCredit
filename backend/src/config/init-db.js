@@ -255,8 +255,124 @@ const initDatabase = async () => {
     `);
     console.log('Loans table-д promo_code_id column нэмэгдлээ');
 
-    console.log('Бүх tables амжилттай үүсгэгдлээ!');
-    
+    // Analytics Events table - analytics.js-ээс ирэх event-үүд
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS analytics_events (
+        id SERIAL PRIMARY KEY,
+        event_type VARCHAR(100) NOT NULL,
+        session_id VARCHAR(100),
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        url VARCHAR(500),
+        device_type VARCHAR(50),
+        user_agent TEXT,
+        screen_width INTEGER,
+        screen_height INTEGER,
+        viewport_width INTEGER,
+        viewport_height INTEGER,
+        event_data JSONB,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('Analytics events table үүсгэсэн');
+
+    // Funnel Sessions table - Analytics funnel tracking
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS funnel_sessions (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(100) UNIQUE NOT NULL,
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        device_type VARCHAR(50),
+        current_step VARCHAR(200),
+        total_events INTEGER DEFAULT 0,
+        started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        ended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('Funnel sessions table үүсгэсэн');
+
+    // User Sessions table - trackingService.js-ээс ирэх session tracking
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_sessions (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(100) UNIQUE NOT NULL,
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        device_info JSONB,
+        pages_visited INTEGER DEFAULT 0,
+        started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        ended_at TIMESTAMP,
+        total_duration INTEGER DEFAULT 0,
+        exit_page VARCHAR(500),
+        converted BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('User sessions table үүсгэсэн');
+
+    // User Activities table - trackingService.js-ээс ирэх activity tracking
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_activities (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        session_id VARCHAR(100),
+        page_url VARCHAR(500),
+        page_title VARCHAR(500),
+        action_type VARCHAR(100) NOT NULL,
+        time_spent INTEGER DEFAULT 0,
+        device_info JSONB,
+        referrer VARCHAR(500),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('User activities table үүсгэсэн');
+
+    // Add indexes for better performance
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_analytics_events_session ON analytics_events(session_id);
+      CREATE INDEX IF NOT EXISTS idx_analytics_events_user ON analytics_events(user_id);
+      CREATE INDEX IF NOT EXISTS idx_analytics_events_created ON analytics_events(created_at);
+      CREATE INDEX IF NOT EXISTS idx_user_sessions_session ON user_sessions(session_id);
+      CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions(user_id);
+      CREATE INDEX IF NOT EXISTS idx_user_activities_session ON user_activities(session_id);
+      CREATE INDEX IF NOT EXISTS idx_user_activities_user ON user_activities(user_id);
+      CREATE INDEX IF NOT EXISTS idx_user_activities_created ON user_activities(created_at);
+    `);
+    console.log('Analytics indexes үүсгэсэн');
+
+    // Add is_admin and visit_count columns to users table for analytics
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'is_admin'
+        ) THEN
+          ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT false;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'visit_count'
+        ) THEN
+          ALTER TABLE users ADD COLUMN visit_count INTEGER DEFAULT 0;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'loan_conversion_count'
+        ) THEN
+          ALTER TABLE users ADD COLUMN loan_conversion_count INTEGER DEFAULT 0;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'age'
+        ) THEN
+          ALTER TABLE users ADD COLUMN age INTEGER;
+        END IF;
+      END $$;
+    `);
+    console.log('Users table-д analytics columns нэмэгдлээ');
+
+    console.log('✅ Бүх tables амжилттай үүсгэгдлээ!');
+
   } catch (error) {
     console.error('Database initialization алдаа:', error);
     throw error;

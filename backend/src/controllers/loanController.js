@@ -33,7 +33,6 @@ const calculateMonthlyPayment = (amount, interestRate, durationMonths) => {
     // 0% хүүтэй бол зөвхөн үндсэн дүнг хуваах
     return amount / durationMonths;
   }
-
   const monthlyRate = interestRate / 100 / 12;
   const payment = (amount * monthlyRate * Math.pow(1 + monthlyRate, durationMonths)) /
                   (Math.pow(1 + monthlyRate, durationMonths) - 1);
@@ -93,7 +92,6 @@ const applyForLoan = async (req, res) => {
       });
     }
 
-    // Нэмэгдлийн код шалгах
     let promoCodeId = null;
     let appliedInterestRate = null;
 
@@ -102,7 +100,7 @@ const applyForLoan = async (req, res) => {
 
       if (!promoValidation.valid) {
         return res.status(400).json({
-          error: 'Буруу нэмэгдлийн код',
+          error: 'Буруу нэхэмжлийн код',
           message: promoValidation.error
         });
       }
@@ -319,7 +317,7 @@ const adminGetAllLoans = async (req, res) => {
   }
 };
 
-// Зээлийн статус өөрчлөх (Админ)
+// Зээлийн статус өөрчлөх 
 // approved хийхэд шууд wallet-д мөнгө орно, disbursed статус руу шилжинэ
 const adminUpdateLoanStatus = async (req, res) => {
   try {

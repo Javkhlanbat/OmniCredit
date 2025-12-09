@@ -948,7 +948,7 @@ export default function Admin() {
                     <div style={{ flex: 1, textAlign: 'center' }}>
                       <div style={{ background: '#8b5cf6', color: 'white', padding: '24px', borderRadius: '8px' }}>
                         <div style={{ fontSize: '32px', fontWeight: '800' }}>0</div>
-                        <div style={{ fontSize: '14px', marginTop: '8px' }}>Зээл авсан</div>
+                        <div style={{ fontSize: '14px', marginTop: '8px' }}>Зээл авах</div>
                         <div style={{ fontSize: '12px', opacity: 0.9 }}>-</div>
                       </div>
                     </div>

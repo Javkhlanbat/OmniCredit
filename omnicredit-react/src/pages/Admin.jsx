@@ -858,6 +858,35 @@ export default function Admin() {
         </div>
       )}
 
+      {/* Analytics Tab - User Behavior Tracking */}
+      {activeTab === 'analytics' && (
+        <div className="tab-content active">
+          {/* Real-time Analytics Summary */}
+          {!analyticsData.loading && analyticsData.summary && (
+            <div className="card" style={{ marginBottom: '24px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+              <div className="card-body">
+                <h3 style={{ marginBottom: '16px', color: 'white' }}> хэрэглэгчийн статистик (30 хоног)</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Нийт Session</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{analyticsData.summary.total_sessions?.toLocaleString() || 0}</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Хэрэглэгчид</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{analyticsData.summary.unique_users?.toLocaleString() || 0}</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Хуудас үзсэн</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{analyticsData.summary.page_views?.toLocaleString() || 0}</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Дундаж хугацаа</div>
+                    <div style={{ fontSize: '32px', fontWeight: '800' }}>{Math.round(analyticsData.summary.avg_session_duration_sec || 0)} сек</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Funnel Overview */}
           <div className="card" style={{ marginBottom: '24px' }}>
@@ -866,7 +895,7 @@ export default function Admin() {
                 <h3 style={{ margin: 0 }}>Хэрэглэгчийн урсгал </h3>
               </div>
 
-              {/* Funnel Visualization - REAL DATA */}
+              {/* Funnel Visualization */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', overflowX: 'auto', opacity: (!analyticsData.loading && analyticsData.summary?.total_sessions === 0) ? 0.5 : 1 }}>
                 {realFunnelData.length > 0 ? (
                   realFunnelData.map((stage, index) => (
@@ -935,7 +964,7 @@ export default function Admin() {
             </div>
           </div>
 
-          {/* Critical Friction Points - REAL DATA */}
+          {/* Critical Friction Points  */}
           <div className="card" style={{ marginBottom: '24px', border: realBounceData?.bounceRate > 20 ? '2px solid #dc2626' : '2px solid #10b981' }}>
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>

@@ -194,8 +194,6 @@ class AnalyticsTracker {
     });
   }
 }
-
 // Singleton instance
 const analytics = new AnalyticsTracker();
-
 export default analytics;
